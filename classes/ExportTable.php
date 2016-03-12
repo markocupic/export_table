@@ -36,16 +36,21 @@ class ExportTable extends \Backend
 
         $arrData = array();
 
+        // Load Datacontainer
+        \Controller::loadDataContainer($strTable, true);
+        $dca = null;
+        if (is_array($GLOBALS['TL_DCA'][$strTable])) {
+            $dca = $GLOBALS['TL_DCA'][$strTable];
+        }
+
         // If no fields are selected, then list the whole table
-        if ($arrSelectedFields === null || empty($arrSelectedFields))
-        {
+        if ($arrSelectedFields === null || empty($arrSelectedFields)) {
             $arrSelectedFields = \Database::getInstance()->getFieldNames($strTable);
         }
 
         // create headline
         $arrHeadline = array();
-        foreach ($arrSelectedFields as $fieldname)
-        {
+        foreach ($arrSelectedFields as $fieldname) {
             $arrHeadline[] = $fieldname;
         }
         $arrData[] = $arrHeadline;
@@ -53,11 +58,10 @@ class ExportTable extends \Backend
         // add rows to $arrData
         $arrFilter = json_decode($strFilter);
         $arrProcedures = [];
+
         $arrValues = [];
-        if (is_array($arrFilter))
-        {
-            foreach ($arrFilter as $filter)
-            {
+        if (is_array($arrFilter)) {
+            foreach ($arrFilter as $filter) {
                 $arrProcedures[] = $filter[0];
                 $arrValues[] = $filter[1];
             }
@@ -69,27 +73,31 @@ class ExportTable extends \Backend
         $objDb = \Database::getInstance()->prepare("SELECT * FROM  " . $strTable . " WHERE " . implode(' AND ', $arrProcedures) . " ORDER BY " . $strSorting)->execute($arrValues);
 
         //$objDb = \Database::getInstance()->prepare("SELECT * FROM " . $strTable . $strFilter . " ORDER BY id")->execute();
-        while ($dataRecord = $objDb->fetchAssoc())
-        {
+        while ($dataRecord = $objDb->fetchAssoc()) {
             $arrRow = array();
-            foreach ($arrSelectedFields as $field)
-            {
+            foreach ($arrSelectedFields as $field) {
                 $value = $dataRecord[$field];
-                if (is_array(unserialize($value)))
-                {
-                    $value = implode(',', unserialize($value));
+
+                // Handle binaries
+                if ($value != '') {
+                    if (is_array(deserialize($value))) {
+                        $arr = deserialize($value);
+                        $arr = self::array_map_deep($arr);
+                        $value = serialize($arr);
+                    }else{
+                        $value = self::binToUuid($value);
+                    }
                 }
 
                 // HOOK: add custom value
-                if (isset($GLOBALS['TL_HOOKS']['exportTable']) && is_array($GLOBALS['TL_HOOKS']['exportTable']))
-                {
+                if (isset($GLOBALS['TL_HOOKS']['exportTable']) && is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     $blnCustomValidation = false;
-                    foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback)
-                    {
+                    foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = \System::importStatic($callback[0]);
-                        $value = $objCallback->$callback[1]($field, $value, $strTable, $dataRecord);
+                        $value = $objCallback->$callback[1]($field, $value, $strTable, $dataRecord, $dca);
                     }
                 }
+
                 $arrRow[] = $value;
             }
             $arrData[] = $arrRow;
@@ -97,8 +105,7 @@ class ExportTable extends \Backend
 
 
         // xml-output
-        if ($exportType == 'xml')
-        {
+        if ($exportType == 'xml') {
             $x = new \XMLWriter();
             $x->openMemory();
             $x->startDocument('1.0', 'UTF-8');
@@ -106,25 +113,16 @@ class ExportTable extends \Backend
             $x->startElement($strTable);
 
             $row = 0;
-            foreach ($arrData as $arrRow)
-            {
-                if ($row == 0)
-                {
+            foreach ($arrData as $arrRow) {
+                if ($row == 0) {
                     $row++;
                     continue;
                 }
                 $row++;
                 $x->startElement('datarecord');
                 $i = 0;
-                foreach ($arrRow as $fieldvalue)
-                {
+                foreach ($arrRow as $fieldvalue) {
                     $x->startElement($arrHeadline[$i]);
-
-                    // Convert bin to uuid
-                    if (\Validator::isBinaryUuid($fieldvalue))
-                    {
-                        $fieldvalue = \StringUtil::binToUuid($fieldvalue);
-                    }
 
                     // Decode html entities
                     $fieldvalue = html_entity_decode($fieldvalue);
@@ -147,8 +145,7 @@ class ExportTable extends \Backend
         }
 
         // csv-output
-        if ($exportType == 'csv')
-        {
+        if ($exportType == 'csv') {
             header("Content-type: text/csv");
             header("Content-Disposition: attachment; filename=" . $strTable . ".csv");
             header("Content-Description: csv File");
@@ -156,17 +153,8 @@ class ExportTable extends \Backend
             header("Expires: 0");
 
             $outputBuffer = fopen("php://output", 'w');
-            foreach ($arrData as $arrRow)
-            {
-                $arrLine = array_map(function ($v)
-                {
-                    //return utf8_decode($v);
-
-                    // Convert bin to uuid
-                    if (\Validator::isBinaryUuid($v))
-                    {
-                        $v = \StringUtil::binToUuid($v);
-                    }
+            foreach ($arrData as $arrRow) {
+                $arrLine = array_map(function ($v) {
                     return html_entity_decode(iconv("UTF-8", "WINDOWS-1252", $v));
                 }, $arrRow);
                 self::fputcsv($outputBuffer, $arrLine, $seperator, $enclosure);
@@ -191,10 +179,8 @@ class ExportTable extends \Backend
         $enclosure_esc = preg_quote($enclosure, '/');
 
         $output = array();
-        foreach ($fields as $field)
-        {
-            if ($field === null && $mysql_null)
-            {
+        foreach ($fields as $field) {
+            if ($field === null && $mysql_null) {
                 $output[] = 'NULL';
                 continue;
             }
@@ -203,5 +189,40 @@ class ExportTable extends \Backend
         }
 
         fwrite($fh, join($delimiter, $output) . "\n");
+    }
+
+    /**
+     * array_map for multidimensional arrays
+     * @param $array
+     * @return array|string
+     */
+    private static function array_map_deep($array)
+    {
+        $new = array();
+        if (is_array($array)) {
+            foreach ($array as $key => $val) {
+                if (is_array($val)) {
+                    $new[$key] = self::array_map_deep($val);
+                } else {
+                    $new[$key] = self::binToUuid($val);
+                }
+            }
+        } else {
+            $new = self::binToUuid($array);
+        }
+        return $new;
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public static function binToUuid($value)
+    {
+        // Convert bin to uuid
+        if (\Validator::isBinaryUuid($value)) {
+            return \StringUtil::binToUuid($value);
+        }
+        return $value;
     }
 }
