@@ -84,7 +84,7 @@ class ExportTable extends \Backend
                         $arr = deserialize($value);
                         $arr = self::array_map_deep($arr);
                         $value = serialize($arr);
-                    }else{
+                    } else {
                         $value = self::binToUuid($value);
                     }
                 }
@@ -103,40 +103,64 @@ class ExportTable extends \Backend
             $arrData[] = $arrRow;
         }
 
+        $arrFieldInfo = self::listFields($strTable);
 
         // xml-output
         if ($exportType == 'xml') {
-            $x = new \XMLWriter();
-            $x->openMemory();
-            $x->startDocument('1.0', 'UTF-8');
+            $objXml = new \XMLWriter();
+            $objXml->openMemory();
+            $objXml->setIndent(true);
+            $objXml->setIndentString("\t");
+            $objXml->startDocument('1.0', 'UTF-8');
 
-            $x->startElement($strTable);
+            $objXml->startElement($strTable);
+            $objXml->writeAttribute('table', $strTable);
+            $objXml->writeAttribute('time', \Date::parse('Y-m-d H:i'));
+            $objXml->writeAttribute('cms', 'Contao ' . VERSION . '.' . BUILD);
+            $objXml->writeAttribute('host', $_SERVER['HTTP_HOST']);
 
-            $row = 0;
-            foreach ($arrData as $arrRow) {
+            foreach ($arrData as $row => $arrRow) {
+                // Headline
                 if ($row == 0) {
-                    $row++;
                     continue;
                 }
-                $row++;
-                $x->startElement('datarecord');
-                $i = 0;
-                foreach ($arrRow as $fieldvalue) {
-                    $x->startElement($arrHeadline[$i]);
+
+                // New row
+                $objXml->startElement('datarecord');
+                $objXml->writeAttribute('index', $row);
+
+                foreach ($arrRow as $i => $fieldvalue) {
+                    // New field
+                    $objXml->startElement($arrHeadline[$i]);
+
+                    // Write Attributes
+                    $objXml->writeAttribute('name', $arrHeadline[$i]);
+                    $objXml->writeAttribute('type', gettype($fieldvalue));
+                    $objXml->writeAttribute('origtype', $arrFieldInfo[$arrHeadline[$i]]['type']);
 
                     // Decode html entities
                     $fieldvalue = html_entity_decode($fieldvalue);
 
-                    $x->text($fieldvalue);
-                    $x->endElement();
-                    $i++;
+                    // Write CDATA
+                    if (is_numeric($fieldvalue) || is_null($fieldvalue) || $fieldvalue == '') {
+                        $fieldvalue = $fieldvalue;
+                        $objXml->text($fieldvalue);
+                    } else {
+                        $objXml->writeCdata($fieldvalue);
+                    }
+
+                    $objXml->endElement();
+                    //end field-tag
                 }
-                $x->endElement();
+                $objXml->endElement();
+                // End row-tag
             }
 
-            $x->endElement();
-            $x->endDocument();
-            $xml = $x->outputMemory();
+            $objXml->endElement();
+            // End table-tag
+
+            $objXml->endDocument();
+            $xml = $objXml->outputMemory();
 
             header('Content-type: text/xml');
             header('Content-Disposition: attachment; filename="' . $strTable . '.xml"');
@@ -224,5 +248,22 @@ class ExportTable extends \Backend
             return \StringUtil::binToUuid($value);
         }
         return $value;
+    }
+
+    /**
+     * @param $strTable
+     * @return array
+     */
+    public static function listFields($strTable)
+    {
+        $objDb = \Database::getInstance();
+        $arrFields = $objDb->listFields($strTable);
+        $arrNew = array();
+        if (is_array($arrFields)) {
+            foreach ($arrFields as $arrField) {
+                $arrNew[$arrField['name']] = $arrField;
+            }
+        }
+        return $arrNew;
     }
 }
