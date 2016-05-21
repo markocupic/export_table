@@ -50,7 +50,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
     ),
     // Palettes
     'palettes' => array(
-        'default' => '{settings},export_table,exportType,fields,filterExpression,sortBy,sortByDirection',
+        'default' => '{settings},export_table,exportType,fields,destinationCharset,filterExpression,sortBy,sortByDirection',
     ),
     // Fields
     'fields' => array(
@@ -111,6 +111,16 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
                 'tl_export_table',
                 'optionsCbSelectedFields'
             ),
+            'eval' => array(
+                'multiple' => false,
+                'mandatory' => false,
+            ),
+            'sql' => "blob NULL",
+        ),
+        'destinationCharset' => array(
+            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['destinationCharset'],
+            'inputType' => 'select',
+            'options' => array("UTF-8", "Windows-1252", "ASCII", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"),
             'eval' => array(
                 'multiple' => false,
                 'mandatory' => false,
@@ -182,8 +192,18 @@ class tl_export_table extends Backend
         {
             $sortingExpression = $_POST['sortBy'] . ' ' . $_POST['sortByDirection'];
         }
+        $options = array(
+            'strSorting' => $sortingExpression,
+            'exportType' => $this->Input->post('exportType'),
+            'strSeperator' => ';',
+            'strEnclosure' => '"',
+            'strFilter' => $filterExpression,
+            'strDestinationCharset' => $this->Input->post('destinationCharset'),  
+            'strDestination' => '',
+            'arrSelectedFields' => $arrSelectedFields
+        );
 
-        MCupic\ExportTable::exportTable($strTable, $filterExpression, $sortingExpression, $arrSelectedFields, $this->Input->post('exportType'));
+        MCupic\ExportTable::exportTable($strTable, $options);
     }
 
 

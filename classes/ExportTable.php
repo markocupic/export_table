@@ -27,12 +27,36 @@ class ExportTable extends \Backend
 
     /**
      * @param $strTable
-     * @param null $arrSelectedFields
-     * @param string $seperator
-     * @param string $enclosure
+     * @param array $options
      */
-    public static function exportTable($strTable, $strFilter = '', $strSorting = 'id ASC', $arrSelectedFields = null, $exportType = 'csv', $seperator = ';', $enclosure = '"')
+    public static function exportTable($strTable, array $options = array())
     {
+        // Defaults
+        $preDefinedOptions = array(
+            'strSorting' => 'id ASC',
+            // Export Type csv or xml
+            'exportType' => 'csv',
+            'strSeperator' => ';',
+            'strEnclosure' => '"',
+            // strFilter json_encoded array [["published=?",1],["pid=6",1]]
+            'strFilter' => '',
+            // strDestinationCharset f.ex: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
+            'strDestinationCharset' => '',
+            // strDestinationCharset f.ex: files/mydir
+            'strDestination' => '',
+            // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
+            'arrSelectedFields' => null
+        );
+        $options = array_merge($preDefinedOptions, $options);
+        $strSorting = $options['strSorting'];
+        $exportType = $options['exportType'];
+        $strSeperator = $options['strSeperator'];
+        $strEnclosure = $options['strEnclosure'];
+        $strFilter = $options['strFilter'];
+        $strDestinationCharset = $options['strDestinationCharset'];
+        $strDestination = $options['strDestination'];
+        $arrSelectedFields = $options['arrSelectedFields'];
+
 
         $arrData = array();
 
@@ -107,7 +131,6 @@ class ExportTable extends \Backend
                 // HOOK: add custom value
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && is_array($GLOBALS['TL_HOOKS']['exportTable']))
                 {
-                    $blnCustomValidation = false;
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback)
                     {
                         $objCallback = \System::importStatic($callback[0]);
@@ -128,13 +151,9 @@ class ExportTable extends \Backend
             $objXml->openMemory();
             $objXml->setIndent(true);
             $objXml->setIndentString("\t");
-            $objXml->startDocument('1.0', 'UTF-8');
+            $objXml->startDocument('1.0', $strDestinationCharset != '' ? $strDestinationCharset : 'UTF-8');
 
             $objXml->startElement($strTable);
-            //$objXml->writeAttribute('table', $strTable);
-            //$objXml->writeAttribute('time', \Date::parse('Y-m-d H:i'));
-            //$objXml->writeAttribute('cms', 'Contao ' . VERSION . '.' . BUILD);
-            //$objXml->writeAttribute('host', $_SERVER['HTTP_HOST']);
 
             foreach ($arrData as $row => $arrRow)
             {
@@ -158,6 +177,11 @@ class ExportTable extends \Backend
                     //$objXml->writeAttribute('type', gettype($fieldvalue));
                     //$objXml->writeAttribute('origtype', $arrFieldInfo[$arrHeadline[$i]]['type']);
 
+                    // Convert to charset
+                    if ($strDestinationCharset != '')
+                    {
+                        $fieldvalue = iconv("UTF-8", $strDestinationCharset, $fieldvalue);
+                    }
 
                     if (is_numeric($fieldvalue) || is_null($fieldvalue) || $fieldvalue == '')
                     {
@@ -182,31 +206,85 @@ class ExportTable extends \Backend
             $objXml->endDocument();
             $xml = $objXml->outputMemory();
 
+            // Write output to file system
+            if ($strDestination != '')
+            {
+                new \Folder($strDestination);
+                $objFolder = \FilesModel::findByPath($strDestination);
+                if ($objFolder !== null)
+                {
+                    if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
+                    {
+                        $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
+                        $objFile->write($xml);
+                        $objFile->close();
+                        return;
+                    }
+                }
+            }
+
+            // Send file to browser
             header('Content-type: text/xml');
             header('Content-Disposition: attachment; filename="' . $strTable . '.xml"');
             echo $xml;
             exit();
         }
 
+
         // csv-output
         if ($exportType == 'csv')
         {
+            // Write output to file system
+            if ($strDestination != '')
+            {
+                new \Folder($strDestination);
+                $objFolder = \FilesModel::findByPath($strDestination);
+                if ($objFolder !== null)
+                {
+                    if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
+                    {
+                        $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
+
+                        foreach ($arrData as $arrRow)
+                        {
+                            $arrLine = array_map(function ($v) use ($strDestinationCharset)
+                            {
+                                if ($strDestinationCharset != '')
+                                {
+                                    $v = iconv("UTF-8", $strDestinationCharset, $v);
+                                }
+                                return html_entity_decode($v);
+                            }, $arrRow);
+                            self::fputcsv($objFile->handle, $arrLine, $strSeperator, $strEnclosure);
+                        }
+                        $objFile->close();
+                    }
+                }
+                return;
+            }
+
+
+            // Send file to browser
             header("Content-type: text/csv");
             header("Content-Disposition: attachment; filename=" . $strTable . ".csv");
             header("Content-Description: csv File");
             header("Pragma: no-cache");
             header("Expires: 0");
 
-            $outputBuffer = fopen("php://output", 'w');
+            $fh = fopen("php://output", 'w');
             foreach ($arrData as $arrRow)
             {
-                $arrLine = array_map(function ($v)
+                $arrLine = array_map(function ($v) use ($strDestinationCharset)
                 {
-                    return html_entity_decode(iconv("UTF-8", "WINDOWS-1252", $v));
+                    if ($strDestinationCharset != '')
+                    {
+                        $v = iconv("UTF-8", $strDestinationCharset, $v);
+                    }
+                    return html_entity_decode($v);
                 }, $arrRow);
-                self::fputcsv($outputBuffer, $arrLine, $seperator, $enclosure);
+                self::fputcsv($fh, $arrLine, $strSeperator, $strEnclosure);
             }
-            fclose($outputBuffer);
+            fclose($fh);
             exit();
         }
     }
@@ -228,6 +306,7 @@ class ExportTable extends \Backend
         $output = array();
         foreach ($fields as $field)
         {
+            $field = str_replace('"', '', $field);
             if ($field === null && $mysql_null)
             {
                 $output[] = 'NULL';
@@ -236,8 +315,7 @@ class ExportTable extends \Backend
 
             $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ? ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure) : $field;
         }
-
-        fwrite($fh, join($delimiter, $output) . "\n");
+        fwrite($fh, implode($delimiter, $output) . "\n");
     }
 
     /**
