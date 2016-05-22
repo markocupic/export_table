@@ -15,17 +15,21 @@ Mit dem Modul lassen sich Contao Tabellen im csv/xml-Format exportieren. Die Exp
 
 // Etwas komplizierterer Export:
 $options = array(
+    // Sortierung
     "strSorting" => "city ASC",
     // xml oder csv
-    "exportType" => "xml",
+    "exportType" => "csv",
+    // Datensätze getrennt durch ';'
     "strSeperator" => ";",
+    // Felder eingeschlossen von
     "strEnclosure" => '"',
-    // arrFilter array(array("published=?",1),array("pid=6",1))
+    // arrFilter: Export auf bestimmte Datensätze beschränken
     "arrFilter" => array(array("published=?",1),array("country=?","ch")),
     // strDestinationCharset z.B.: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
     "strDestinationCharset" => "Windows-1252",
     // Datei im Contao Fielsystem abspeichern
     "strDestination" => "files/tl_member_backups",
+    // Export auf bestimmte Felder beschränken
     "arrSelectedFields" => array("firstname", "lastname", "street", "city", "gender", "email")
 );
 \MCupic\ExportTable::exportTable('tl_member', $options);
