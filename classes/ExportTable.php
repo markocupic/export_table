@@ -38,8 +38,8 @@ class ExportTable extends \Backend
             'exportType' => 'csv',
             'strSeperator' => ';',
             'strEnclosure' => '"',
-            // strFilter json_encoded array [["published=?",1],["pid=6",1]]
-            'strFilter' => '',
+            // arrFilter array(array("published=?",1),array("pid=6",1))
+            'arrFilter' => array(),
             // strDestinationCharset f.ex: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
             'strDestinationCharset' => '',
             // strDestinationCharset f.ex: files/mydir
@@ -52,7 +52,7 @@ class ExportTable extends \Backend
         $exportType = $options['exportType'];
         $strSeperator = $options['strSeperator'];
         $strEnclosure = $options['strEnclosure'];
-        $strFilter = $options['strFilter'];
+        $arrFilter = $options['arrFilter'];
         $strDestinationCharset = $options['strDestinationCharset'];
         $strDestination = $options['strDestination'];
         $arrSelectedFields = $options['arrSelectedFields'];
@@ -83,18 +83,17 @@ class ExportTable extends \Backend
         $arrData[] = $arrHeadline;
 
         // add rows to $arrData
-        $arrFilter = json_decode($strFilter);
-        $arrProcedures = [];
-
-        $arrValues = [];
-        if (is_array($arrFilter))
-        {
-            foreach ($arrFilter as $filter)
-            {
-                $arrProcedures[] = $filter[0];
-                $arrValues[] = $filter[1];
-            }
+        if(empty($arrFilter) || !is_array($arrFilter) ){
+            $arrFilter = array();
         }
+        $arrProcedures = [];
+        $arrValues = [];
+        foreach ($arrFilter as $filter)
+        {
+            $arrProcedures[] = $filter[0];
+            $arrValues[] = $filter[1];
+        }
+
         $arrProcedures[] = "id>=?";
         $arrValues[] = 0;
         $arrFieldInfo = self::listFields($strTable);

@@ -181,11 +181,11 @@ class tl_export_table extends Backend
         $strTable = $this->Input->post('export_table');
         $arrSelectedFields = $this->Input->post('fields');
 
-        $filterExpression = $_POST['filterExpression'];
+        $filterExpression = trim($_POST['filterExpression']);
         if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
         {
             $filterExpression = '';
-            $_POST['filterExpression'] = null;
+            $_POST['filterExpression'] = '';
         }
         $sortingExpression = '';
         if ($_POST['sortBy'] != '' && $_POST['sortByDirection'] != '')
@@ -197,12 +197,12 @@ class tl_export_table extends Backend
             'exportType' => $this->Input->post('exportType'),
             'strSeperator' => ';',
             'strEnclosure' => '"',
-            'strFilter' => $filterExpression,
-            'strDestinationCharset' => $this->Input->post('destinationCharset'),  
+            'arrFilter' => $filterExpression != '' ? json_decode($filterExpression) : array(),
+            'strDestinationCharset' => $this->Input->post('destinationCharset'),
             'strDestination' => '',
             'arrSelectedFields' => $arrSelectedFields
         );
-
+        // Call Export class
         MCupic\ExportTable::exportTable($strTable, $options);
     }
 
