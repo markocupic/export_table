@@ -42,7 +42,7 @@ class ExportTable extends \Backend
             'arrFilter' => array(),
             // strDestinationCharset f.ex: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
             'strDestinationCharset' => '',
-            // strDestinationCharset f.ex: files/mydir
+            // strDestination f.ex: files/mydir
             'strDestination' => '',
             // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
             'arrSelectedFields' => null
