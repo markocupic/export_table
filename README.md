@@ -2,14 +2,14 @@
 
 ## Backend Modul für Contao 3.
 
-Mit dem Modul lassen sich Contao Tabellen im csv/xml-Format exportieren. Die Export-Klasse lässt sich auch in eigenen Erweiterungen einbauen. Hier zwei Beispiele:
+Mit dem Modul lassen sich Contao Tabellen im csv/xml-Format exportieren. Die Export-Klasse lässt sich auch ohne Backend-Modul direkt in eigenen Erweiterungen nutzen. Hier zwei Beispiele:
 
 
 
 ```php
 <?php
 
-// Einfachen CSV-Export initieren (Datei wird zum Browser gesandt)
+// Einfachen CSV-Export initieren (Datei wird zum Browser gesendet)
 \MCupic\ExportTable::exportTable('tl_member');
 
 
