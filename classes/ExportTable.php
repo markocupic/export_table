@@ -61,7 +61,11 @@ class ExportTable extends \Backend
         $arrData = array();
 
         // Load Datacontainer
-        \Controller::loadDataContainer($strTable, true);
+        if(!is_array($GLOBALS['TL_DCA'][$strTable]))
+        {
+            \Controller::loadDataContainer($strTable, true);
+        }
+
         $dca = array();
         if (is_array($GLOBALS['TL_DCA'][$strTable]))
         {
