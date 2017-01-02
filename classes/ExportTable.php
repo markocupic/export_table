@@ -25,6 +25,77 @@ class ExportTable extends \Backend
 {
 
 
+
+
+
+    public static function prepareExport($id=null)
+    {
+        if ($id == null)
+        {
+            $strTable = \Input::post('export_table');
+            $arrSelectedFields = \Input::post('fields');
+            $filterExpression = trim($_POST['filterExpression']);
+            $exportType = \Input::post('exportType');
+            $destinationCharset = \Input::post('destinationCharset');
+
+            if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
+            {
+                $filterExpression = '';
+                $_POST['filterExpression'] = '';
+            }
+
+            $sortingExpression = '';
+            if ($_POST['sortBy'] != '' && $_POST['sortByDirection'] != '')
+            {
+                $sortingExpression = $_POST['sortBy'] . ' ' . $_POST['sortByDirection'];
+            }
+        }
+        else
+        {
+            // Deep link export
+            $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(\Input::get('id'));
+            if ($objDb->numRows)
+            {
+                if ($objDb->activateDeepLinkExport && \Input::get('key') == $objDb->deepLinkExportKey)
+                {
+                    $strTable = $objDb->export_table;
+                    $arrSelectedFields = deserialize($objDb->fields, true);
+                    $filterExpression = trim($objDb->filterExpression);
+                    $exportType = $objDb->exportType;
+                    $destinationCharset = $objDb->destinationCharset;
+
+                    if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
+                    {
+                        $filterExpression = '';
+                    }
+
+                    $sortingExpression = '';
+                    if ($objDb->sortBy != '' && $objDb->sortByDirection != '')
+                    {
+                        $sortingExpression = $objDb->sortBy . ' ' . $objDb->sortByDirection;
+                    }
+                }
+            }
+
+        }
+
+
+        $options = array(
+            'strSorting'            => $sortingExpression,
+            'exportType'            => $exportType,
+            'strSeperator'          => ';',
+            'strEnclosure'          => '"',
+            'arrFilter'             => $filterExpression != '' ? json_decode($filterExpression) : array(),
+            'strDestinationCharset' => $destinationCharset,
+            'strDestination'        => '',
+            'arrSelectedFields'     => $arrSelectedFields,
+        );
+        // Call Export class
+        self::exportTable($strTable, $options);
+    }
+
+
+
     /**
      * @param $strTable
      * @param array $options

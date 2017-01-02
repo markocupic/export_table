@@ -11,143 +11,174 @@
 
 $GLOBALS['TL_DCA']['tl_export_table'] = array(
     // Config
-    'config' => array(
+    'config'      => array(
         'dataContainer' => 'Table',
-        'sql' => array(
+        'sql'           => array(
             'keys' => array(
                 'id' => 'primary',
-            )
+            ),
         ),
     ),
     // List
-    'list' => array(
-        'sorting' => array(
+    'list'        => array(
+        'sorting'           => array(
             'fields' => array('tstamp DESC'),
         ),
-        'label' => array(
-            'fields' => array('export_table'),
-            'format' => '%s'
+        'label'             => array(
+            'fields' => array('title', 'export_table'),
+            'format' => '%s Tabelle: %s',
         ),
         'global_operations' => array(),
-        'operations' => array(
-            'edit' => array(
+        'operations'        => array(
+            'edit'   => array(
                 'label' => &$GLOBALS['TL_LANG']['MSC']['edit'],
-                'href' => 'act=edit',
-                'icon' => 'edit.gif'
+                'href'  => 'act=edit',
+                'icon'  => 'edit.gif',
             ),
             'delete' => array(
-                'label' => &$GLOBALS['TL_LANG']['MSC']['delete'],
-                'href' => 'act=delete',
-                'icon' => 'delete.gif',
-                'attributes' => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"'
+                'label'      => &$GLOBALS['TL_LANG']['MSC']['delete'],
+                'href'       => 'act=delete',
+                'icon'       => 'delete.gif',
+                'attributes' => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
             ),
-            'show' => array(
+            'show'   => array(
                 'label' => &$GLOBALS['TL_LANG']['MSC']['show'],
-                'href' => 'act=show',
-                'icon' => 'show.gif'
-            )
-        )
+                'href'  => 'act=show',
+                'icon'  => 'show.gif',
+            ),
+        ),
     ),
     // Palettes
-    'palettes' => array(
-        'default' => '{settings},export_table,exportType,fields,destinationCharset,filterExpression,sortBy,sortByDirection',
+    'palettes'    => array(
+        '__selector__' => array('activateDeepLinkExport'),
+        'default'      => '{title_legend},title;{settings},export_table,exportType,fields,destinationCharset,filterExpression,sortBy,sortByDirection;{deep_link_legend},activateDeepLinkExport',
+    ),
+    'subpalettes' => array(
+        'activateDeepLinkExport' => 'deepLinkExportKey,deepLinkInfo',
     ),
     // Fields
-    'fields' => array(
+    'fields'      => array(
 
-        'id' => array(
-            'label' => array('ID'),
+        'id'                     => array(
+            'label'  => array('ID'),
             'search' => true,
-            'sql' => "int(10) unsigned NOT NULL auto_increment"
+            'sql'    => "int(10) unsigned NOT NULL auto_increment",
         ),
-
-        'tstamp' => array(
-            'sql' => "int(10) unsigned NOT NULL default '0'"
+        'tstamp'                 => array(
+            'sql' => "int(10) unsigned NOT NULL default '0'",
         ),
-
-        'export_table' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['export_table'],
-            'inputType' => 'select',
-            'options_callback' => array(
-                'tl_export_table',
-                'optionsCbGetTables'
-            ),
-            'eval' => array(
-                'multiple' => false,
-                'mandatory' => true,
-                'includeBlankOption' => true,
-                'submitOnChange' => true,
-            ),
-            'sql' => "varchar(255) NOT NULL default ''"
-        ),
-
-        'filterExpression' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'],
+        'title'                  => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['title'],
+            'exclude'   => true,
+            'search'    => true,
             'inputType' => 'text',
-            'eval' => array(
-                'mandatory' => false, 'preserveTags' => false, 'allowHtml' => true, 'decodeEntities' => false
-            ),
-            'sql' => "varchar(255) NOT NULL default ''"
+            'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'clr'),
+            'sql'       => "varchar(255) NOT NULL default ''",
         ),
-
-
-        'fields' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['fields'],
-            'inputType' => 'checkbox',
+        'export_table'           => array(
+            'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['export_table'],
+            'inputType'        => 'select',
             'options_callback' => array(
                 'tl_export_table',
-                'optionsCbSelectedFields'
+                'optionsCbGetTables',
             ),
-            'eval' => array(
-                'multiple' => true,
+            'eval'             => array(
+                'multiple'           => false,
+                'mandatory'          => true,
+                'includeBlankOption' => true,
+                'submitOnChange'     => true,
+            ),
+            'sql'              => "varchar(255) NOT NULL default ''",
+        ),
+        'filterExpression'       => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'],
+            'inputType' => 'text',
+            'eval'      => array(
+                'mandatory'      => false,
+                'preserveTags'   => false,
+                'allowHtml'      => true,
+                'decodeEntities' => false,
+            ),
+            'sql'       => "varchar(255) NOT NULL default ''",
+        ),
+        'fields'                 => array(
+            'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['fields'],
+            'inputType'        => 'checkbox',
+            'options_callback' => array(
+                'tl_export_table',
+                'optionsCbSelectedFields',
+            ),
+            'eval'             => array(
+                'multiple'  => true,
                 'mandatory' => true,
             ),
-            'sql' => "blob NULL",
+            'sql'              => "blob NULL",
         ),
-        'sortBy' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['sortBy'],
-            'inputType' => 'select',
+        'sortBy'                 => array(
+            'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['sortBy'],
+            'inputType'        => 'select',
             'options_callback' => array(
                 'tl_export_table',
-                'optionsCbSelectedFields'
+                'optionsCbSelectedFields',
             ),
-            'eval' => array(
-                'multiple' => false,
+            'eval'             => array(
+                'multiple'  => false,
                 'mandatory' => false,
             ),
-            'sql' => "blob NULL",
+            'sql'              => "blob NULL",
         ),
-        'destinationCharset' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['destinationCharset'],
+        'destinationCharset'     => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['destinationCharset'],
             'inputType' => 'select',
-            'options' => array("UTF-8", "Windows-1252", "ASCII", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"),
-            'eval' => array(
-                'multiple' => false,
+            'options'   => array("UTF-8", "Windows-1252", "ASCII", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"),
+            'eval'      => array(
+                'multiple'  => false,
                 'mandatory' => false,
             ),
-            'sql' => "blob NULL",
+            'sql'       => "blob NULL",
         ),
-        'sortByDirection' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'],
+        'sortByDirection'        => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'],
             'inputType' => 'select',
-            'options' => array('ASC', 'DESC'),
-            'eval' => array(
-                'multiple' => false,
+            'options'   => array('ASC', 'DESC'),
+            'eval'      => array(
+                'multiple'  => false,
                 'mandatory' => false,
             ),
-            'sql' => "blob NULL",
+            'sql'       => "blob NULL",
         ),
-        'exportType' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['exportType'],
+        'exportType'             => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['exportType'],
             'inputType' => 'select',
-            'options' => array('csv', 'xml'),
-            'eval' => array(
-                'multiple' => false,
+            'options'   => array('csv', 'xml'),
+            'eval'      => array(
+                'multiple'  => false,
                 'mandatory' => false,
             ),
-            'sql' => "blob NULL",
+            'sql'       => "blob NULL",
+        ),
+        'activateDeepLinkExport' => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => array('submitOnChange' => true),
+            'sql'       => "char(1) NOT NULL default ''",
+        ),
+        'deepLinkExportKey' => array(
+
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'],
+            'exclude'   => true,
+            'search'    => true,
+            'default'   => md5(microtime() . rand()),
+            'inputType' => 'text',
+            'eval'      => array('mandatory' => true, 'maxlength' => 200),
+            'sql'       => "varchar(255) NOT NULL default ''",
+        ),
+        'deepLinkInfo'           => array(
+            'input_field_callback' => array('tl_export_table', 'generateDeepLinkInfo'),
+            'eval'                 => array('doNotShow' => true)
         )
-    )
+    ),
 );
 
 /**
@@ -167,6 +198,7 @@ class tl_export_table extends Backend
 
         if ($_POST['saveNcreate'] && $this->Input->post('FORM_SUBMIT') && $this->Input->post('SUBMIT_TYPE') != 'auto' && !$_SESSION['export_table'])
         {
+            $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(\Input::get('id'));
             unset($_POST['saveNcreate']);
             $this->initExport();
         }
@@ -176,34 +208,9 @@ class tl_export_table extends Backend
     /**
      * init Export
      */
-    private function initExport()
+    public function initExport()
     {
-        $strTable = $this->Input->post('export_table');
-        $arrSelectedFields = $this->Input->post('fields');
-
-        $filterExpression = trim($_POST['filterExpression']);
-        if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
-        {
-            $filterExpression = '';
-            $_POST['filterExpression'] = '';
-        }
-        $sortingExpression = '';
-        if ($_POST['sortBy'] != '' && $_POST['sortByDirection'] != '')
-        {
-            $sortingExpression = $_POST['sortBy'] . ' ' . $_POST['sortByDirection'];
-        }
-        $options = array(
-            'strSorting' => $sortingExpression,
-            'exportType' => $this->Input->post('exportType'),
-            'strSeperator' => ';',
-            'strEnclosure' => '"',
-            'arrFilter' => $filterExpression != '' ? json_decode($filterExpression) : array(),
-            'strDestinationCharset' => $this->Input->post('destinationCharset'),
-            'strDestination' => '',
-            'arrSelectedFields' => $arrSelectedFields
-        );
-        // Call Export class
-        MCupic\ExportTable::exportTable($strTable, $options);
+        MCupic\ExportTable::prepareExport();
     }
 
 
@@ -280,5 +287,33 @@ class tl_export_table extends Backend
 
         return $strContent;
     }
+
+    /**
+     * Input-field-callback
+     * @return string
+     */
+    public function generateDeepLinkInfo()
+    {
+
+        $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=? LIMIT 0,1')->execute($this->Input->get('id'));
+        $host = Environment::get('host');
+        $query = '?action=exportTable&id=' . $this->Input->get('id') . '&key=' . $objDb->deepLinkExportKey;
+
+            $html = '
+<div class="deep_link_info">
+<br /><br />
+<table cellpadding="0" cellspacing="0" width="100%" summary="">
+	<tr class="odd">
+		<td>Use this deep link to activate the table-export in your browser:</td>
+	</tr>
+	<tr class="even">
+		<td>//' . $host . $query . '</td>
+	</tr>
+</table>
+</div>
+				';
+
+            return $html;
+        }
 }           
               

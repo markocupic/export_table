@@ -31,3 +31,8 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table') {
        );
 }
 
+if(Input::get('action') == 'exportTable' && Input::get('id') > 0){
+       MCupic\ExportTable::prepareExport(Input::get('id'));
+}
+
+
