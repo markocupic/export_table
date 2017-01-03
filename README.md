@@ -68,7 +68,7 @@ class ExportTableHook
 ```
 
 Wichtig!!!
-Versichere dich, dass der Hook-Container vor dem export_table Container geladen wird. In Contao 4 erreichst du dies, indem du in der AppKernel.php den Hook-Container vor dem export_table-Container registrierst.
+Versichere dich, dass der Hook-Container vor dem export_table Container geladen wird. In Contao 4 erreichst du dies, indem du in der AppKernel.php den Hook-Container vor dem export_table-Container registrierst. 
 
 
 ```php
