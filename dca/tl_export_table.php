@@ -59,13 +59,12 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
     ),
     // Fields
     'fields'      => array(
-
-        'id'                     => array(
+        'id'                 => array(
             'label'  => array('ID'),
             'search' => true,
             'sql'    => "int(10) unsigned NOT NULL auto_increment",
         ),
-        'tstamp'                 => array(
+        'tstamp'             => array(
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ),
         'title'                  => array(
@@ -76,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'clr'),
             'sql'       => "varchar(255) NOT NULL default ''",
         ),
-        'export_table'           => array(
+        'export_table'       => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['export_table'],
             'inputType'        => 'select',
             'options_callback' => array(
@@ -91,7 +90,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'              => "varchar(255) NOT NULL default ''",
         ),
-        'filterExpression'       => array(
+        'filterExpression'   => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'],
             'inputType' => 'text',
             'eval'      => array(
@@ -102,20 +101,25 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "varchar(255) NOT NULL default ''",
         ),
-        'fields'                 => array(
+        'fields'             => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['fields'],
-            'inputType'        => 'checkbox',
+            'inputType'        => 'checkboxWizard',
             'options_callback' => array(
                 'tl_export_table',
                 'optionsCbSelectedFields',
             ),
             'eval'             => array(
-                'multiple'  => true,
-                'mandatory' => true,
+                'multiple'   => true,
+                'mandatory'  => true,
+                'orderField' => 'orderFields',
             ),
             'sql'              => "blob NULL",
         ),
-        'sortBy'                 => array(
+        'orderFields'        => array(
+            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['orderFields'],
+            'sql'   => "blob NULL",
+        ),
+        'sortBy'             => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['sortBy'],
             'inputType'        => 'select',
             'options_callback' => array(
@@ -128,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'              => "blob NULL",
         ),
-        'destinationCharset'     => array(
+        'destinationCharset' => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['destinationCharset'],
             'inputType' => 'select',
             'options'   => array("UTF-8", "Windows-1252", "ASCII", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"),
@@ -138,7 +142,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "blob NULL",
         ),
-        'sortByDirection'        => array(
+        'sortByDirection'    => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'],
             'inputType' => 'select',
             'options'   => array('ASC', 'DESC'),
@@ -148,7 +152,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "blob NULL",
         ),
-        'exportType'             => array(
+        'exportType'         => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['exportType'],
             'inputType' => 'select',
             'options'   => array('csv', 'xml'),
@@ -179,7 +183,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             'input_field_callback' => array('tl_export_table', 'generateDeepLinkInfo'),
             'eval'                 => array('doNotShow' => true)
         )
-    ),
+    )
 );
 
 /**
