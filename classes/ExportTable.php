@@ -456,4 +456,5 @@ class ExportTable extends \Backend
         }
         return $arrNew;
     }
+
 }

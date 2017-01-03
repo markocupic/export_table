@@ -103,18 +103,23 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "varchar(255) NOT NULL default ''",
         ),
-        'fields'                 => array(
+        'fields'             => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['fields'],
-            'inputType'        => 'checkbox',
+            'inputType'        => 'checkboxWizard',
             'options_callback' => array(
                 'tl_export_table',
                 'optionsCbSelectedFields',
             ),
             'eval'             => array(
-                'multiple'  => true,
-                'mandatory' => true,
+                'multiple'   => true,
+                'mandatory'  => true,
+                'orderField' => 'orderFields',
             ),
             'sql'              => "blob NULL",
+        ),
+        'orderFields'        => array(
+            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['orderFields'],
+            'sql'   => "blob NULL",
         ),
         'sortBy'                 => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['sortBy'],
