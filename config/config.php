@@ -9,7 +9,7 @@
  * @link    https://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
-
+use Markocupic\ExportTable\ExportTable;
 
 /**
  * Back end modules
@@ -33,9 +33,12 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table') {
        );
 }
 
+// With the exportTable Hook you can control the output
+//$GLOBALS['TL_HOOKS']['exportTable'][] = array('MyNamespace\MyClass','myMethod');
+
 // Deep-Link support
 if(Input::get('action') == 'exportTable' && Input::get('id') > 0 && Input::get('key') != ''){
-       MCupic\ExportTable::prepareExport(Input::get('id'));
+       Markocupic\ExportTable\ExportTable::prepareExport(Input::get('id'));
 }
 
 

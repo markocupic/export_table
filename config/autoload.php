@@ -16,7 +16,7 @@
  */
 ClassLoader::addNamespaces(array
 (
-	'MCupic',
+	'Markocupic\ExportTable',
 ));
 
 
@@ -26,5 +26,5 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
 	// Classes
-	'MCupic\ExportTable' => 'system/modules/export_table/classes/ExportTable.php',
+	'Markocupic\ExportTable\ExportTable' => 'system/modules/export_table/classes/ExportTable.php',
 ));

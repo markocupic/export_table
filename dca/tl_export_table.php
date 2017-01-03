@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Contao Open Source CMS
  *
@@ -59,12 +60,13 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
     ),
     // Fields
     'fields'      => array(
-        'id'                 => array(
+
+        'id'                     => array(
             'label'  => array('ID'),
             'search' => true,
             'sql'    => "int(10) unsigned NOT NULL auto_increment",
         ),
-        'tstamp'             => array(
+        'tstamp'                 => array(
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ),
         'title'                  => array(
@@ -75,7 +77,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'clr'),
             'sql'       => "varchar(255) NOT NULL default ''",
         ),
-        'export_table'       => array(
+        'export_table'           => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['export_table'],
             'inputType'        => 'select',
             'options_callback' => array(
@@ -90,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'              => "varchar(255) NOT NULL default ''",
         ),
-        'filterExpression'   => array(
+        'filterExpression'       => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'],
             'inputType' => 'text',
             'eval'      => array(
@@ -101,25 +103,20 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "varchar(255) NOT NULL default ''",
         ),
-        'fields'             => array(
+        'fields'                 => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['fields'],
-            'inputType'        => 'checkboxWizard',
+            'inputType'        => 'checkbox',
             'options_callback' => array(
                 'tl_export_table',
                 'optionsCbSelectedFields',
             ),
             'eval'             => array(
-                'multiple'   => true,
-                'mandatory'  => true,
-                'orderField' => 'orderFields',
+                'multiple'  => true,
+                'mandatory' => true,
             ),
             'sql'              => "blob NULL",
         ),
-        'orderFields'        => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_export_table']['orderFields'],
-            'sql'   => "blob NULL",
-        ),
-        'sortBy'             => array(
+        'sortBy'                 => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['sortBy'],
             'inputType'        => 'select',
             'options_callback' => array(
@@ -132,7 +129,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'              => "blob NULL",
         ),
-        'destinationCharset' => array(
+        'destinationCharset'     => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['destinationCharset'],
             'inputType' => 'select',
             'options'   => array("UTF-8", "Windows-1252", "ASCII", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"),
@@ -142,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "blob NULL",
         ),
-        'sortByDirection'    => array(
+        'sortByDirection'        => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'],
             'inputType' => 'select',
             'options'   => array('ASC', 'DESC'),
@@ -152,7 +149,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "blob NULL",
         ),
-        'exportType'         => array(
+        'exportType'             => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['exportType'],
             'inputType' => 'select',
             'options'   => array('csv', 'xml'),
@@ -183,7 +180,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             'input_field_callback' => array('tl_export_table', 'generateDeepLinkInfo'),
             'eval'                 => array('doNotShow' => true)
         )
-    )
+    ),
 );
 
 /**
@@ -204,7 +201,7 @@ class tl_export_table extends Backend
         if ($_POST['saveNcreate'] && $this->Input->post('FORM_SUBMIT') && $this->Input->post('SUBMIT_TYPE') != 'auto' && !$_SESSION['export_table'])
         {
             unset($_POST['saveNcreate']);
-            MCupic\ExportTable::prepareExport();
+            Markocupic\ExportTable\ExportTable::prepareExport();
         }
     }
 
@@ -264,20 +261,23 @@ class tl_export_table extends Backend
 
         if (Input::get('act') == 'edit')
         {
-            // remove saveNClose button
-            $strContent = preg_replace('/<input type=\"submit\" name=\"saveNclose\"((\r|\n|.)+?)>/', '', $strContent);
 
-            //rename buttons
-            $strContent = preg_replace('/<input type=\"submit\" name=\"save\" id=\"save\" class=\"tl_submit\" accesskey=\"s\" value=\"((\r|\n|.)+?)\">/', '<input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="' . $GLOBALS['TL_LANG']['MSC']['save'] . '">', $strContent);
-            $strContent = preg_replace('/<input type=\"submit\" name=\"saveNcreate\" id=\"saveNcreate\" class=\"tl_submit\" accesskey=\"n\" value=\"((\r|\n|.)+?)\">/', '<input type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit exportButton" accesskey="n" value="' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '">', $strContent);
-
-
-            if (strstr($strContent, 'reportTable'))
+            if(version_compare(VERSION . '.' . BUILD, '4.3','<'))
             {
-                $strContent = preg_replace('/<input type=\"submit\" name=\"save\"((\r|\n|.)+?)>/', '', $strContent);
+                // remove saveNClose button
                 $strContent = preg_replace('/<input type=\"submit\" name=\"saveNclose\"((\r|\n|.)+?)>/', '', $strContent);
-                $strContent = preg_replace('/<input type=\"submit\" name=\"saveNcreate\"((\r|\n|.)+?)>/', '', $strContent);
+
+                //rename buttons
+                $strContent = preg_replace('/<input type=\"submit\" name=\"saveNcreate\" id=\"saveNcreate\" class=\"tl_submit\" accesskey=\"n\" value=\"((\r|\n|.)+?)\">/', '<input type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit exportButton" accesskey="n" value="' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '">', $strContent);
+
             }
+            else
+            {
+                // Contao > 4.2
+                $strContent = preg_replace('/<div class="split-button"((\r|\n|.)+?)<\/div>/', '<button type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit" accesskey="n">' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton']  . '</button>', $strContent);
+            }
+
+
 
         }
 
@@ -294,16 +294,17 @@ class tl_export_table extends Backend
         $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=? LIMIT 0,1')->execute($this->Input->get('id'));
         $host = Environment::get('host');
         $query = '?action=exportTable&id=' . $this->Input->get('id') . '&key=' . $objDb->deepLinkExportKey;
+        $href = '//' . $host . $query;
 
             $html = '
-<div class="deep_link_info">
+<div class="clr widget deep_link_info">
 <br /><br />
 <table cellpadding="0" cellspacing="0" width="100%" summary="">
 	<tr class="odd">
-		<td>' . $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] . '</td>
+		<td><h2>' . $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] . '</h2></td>
     </tr>
 	<tr class="even">
-		<td>//' . $host . $query . '</td>
+		<td><a href="' . $href . '">' . $href . '</a></td>
 	</tr>
 </table>
 </div>
