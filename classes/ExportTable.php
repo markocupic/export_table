@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ *
+ * Copyright (c) 2005-2017 Leo Feyer
+ *
  * @package export_table
- * @author Marko Cupic 2014
- * @link https://github.com/markocupic/export_table
+ * @link    https://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
@@ -15,7 +17,7 @@ namespace MCupic;
 
 /**
  * Class ExportTable
- * Copyright: 2014 Marko Cupic
+ * Copyright: 2017 Marko Cupic
  * @author Marko Cupic <m.cupic@gmx.ch>
  * @package export_table
  */
@@ -25,13 +27,14 @@ class ExportTable extends \Backend
 {
 
 
-
-
-
-    public static function prepareExport($id=null)
+    /**
+     * @param null $id
+     */
+    public static function prepareExport($id = null)
     {
         if ($id == null)
         {
+            // When using backend-download ($_POST-Data)
             $strTable = \Input::post('export_table');
             $arrSelectedFields = \Input::post('fields');
             $filterExpression = trim($_POST['filterExpression']);
@@ -52,7 +55,7 @@ class ExportTable extends \Backend
         }
         else
         {
-            // Deep link export
+            // Deep link export requires an id
             $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(\Input::get('id'));
             if ($objDb->numRows)
             {
@@ -95,7 +98,6 @@ class ExportTable extends \Backend
     }
 
 
-
     /**
      * @param $strTable
      * @param array $options
@@ -104,19 +106,19 @@ class ExportTable extends \Backend
     {
         // Defaults
         $preDefinedOptions = array(
-            'strSorting' => 'id ASC',
+            'strSorting'            => 'id ASC',
             // Export Type csv or xml
-            'exportType' => 'csv',
-            'strSeperator' => ';',
-            'strEnclosure' => '"',
+            'exportType'            => 'csv',
+            'strSeperator'          => ';',
+            'strEnclosure'          => '"',
             // arrFilter array(array("published=?",1),array("pid=6",1))
-            'arrFilter' => array(),
+            'arrFilter'             => array(),
             // strDestinationCharset f.ex: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
             'strDestinationCharset' => '',
             // strDestination f.ex: files/mydir
-            'strDestination' => '',
+            'strDestination'        => '',
             // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
-            'arrSelectedFields' => null
+            'arrSelectedFields'     => null,
         );
         $options = array_merge($preDefinedOptions, $options);
         $strSorting = $options['strSorting'];
@@ -132,7 +134,7 @@ class ExportTable extends \Backend
         $arrData = array();
 
         // Load Datacontainer
-        if(!is_array($GLOBALS['TL_DCA'][$strTable]))
+        if (!is_array($GLOBALS['TL_DCA'][$strTable]))
         {
             \Controller::loadDataContainer($strTable, true);
         }
@@ -158,7 +160,8 @@ class ExportTable extends \Backend
         $arrData[] = $arrHeadline;
 
         // add rows to $arrData
-        if(empty($arrFilter) || !is_array($arrFilter) ){
+        if (empty($arrFilter) || !is_array($arrFilter))
+        {
             $arrFilter = array();
         }
         $arrProcedures = [];

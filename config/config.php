@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ *
+ * Copyright (c) 2005-2017 Leo Feyer
+ *
  * @package export_table
- * @author Marko Cupic 2014
- * @link https://github.com/markocupic/export_table
+ * @link    https://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
@@ -31,7 +33,8 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table') {
        );
 }
 
-if(Input::get('action') == 'exportTable' && Input::get('id') > 0){
+// Deep-Link support
+if(Input::get('action') == 'exportTable' && Input::get('id') > 0 && Input::get('key') != ''){
        MCupic\ExportTable::prepareExport(Input::get('id'));
 }
 

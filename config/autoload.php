@@ -3,7 +3,7 @@
 /**
  * Contao Open Source CMS
  *
- * Copyright (c) 2005-2014 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @package export_table
  * @link    https://contao.org

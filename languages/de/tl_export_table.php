@@ -30,4 +30,6 @@ $GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'][0] = 'Deep-Link
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'][0] = 'Deep-Link Schl&uuml;ssel';
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'][1] = 'Geben Sie einen Schl&uuml;ssel ein, um den Download zu sch&uuml;tzen.';
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfo'][0] = 'Link-Info';
+$GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] = 'Benutzen Sie diesen Link, um die Tabellen-Exportfunktion in Ihrem Browser zu nutzen:';
+
 ?>

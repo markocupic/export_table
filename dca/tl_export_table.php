@@ -1,12 +1,13 @@
 <?php
+
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ *
+ * Copyright (c) 2005-2017 Leo Feyer
+ *
  * @package export_table
- * @author Marko Cupic 2014
- * @link    http://www.contao.org
+ * @link    https://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- * @link https://github.com/markocupic/export_table
  */
 
 $GLOBALS['TL_DCA']['tl_export_table'] = array(
@@ -198,20 +199,11 @@ class tl_export_table extends Backend
 
         if ($_POST['saveNcreate'] && $this->Input->post('FORM_SUBMIT') && $this->Input->post('SUBMIT_TYPE') != 'auto' && !$_SESSION['export_table'])
         {
-            $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(\Input::get('id'));
             unset($_POST['saveNcreate']);
-            $this->initExport();
+            MCupic\ExportTable::prepareExport();
         }
     }
 
-
-    /**
-     * init Export
-     */
-    public function initExport()
-    {
-        MCupic\ExportTable::prepareExport();
-    }
 
 
     /**
@@ -304,8 +296,8 @@ class tl_export_table extends Backend
 <br /><br />
 <table cellpadding="0" cellspacing="0" width="100%" summary="">
 	<tr class="odd">
-		<td>Use this deep link to activate the table-export in your browser:</td>
-	</tr>
+		<td>' . $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] . '</td>
+    </tr>
 	<tr class="even">
 		<td>//' . $host . $query . '</td>
 	</tr>
