@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ *
+ * Copyright (c) 2005-2017 Leo Feyer
+ *
  * @package export_table
- * @author Marko Cupic 2014
- * @link https://github.com/markocupic/export_table
+ * @link    https://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
-// legends
+// Legends
 $GLOBALS['TL_LANG']['tl_export_table']['title_legend'] = 'Title settings';
 $GLOBALS['TL_LANG']['tl_export_table']['settings'] = 'Settings';
 $GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = 'Deep-Link settings';
 
 
-// fields
+// Fields
 $GLOBALS['TL_LANG']['tl_export_table']['export_table'] = array('Export data from this table', 'Choose a table for the export.');
 $GLOBALS['TL_LANG']['tl_export_table']['selected_fields'] = array('Select the fields for the export');
 $GLOBALS['TL_LANG']['tl_export_table']['filterExpression'] = array('SQL "filter-expression"', 'Define filter as JSON-encoded Array -> [["published=?",1],["pid=6",1]]');
@@ -28,8 +30,10 @@ $GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'] = array('Deep-Link k
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfo'] = array('Link-info');
 
 
-//buttons
+// Buttons
 $GLOBALS['TL_LANG']['tl_export_table']['new'][0] = 'Add new export';
 $GLOBALS['TL_LANG']['tl_export_table']['new'][1] = 'Add a new export';
 $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] = 'Launch export process';
 
+// Info text
+$GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] = 'Use this deep link to activate the table-export in your browser:';
