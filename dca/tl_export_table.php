@@ -202,8 +202,7 @@ class tl_export_table extends Backend
     {
 
         parent::__construct();
-
-        if ($_POST['saveNcreate'] && $this->Input->post('FORM_SUBMIT') && $this->Input->post('SUBMIT_TYPE') != 'auto' && !$_SESSION['export_table'])
+        if (isset($_POST['saveNcreate']) && $_POST['FORM_SUBMIT'] == 'tl_export_table')
         {
             unset($_POST['saveNcreate']);
             Markocupic\ExportTable\ExportTable::prepareExport();
@@ -298,8 +297,8 @@ class tl_export_table extends Backend
 
         $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=? LIMIT 0,1')->execute($this->Input->get('id'));
         $host = Environment::get('host');
-        $query = '?action=exportTable&id=' . $this->Input->get('id') . '&key=' . $objDb->deepLinkExportKey;
-        $href = '//' . $host . $query;
+        $query = '?action=exportTable&amp;id=' . $this->Input->get('id') . '&amp;key=' . $objDb->deepLinkExportKey;
+        $href = 'http://' . $host . $query;
 
             $html = '
 <div class="clr widget deep_link_info">
