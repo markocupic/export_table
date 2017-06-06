@@ -292,7 +292,8 @@ class ExportTable extends \Backend
                 {
                     if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
                     {
-                        $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
+
+                        $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.xml', false);
                         $objFile->write($xml);
                         $objFile->close();
                         return;
@@ -321,7 +322,7 @@ class ExportTable extends \Backend
                     if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
                     {
                         $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
-
+                        $objFile->write('');
                         foreach ($arrData as $arrRow)
                         {
                             $arrLine = array_map(function ($v) use ($strDestinationCharset)
