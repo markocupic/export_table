@@ -1,40 +1,45 @@
 {
-    "name":"markocupic/export_table",
-    "description":"Export Contao tables to csv- or xml-file.",
-    "keywords":["contao", "export table"],
-    "type":"contao-module",
-    "license":"LGPL-3.0+",
-    "authors":[
-        {
-            "name":"Marko Cupic",
-            "email":"m.cupic@gmx.ch",
-            "homepage":"http://4ae-racing-team.ch",
-            "role":"Developer"
-        }
-    ],
-    "support":{
-        "issues":"https://github.com/markocupic/export_table/issues",
-        "source":"https://github.com/markocupic/export_table"
-    },
-    "require":{
-        "php":">=5.3",
-        "contao/core":">=3.2,<4",
-        "contao-community-alliance/composer-plugin": "*"  
-    },
-    "replace": {
-        "contao-legacy/export_table":"*"
-    },
-    "conflict": {
-        "contao/core": "3.0.*"
-    },
-    "autoload":{
-        "classmap":[""]
-    },
-    "extra":{
-        "contao":{
-            "sources":{
-                "":"system/modules/export_table"
-            }
-        }
+  "name": "markocupic/export_table",
+  "description": "Export Contao tables to csv- or xml-file.",
+  "keywords": [
+    "contao",
+    "export table"
+  ],
+  "type": "contao-module",
+  "license": "LGPL-3.0+",
+  "authors": [
+    {
+      "name": "Marko Cupic",
+      "email": "m.cupic@gmx.ch",
+      "homepage": "http://4ae-racing-team.ch",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/markocupic/export_table/issues",
+    "source": "https://github.com/markocupic/export_table"
+  },
+  "require": {
+    "php": ">=5.3",
+    "contao/core-bundle": ">=3.5 || >=4.3",
+    "contao-community-alliance/composer-plugin": "^2.4.0 || 3.*"
+  },
+  "replace": {
+    "contao-legacy/export_table": "*"
+  },
+  "conflict": {
+    "contao/core": "3.0.*"
+  },
+  "autoload": {
+    "classmap": [
+      ""
+    ]
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "": "system/modules/export_table"
+      }
+    }
+  }
 }
