@@ -68,7 +68,7 @@ class ExportTableHook
 ```
 
 Wichtig!!!
-Versichere dich, dass der Hook-Container vor dem export_table Container geladen wird. In Contao 4 erreichst du dies, indem du in der AppKernel.php den Hook-Container vor dem export_table-Container registrierst. 
+Versichere dich, dass der Hook-Container vor dem export_table Container geladen wird. In Contao 4 erreichst du dies, indem du in der AppKernel.php den Hook-Container vor dem export_table-Container registrierst.
 
 
 ```php
@@ -109,5 +109,20 @@ class AppKernel extends Kernel
     }
 
 ```
-Viel Spass mit Export Table!
 
+## ExportTable aus eigener Erweiterung heraus nutzen
+Die ExportTable Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
+
+```php
+$opt = array();
+$opt['arrSelectedFields'] = array('stateOfSubscription', 'hasParticipated', 'addedOn', 'eventName', 'firstname', 'lastname', 'sacMemberId', 'gender', 'street', 'postal', 'city', 'phone', 'email', 'dateOfBirth');
+$opt['useLabelForHeadline'] = 'de';
+$opt['exportType'] = 'csv';
+$opt['arrFilter'][] = array('pid=?', Input::get('id'));
+$opt['strDestinationCharset'] = 'windows-1252';
+$GLOBALS['TL_HOOKS']['exportTable'][] = array('Markocupic\SacpilatusBundle\CalendarKurse', 'exportRegistrationListHook');
+Markocupic\ExportTable\ExportTable::exportTable('tl_calendar_events_member', $opt);
+```
+
+
+Viel Spass mit Export Table!
