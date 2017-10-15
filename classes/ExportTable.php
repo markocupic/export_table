@@ -158,15 +158,18 @@ class ExportTable extends \Backend
         // create headline
         if($useLabelForHeadline !== null)
         {
+            // Use language file
             \Controller::loadLanguageFile($strTable, $useLabelForHeadline);
         }
+
         $arrHeadline = array();
         foreach ($arrSelectedFields as $fieldname)
         {
-            if(isset($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname][0]) && strlen($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname][0]))
+            $arrLang = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['label'];
+            if(is_array($arrLang) && isset($arrLang[0]))
             {
-                $arrHeadline[] = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname][0];
-            } 
+                $arrHeadline[] = strlen($arrLang[0]) ? $arrLang[0] : $fieldname;
+            }
             else
             {
                 $arrHeadline[] = $fieldname;
