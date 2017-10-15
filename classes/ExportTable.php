@@ -92,6 +92,7 @@ class ExportTable extends \Backend
             'strDestinationCharset' => $destinationCharset,
             'strDestination'        => '',
             'arrSelectedFields'     => $arrSelectedFields,
+            'useLabelForHeadline'   => null,
         );
         // Call Export class
         self::exportTable($strTable, $options);
@@ -119,6 +120,8 @@ class ExportTable extends \Backend
             'strDestination'        => '',
             // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
             'arrSelectedFields'     => null,
+            // useLabelForHeadline: can be null or en, de, fr, ...
+            'useLabelForHeadline'   => null,
         );
         $options = array_merge($preDefinedOptions, $options);
         $strSorting = $options['strSorting'];
@@ -129,6 +132,7 @@ class ExportTable extends \Backend
         $strDestinationCharset = $options['strDestinationCharset'];
         $strDestination = $options['strDestination'];
         $arrSelectedFields = $options['arrSelectedFields'];
+        $useLabelForHeadline = $options['useLabelForHeadline'];
 
 
         $arrData = array();
@@ -152,10 +156,21 @@ class ExportTable extends \Backend
         }
 
         // create headline
+        if($useLabelForHeadline !== null)
+        {
+            \Controller::loadLanguageFile($strTable, $useLabelForHeadline);
+        }
         $arrHeadline = array();
         foreach ($arrSelectedFields as $fieldname)
         {
-            $arrHeadline[] = $fieldname;
+            if(isset($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname][0]) && strlen($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname][0]))
+            {
+                $arrHeadline[] = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname][0];
+            } 
+            else
+            {
+                $arrHeadline[] = $fieldname;
+            }
         }
         $arrData[] = $arrHeadline;
 
