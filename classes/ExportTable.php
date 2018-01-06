@@ -17,6 +17,7 @@
 
 namespace Markocupic\ExportTable;
 
+use Contao\CoreBundle\Exception\AccessDeniedException;
 use League\Csv\Reader;
 use League\Csv\Writer;
 
@@ -31,73 +32,56 @@ class ExportTable extends \Backend
 
 
     /**
-     * @todo delete destination charset
      * @param null $id
      */
-    public static function prepareExport($id = null)
+    public static function prepareExport($key = null)
     {
-        if ($id == null)
-        {
-            // When using backend-download ($_POST-Data)
-            $strTable = \Input::post('export_table');
-            $arrSelectedFields = \Input::post('fields');
-            $filterExpression = trim($_POST['filterExpression']);
-            $exportType = \Input::post('exportType');
-            $destinationCharset = \Input::post('destinationCharset');
-
-            if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
-            {
-                $filterExpression = '';
-                $_POST['filterExpression'] = '';
-            }
-
-            $sortingExpression = '';
-            if ($_POST['sortBy'] != '' && $_POST['sortByDirection'] != '')
-            {
-                $sortingExpression = $_POST['sortBy'] . ' ' . $_POST['sortByDirection'];
-            }
-        }
-        else
+        if ($key !== null)
         {
             // Deep link export requires an id
-            $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(\Input::get('id'));
+            $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE deepLinkExportKey=?')->execute($key);
+
             if ($objDb->numRows)
             {
-                if ($objDb->activateDeepLinkExport && \Input::get('key') == $objDb->deepLinkExportKey)
+                if (TL_MODE === 'FE' && !$objDb->activateDeepLinkExport)
                 {
-                    $strTable = $objDb->export_table;
-                    $arrSelectedFields = deserialize($objDb->fields, true);
-                    $filterExpression = trim($objDb->filterExpression);
-                    $exportType = $objDb->exportType;
-                    $destinationCharset = $objDb->destinationCharset;
+                    throw new AccessDeniedException('You are not allowed to use this service.');
+                }
 
-                    if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
-                    {
-                        $filterExpression = '';
-                    }
 
-                    $sortingExpression = '';
-                    if ($objDb->sortBy != '' && $objDb->sortByDirection != '')
-                    {
-                        $sortingExpression = $objDb->sortBy . ' ' . $objDb->sortByDirection;
-                    }
+                $strTable = $objDb->export_table;
+                $arrSelectedFields = deserialize($objDb->fields, true);
+                $filterExpression = trim($objDb->filterExpression);
+                $exportType = $objDb->exportType;
+
+                if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
+                {
+                    $filterExpression = '';
+                }
+
+                $sortingExpression = '';
+                if ($objDb->sortBy != '' && $objDb->sortByDirection != '')
+                {
+                    $sortingExpression = $objDb->sortBy . ' ' . $objDb->sortByDirection;
                 }
             }
-
+            else
+            {
+                throw new AccessDeniedException('You are not allowed to use this service.');
+            }
         }
 
-
         $options = array(
-            'strSorting'            => $sortingExpression,
-            'exportType'            => $exportType,
-            'strSeperator'          => ';',
-            'strEnclosure'          => '"',
-            'arrFilter'             => $filterExpression != '' ? json_decode($filterExpression) : array(),
-            'strDestinationCharset' => $destinationCharset,
-            'strDestination'        => null,
-            'arrSelectedFields'     => $arrSelectedFields,
-            'useLabelForHeadline'   => null,
+            'strSorting'          => $sortingExpression,
+            'exportType'          => $exportType,
+            'strDelimiter'        => ';',
+            'strEnclosure'        => '"',
+            'arrFilter'           => $filterExpression != '' ? json_decode($filterExpression) : array(),
+            'strDestination'      => null,
+            'arrSelectedFields'   => $arrSelectedFields,
+            'useLabelForHeadline' => null,
         );
+
         // Call Export class
         self::exportTable($strTable, $options);
     }
@@ -111,29 +95,26 @@ class ExportTable extends \Backend
     {
         // Defaults
         $preDefinedOptions = array(
-            'strSorting'            => 'id ASC',
+            'strSorting'          => 'id ASC',
             // Export Type csv or xml
-            'exportType'            => 'csv',
-            'strSeperator'          => ';',
-            'strEnclosure'          => '"',
+            'exportType'          => 'csv',
+            'strDelimiter'        => ';',
+            'strEnclosure'        => '"',
             // arrFilter array(array("published=?",1),array("pid=6",1))
-            'arrFilter'             => array(),
-            // strDestinationCharset f.ex: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
-            'strDestinationCharset' => null,
+            'arrFilter'           => array(),
             // strDestination f.ex: files/mydir
-            'strDestination'        => null,
+            'strDestination'      => null,
             // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
-            'arrSelectedFields'     => null,
+            'arrSelectedFields'   => null,
             // useLabelForHeadline: can be null or en, de, fr, ...
-            'useLabelForHeadline'   => null,
+            'useLabelForHeadline' => null,
         );
         $options = array_merge($preDefinedOptions, $options);
         $strSorting = $options['strSorting'];
         $exportType = $options['exportType'];
-        $strSeperator = $options['strSeperator'];
+        $strDelimiter = $options['strDelimiter'];
         $strEnclosure = $options['strEnclosure'];
         $arrFilter = $options['arrFilter'];
-        $strDestinationCharset = $options['strDestinationCharset'];
         $strDestination = $options['strDestination'];
         $arrSelectedFields = $options['arrSelectedFields'];
         $useLabelForHeadline = $options['useLabelForHeadline'];
@@ -244,13 +225,13 @@ class ExportTable extends \Backend
 
 
         // xml-output
-        if ($exportType == 'xml')
+        if ($exportType === 'xml')
         {
             $objXml = new \XMLWriter();
             $objXml->openMemory();
             $objXml->setIndent(true);
             $objXml->setIndentString("\t");
-            $objXml->startDocument('1.0', $strDestinationCharset != '' ? $strDestinationCharset : 'UTF-8');
+            $objXml->startDocument('1.0', 'UTF-8');
 
             $objXml->startElement($strTable);
 
@@ -264,23 +245,11 @@ class ExportTable extends \Backend
 
                 // New row
                 $objXml->startElement('datarecord');
-                //$objXml->writeAttribute('index', $row);
 
                 foreach ($arrRow as $i => $fieldvalue)
                 {
                     // New field
                     $objXml->startElement($arrHeadline[$i]);
-
-                    // Write Attributes
-                    //$objXml->writeAttribute('name', $arrHeadline[$i]);
-                    //$objXml->writeAttribute('type', gettype($fieldvalue));
-                    //$objXml->writeAttribute('origtype', $arrFieldInfo[$arrHeadline[$i]]['type']);
-
-                    // Convert to charset
-                    if ($strDestinationCharset != '')
-                    {
-                        $fieldvalue = iconv("UTF-8", $strDestinationCharset, $fieldvalue);
-                    }
 
                     if (is_numeric($fieldvalue) || is_null($fieldvalue) || $fieldvalue == '')
                     {
@@ -314,7 +283,6 @@ class ExportTable extends \Backend
                 {
                     if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
                     {
-
                         $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.xml', false);
                         $objFile->write($xml);
                         $objFile->close();
@@ -344,33 +312,33 @@ class ExportTable extends \Backend
                 if (is_dir(TL_ROOT . '/' . $strDestination))
                 {
 
-                        $objFile = new \File($strDestination . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
-                        $objFile->write('');
-                        // Convert special chars
-                        $arrFinal = array();
-                        foreach ($arrData as $arrRow)
-                        {
-                            $arrLine = array_map(function ($v) use ($strDestinationCharset) {
-                                return html_entity_decode(htmlspecialchars_decode($v));
-                            }, $arrRow);
-                            $arrFinal[] = $arrLine;
-                        }
+                    $objFile = new \File($strDestination . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
+                    $objFile->write('');
+                    // Convert special chars
+                    $arrFinal = array();
+                    foreach ($arrData as $arrRow)
+                    {
+                        $arrLine = array_map(function ($v) {
+                            return html_entity_decode(htmlspecialchars_decode($v));
+                        }, $arrRow);
+                        $arrFinal[] = $arrLine;
+                    }
 
 
-                        // Load the CSV document from a string
-                        $csv = Writer::createFromString('');
-                        $csv->setOutputBOM(Reader::BOM_UTF8);
+                    // Load the CSV document from a string
+                    $csv = Writer::createFromString('');
+                    $csv->setOutputBOM(Reader::BOM_UTF8);
 
-                        $csv->setDelimiter($strSeperator);
-                        $csv->setEnclosure($strEnclosure);
+                    $csv->setDelimiter($strDelimiter);
+                    $csv->setEnclosure($strEnclosure);
 
-                        // Insert all the records
-                        $csv->insertAll($arrFinal);
+                    // Insert all the records
+                    $csv->insertAll($arrFinal);
 
-                        // Write csv into file
-                        $objFile->write($csv);
-                        $objFile->close();
-                        exit;
+                    // Write csv into file
+                    $objFile->write($csv);
+                    $objFile->close();
+                    exit;
 
                 }
                 return;
@@ -380,7 +348,7 @@ class ExportTable extends \Backend
             $arrFinal = array();
             foreach ($arrData as $arrRow)
             {
-                $arrLine = array_map(function ($v) use ($strDestinationCharset) {
+                $arrLine = array_map(function ($v) {
                     return html_entity_decode(htmlspecialchars_decode($v));
                 }, $arrRow);
                 $arrFinal[] = $arrLine;
@@ -395,7 +363,7 @@ class ExportTable extends \Backend
             $csv = Writer::createFromString('');
             $csv->setOutputBOM(Reader::BOM_UTF8);
 
-            $csv->setDelimiter($strSeperator);
+            $csv->setDelimiter($strDelimiter);
             $csv->setEnclosure($strEnclosure);
 
             // Insert all the records
@@ -426,7 +394,6 @@ class ExportTable extends \Backend
         }
         return $arrNew;
     }
-
 
 
     /**

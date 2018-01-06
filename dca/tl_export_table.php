@@ -53,7 +53,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
     // Palettes
     'palettes'    => array(
         '__selector__' => array('activateDeepLinkExport'),
-        'default'      => '{title_legend},title;{settings},export_table,exportType,fields,destinationCharset,filterExpression,sortBy,sortByDirection;{deep_link_legend},activateDeepLinkExport',
+        'default'      => '{title_legend},title;{settings},export_table,exportType,fields,filterExpression,sortBy,sortByDirection;{deep_link_legend},activateDeepLinkExport',
     ),
     'subpalettes' => array(
         'activateDeepLinkExport' => 'deepLinkExportKey,deepLinkInfo',
@@ -103,7 +103,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'       => "varchar(255) NOT NULL default ''",
         ),
-        'fields'             => array(
+        'fields'                 => array(
             'label'            => &$GLOBALS['TL_LANG']['tl_export_table']['fields'],
             'inputType'        => 'checkboxWizard',
             'options_callback' => array(
@@ -117,7 +117,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
             'sql'              => "blob NULL",
         ),
-        'orderFields'        => array(
+        'orderFields'            => array(
             'label' => &$GLOBALS['TL_LANG']['tl_export_table']['orderFields'],
             'sql'   => "blob NULL",
         ),
@@ -133,16 +133,6 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
                 'mandatory' => false,
             ),
             'sql'              => "blob NULL",
-        ),
-        'destinationCharset'     => array(
-            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['destinationCharset'],
-            'inputType' => 'select',
-            'options'   => array("UTF-8", "Windows-1252", "ASCII", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"),
-            'eval'      => array(
-                'multiple'  => false,
-                'mandatory' => false,
-            ),
-            'sql'       => "blob NULL",
         ),
         'sortByDirection'        => array(
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'],
@@ -171,7 +161,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             'eval'      => array('submitOnChange' => true),
             'sql'       => "char(1) NOT NULL default ''",
         ),
-        'deepLinkExportKey' => array(
+        'deepLinkExportKey'      => array(
 
             'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'],
             'exclude'   => true,
@@ -183,8 +173,8 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
         ),
         'deepLinkInfo'           => array(
             'input_field_callback' => array('tl_export_table', 'generateDeepLinkInfo'),
-            'eval'                 => array('doNotShow' => true)
-        )
+            'eval'                 => array('doNotShow' => true),
+        ),
     ),
 );
 
@@ -205,10 +195,13 @@ class tl_export_table extends Backend
         if (isset($_POST['saveNcreate']) && $_POST['FORM_SUBMIT'] == 'tl_export_table')
         {
             unset($_POST['saveNcreate']);
-            Markocupic\ExportTable\ExportTable::prepareExport();
+            $objDb = Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
+            if ($objDb->numRows)
+            {
+                Markocupic\ExportTable\ExportTable::prepareExport($objDb->deepLinkExportKey);
+            }
         }
     }
-
 
 
     /**
@@ -266,7 +259,7 @@ class tl_export_table extends Backend
         if (Input::get('act') == 'edit')
         {
 
-            if(version_compare(VERSION . '.' . BUILD, '4.3','<'))
+            if (version_compare(VERSION . '.' . BUILD, '4.3', '<'))
             {
                 // remove saveNClose button
                 $strContent = preg_replace('/<input type=\"submit\" name=\"saveNclose\"((\r|\n|.)+?)>/', '', $strContent);
@@ -278,9 +271,8 @@ class tl_export_table extends Backend
             else
             {
                 // Contao > 4.2
-                $strContent = preg_replace('/<div class="split-button"((\r|\n|.)+?)<\/div>/', '<button type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit" accesskey="n">' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton']  . '</button>', $strContent);
+                $strContent = preg_replace('/<div class="split-button"((\r|\n|.)+?)<\/div>/', '<button type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit" accesskey="n">' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '</button>', $strContent);
             }
-
 
 
         }
@@ -297,10 +289,10 @@ class tl_export_table extends Backend
 
         $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=? LIMIT 0,1')->execute($this->Input->get('id'));
         $host = Environment::get('host');
-        $query = '?action=exportTable&amp;id=' . $this->Input->get('id') . '&amp;key=' . $objDb->deepLinkExportKey;
+        $query = '?action=exportTable&amp;key=' . $objDb->deepLinkExportKey;
         $href = 'http://' . $host . $query;
 
-            $html = '
+        $html = '
 <div class="clr widget deep_link_info">
 <br /><br />
 <table cellpadding="0" cellspacing="0" width="100%" summary="">
@@ -314,7 +306,7 @@ class tl_export_table extends Backend
 </div>
 				';
 
-            return $html;
-        }
+        return $html;
+    }
 }           
               

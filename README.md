@@ -119,7 +119,6 @@ $opt['arrSelectedFields'] = array('stateOfSubscription', 'hasParticipated', 'add
 $opt['useLabelForHeadline'] = 'de';
 $opt['exportType'] = 'csv';
 $opt['arrFilter'][] = array('pid=?', Input::get('id'));
-$opt['strDestinationCharset'] = 'windows-1252';
 $GLOBALS['TL_HOOKS']['exportTable'][] = array('Markocupic\SacpilatusBundle\CalendarKurse', 'exportRegistrationListHook');
 Markocupic\ExportTable\ExportTable::exportTable('tl_calendar_events_member', $opt);
 ```
