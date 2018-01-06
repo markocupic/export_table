@@ -20,9 +20,9 @@
     "source": "https://github.com/markocupic/export_table"
   },
   "require": {
-    "php": ">=5.3",
-    "contao/core-bundle": ">=3.5 || >=4.3",
-    "contao-community-alliance/composer-plugin": "^2.4.0 || 3.*"
+    "php": ">=7.1",
+    "contao/core-bundle": ">=4.4",
+    "league/csv": "^9.1"
   },
   "replace": {
     "contao-legacy/export_table": "*"

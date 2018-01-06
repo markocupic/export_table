@@ -41,7 +41,7 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table') {
 
 // Deep-Link support
 if(Input::get('action') == 'exportTable' && Input::get('id') > 0 && Input::get('key') != ''){
-       Markocupic\ExportTable\ExportTable::prepareExport(Input::get('id'));
+    Markocupic\ExportTable\ExportTable::prepareExport(Input::get('id'));
 }
 
 

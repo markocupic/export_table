@@ -10,10 +10,15 @@
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
+
 /**
  * Run in a custom namespace, so the class can be replaced
  */
+
 namespace Markocupic\ExportTable;
+
+use League\Csv\Reader;
+use League\Csv\Writer;
 
 /**
  * Class ExportTable
@@ -21,13 +26,12 @@ namespace Markocupic\ExportTable;
  * @author Marko Cupic <m.cupic@gmx.ch>
  * @package export_table
  */
-
-
 class ExportTable extends \Backend
 {
 
 
     /**
+     * @todo delete destination charset
      * @param null $id
      */
     public static function prepareExport($id = null)
@@ -90,7 +94,7 @@ class ExportTable extends \Backend
             'strEnclosure'          => '"',
             'arrFilter'             => $filterExpression != '' ? json_decode($filterExpression) : array(),
             'strDestinationCharset' => $destinationCharset,
-            'strDestination'        => '',
+            'strDestination'        => null,
             'arrSelectedFields'     => $arrSelectedFields,
             'useLabelForHeadline'   => null,
         );
@@ -115,9 +119,9 @@ class ExportTable extends \Backend
             // arrFilter array(array("published=?",1),array("pid=6",1))
             'arrFilter'             => array(),
             // strDestinationCharset f.ex: "UTF-8", "ASCII", "Windows-1252", "ISO-8859-15", "ISO-8859-1", "ISO-8859-6", "CP1256"
-            'strDestinationCharset' => '',
+            'strDestinationCharset' => null,
             // strDestination f.ex: files/mydir
-            'strDestination'        => '',
+            'strDestination'        => null,
             // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
             'arrSelectedFields'     => null,
             // useLabelForHeadline: can be null or en, de, fr, ...
@@ -156,7 +160,7 @@ class ExportTable extends \Backend
         }
 
         // create headline
-        if($useLabelForHeadline !== null)
+        if ($useLabelForHeadline !== null)
         {
             // Use language file
             \Controller::loadLanguageFile($strTable, $useLabelForHeadline);
@@ -166,7 +170,7 @@ class ExportTable extends \Backend
         foreach ($arrSelectedFields as $fieldname)
         {
             $arrLang = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['label'];
-            if(is_array($arrLang) && isset($arrLang[0]))
+            if (is_array($arrLang) && isset($arrLang[0]))
             {
                 $arrHeadline[] = strlen($arrLang[0]) ? $arrLang[0] : $fieldname;
             }
@@ -326,93 +330,104 @@ class ExportTable extends \Backend
             exit();
         }
 
-
         // csv-output
-        if ($exportType == 'csv')
+        if ($exportType === 'csv')
         {
             // Write output to file system
-            if ($strDestination != '')
+            if ($strDestination !== null)
             {
-                new \Folder($strDestination);
-                $objFolder = \FilesModel::findByPath($strDestination);
-                if ($objFolder !== null)
+                if (!is_dir(TL_ROOT . '/' . $strDestination))
                 {
-                    if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
-                    {
-                        $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
+                    mkdir(TL_ROOT . '/' . $strDestination);
+                }
+
+                if (is_dir(TL_ROOT . '/' . $strDestination))
+                {
+
+                        $objFile = new \File($strDestination . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
                         $objFile->write('');
+                        // Convert special chars
+                        $arrFinal = array();
                         foreach ($arrData as $arrRow)
                         {
-                            $arrLine = array_map(function ($v) use ($strDestinationCharset)
-                            {
-                                if ($strDestinationCharset != '')
-                                {
-                                    $v = iconv("UTF-8", $strDestinationCharset, $v);
-                                }
-                                return html_entity_decode($v);
+                            $arrLine = array_map(function ($v) use ($strDestinationCharset) {
+                                return html_entity_decode(htmlspecialchars_decode($v));
                             }, $arrRow);
-                            self::fputcsv($objFile->handle, $arrLine, $strSeperator, $strEnclosure);
+                            $arrFinal[] = $arrLine;
                         }
+
+
+                        // Load the CSV document from a string
+                        $csv = Writer::createFromString('');
+                        $csv->setOutputBOM(Reader::BOM_UTF8);
+
+                        $csv->setDelimiter($strSeperator);
+                        $csv->setEnclosure($strEnclosure);
+
+                        // Insert all the records
+                        $csv->insertAll($arrFinal);
+
+                        // Write csv into file
+                        $objFile->write($csv);
                         $objFile->close();
-                    }
+                        exit;
+
                 }
                 return;
             }
 
-
-            // Send file to browser
-            header("Content-type: text/csv");
-            header("Content-Disposition: attachment; filename=" . $strTable . ".csv");
-            header("Content-Description: csv File");
-            header("Pragma: no-cache");
-            header("Expires: 0");
-
-            $fh = fopen("php://output", 'w');
+            // Convert special chars
+            $arrFinal = array();
             foreach ($arrData as $arrRow)
             {
-                $arrLine = array_map(function ($v) use ($strDestinationCharset)
-                {
-                    if ($strDestinationCharset != '')
-                    {
-                        $v = iconv("UTF-8", $strDestinationCharset, $v);
-                    }
-                    return html_entity_decode($v);
+                $arrLine = array_map(function ($v) use ($strDestinationCharset) {
+                    return html_entity_decode(htmlspecialchars_decode($v));
                 }, $arrRow);
-                self::fputcsv($fh, $arrLine, $strSeperator, $strEnclosure);
+                $arrFinal[] = $arrLine;
             }
-            fclose($fh);
-            exit();
+
+            // Send file to browser
+            header('Content-Encoding: UTF-8');
+            header('Content-type: text/csv; charset=UTF-8');
+            header('Content-Disposition: attachment; filename="' . $strTable . '.csv"');
+
+            // Load the CSV document from a string
+            $csv = Writer::createFromString('');
+            $csv->setOutputBOM(Reader::BOM_UTF8);
+
+            $csv->setDelimiter($strSeperator);
+            $csv->setEnclosure($strEnclosure);
+
+            // Insert all the records
+            $csv->insertAll($arrFinal);
+
+            // Returns the CSV document as a string
+            echo $csv;
+            exit;
+
         }
     }
-
 
     /**
-     * @param $fh
-     * @param array $fields
-     * @param string $delimiter
-     * @param string $enclosure
-     * @param bool $mysql_null
+     * @param $strTable
+     * @return array
      */
-    private static function fputcsv($fh, array $fields, $delimiter = ',', $enclosure = '"', $mysql_null = false)
+    public static function listFields($strTable)
     {
-
-        $delimiter_esc = preg_quote($delimiter, '/');
-        $enclosure_esc = preg_quote($enclosure, '/');
-
-        $output = array();
-        foreach ($fields as $field)
+        $objDb = \Database::getInstance();
+        $arrFields = $objDb->listFields($strTable);
+        $arrNew = array();
+        if (is_array($arrFields))
         {
-            $field = str_replace('"', '', $field);
-            if ($field === null && $mysql_null)
+            foreach ($arrFields as $arrField)
             {
-                $output[] = 'NULL';
-                continue;
+                $arrNew[$arrField['name']] = $arrField;
             }
-
-            $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ? ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure) : $field;
         }
-        fwrite($fh, implode($delimiter, $output) . "\n");
+        return $arrNew;
     }
+
+
 
     /**
      * array_map for multidimensional arrays
@@ -455,25 +470,6 @@ class ExportTable extends \Backend
             return \StringUtil::binToUuid($value);
         }
         return $value;
-    }
-
-    /**
-     * @param $strTable
-     * @return array
-     */
-    public static function listFields($strTable)
-    {
-        $objDb = \Database::getInstance();
-        $arrFields = $objDb->listFields($strTable);
-        $arrNew = array();
-        if (is_array($arrFields))
-        {
-            foreach ($arrFields as $arrField)
-            {
-                $arrNew[$arrField['name']] = $arrField;
-            }
-        }
-        return $arrNew;
     }
 
 }
