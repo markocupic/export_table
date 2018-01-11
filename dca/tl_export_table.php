@@ -21,6 +21,11 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
             ),
         ),
     ),
+    // Buttons callback
+    'edit'        => array(
+        'buttons_callback' => array(array('tl_export_table', 'buttonsCallback')),
+    ),
+
     // List
     'list'        => array(
         'sorting'           => array(
@@ -192,13 +197,14 @@ class tl_export_table extends Backend
     {
 
         parent::__construct();
-        if (isset($_POST['saveNcreate']) && $_POST['FORM_SUBMIT'] == 'tl_export_table')
+        if (isset($_POST['exportTable']) && $_POST['FORM_SUBMIT'] == 'tl_export_table')
         {
-            unset($_POST['saveNcreate']);
+            unset($_POST['exportTable']);
             $objDb = Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
             if ($objDb->numRows)
             {
-                Markocupic\ExportTable\ExportTable::prepareExport($objDb->deepLinkExportKey);
+                \Markocupic\ExportTable\ExportTable::prepareExport($objDb->deepLinkExportKey);
+                exit();
             }
         }
     }
@@ -218,6 +224,35 @@ class tl_export_table extends Backend
             $arrOptions[] = $table;
         }
         return $arrOptions;
+    }
+
+
+    /**
+     * buttons_callback
+     * @param $arrButtons
+     * @param DC_Table $dc
+     * @return mixed
+     */
+    public function buttonsCallback($arrButtons, DC_Table $dc)
+    {
+
+        if (Input::get('act') == 'edit')
+        {
+            $save = $arrButtons['save'];
+            $exportTable = '<button type="submit" name="exportTable" id="exportTable" class="tl_submit" accesskey="n">' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '</button>';
+            $saveNclose = $arrButtons['saveNclose'];
+
+            unset($arrButtons);
+
+            // Set correct order
+            $arrButtons = array(
+                'save'        => $save,
+                'exportTable' => $exportTable,
+                'saveNclose'  => $saveNclose,
+            );
+        }
+
+        return $arrButtons;
     }
 
 
@@ -246,39 +281,6 @@ class tl_export_table extends Backend
         return $arrOptions;
     }
 
-
-    /**
-     * Parse Backend Template Hook
-     * @param string
-     * @param string
-     * @return string
-     */
-    public function parseBackendTemplate($strContent, $strTemplate)
-    {
-
-        if (Input::get('act') == 'edit')
-        {
-
-            if (version_compare(VERSION . '.' . BUILD, '4.3', '<'))
-            {
-                // remove saveNClose button
-                $strContent = preg_replace('/<input type=\"submit\" name=\"saveNclose\"((\r|\n|.)+?)>/', '', $strContent);
-
-                //rename buttons
-                $strContent = preg_replace('/<input type=\"submit\" name=\"saveNcreate\" id=\"saveNcreate\" class=\"tl_submit\" accesskey=\"n\" value=\"((\r|\n|.)+?)\">/', '<input type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit exportButton" accesskey="n" value="' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '">', $strContent);
-
-            }
-            else
-            {
-                // Contao > 4.2
-                $strContent = preg_replace('/<div class="split-button"((\r|\n|.)+?)<\/div>/', '<button type="submit" name="saveNcreate" id="saveNcreate" class="tl_submit" accesskey="n">' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '</button>', $strContent);
-            }
-
-
-        }
-
-        return $strContent;
-    }
 
     /**
      * Input-field-callback

@@ -18,6 +18,7 @@
 namespace Markocupic\ExportTable;
 
 use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\StringUtil;
 use League\Csv\Reader;
 use League\Csv\Writer;
 
@@ -187,24 +188,23 @@ class ExportTable extends \Backend
             $arrRow = array();
             foreach ($arrSelectedFields as $field)
             {
-                $value = $dataRecord[$field];
+                $value = '';
 
-                // Handle binaries
-                if ($value != '')
+                // Handle arrays correctly
+                if ($dataRecord[$field] != '')
                 {
-                    switch (strtolower($arrFieldInfo[$field]['type']))
+                    if ($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['csv'] != '')
                     {
-                        case 'binary':
-                        case 'varbinary':
-                        case 'blob':
-                        case 'tinyblob':
-                        case 'mediumblob':
-                        case 'longblob':
-                            $value = "0x" . bin2hex($value);
-                            break;
-                        default:
-                            //
-                            break;
+                        $delim = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['csv'];
+                        $value = explode($delim, StringUtil::deserialize($dataRecord[$field], true));
+                    }
+                    elseif ($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['eval']['multiple'] === true)
+                    {
+                        $value = StringUtil::deserialize($dataRecord[$field], true);
+                    }
+                    else
+                    {
+                        $value = $dataRecord[$field];
                     }
                 }
 
@@ -353,6 +353,7 @@ class ExportTable extends \Backend
                 }, $arrRow);
                 $arrFinal[] = $arrLine;
             }
+
 
             // Send file to browser
             header('Content-Encoding: UTF-8');

@@ -27,11 +27,6 @@ if (TL_MODE == 'BE')
 if (TL_MODE == 'BE' && $_GET['do'] == 'export_table')
 {
     $GLOBALS['TL_CSS'][] = 'system/modules/export_table/assets/export_table.css';
-
-    $GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array(
-        'tl_export_table',
-        'parseBackendTemplate',
-    );
 }
 
 // ****** exportTable Hook *********
@@ -43,7 +38,7 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table')
 // Deep-Link support
 if (Input::get('action') == 'exportTable' && Input::get('key') != '')
 {
-    Markocupic\ExportTable\ExportTable::prepareExport(Input::get('key'));
+    \Markocupic\ExportTable\ExportTable::prepareExport(Input::get('key'));
 }
 
 
