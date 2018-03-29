@@ -18,6 +18,7 @@
 namespace Markocupic\ExportTable;
 
 use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\Input;
 use Contao\StringUtil;
 use League\Csv\Reader;
 use League\Csv\Writer;
@@ -33,10 +34,19 @@ class ExportTable extends \Backend
 
 
     /**
-     * @param null $id
+     *
      */
-    public static function prepareExport($key = null)
+    public static function prepareExport()
     {
+
+        $key = null;
+
+        // Support Deep Link export
+        if (Input::get('action') == 'exportTable' && Input::get('key') != '')
+        {
+            $key = Input::get('key');
+        }
+
         if ($key !== null)
         {
             // Deep link export requires an id
@@ -193,12 +203,19 @@ class ExportTable extends \Backend
                 // Handle arrays correctly
                 if ($dataRecord[$field] != '')
                 {
-                    if ($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['csv'] != '')
+                    // Replace newlines with [NEWLINE]
+                    if ($GLOBALS['TL_DCA'][$strTable]['fields'][$field]['inputType'] === 'textarea')
                     {
-                        $delim = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['csv'];
+                        $value = $dataRecord[$field];
+                        $dataRecord[$field] = str_replace(PHP_EOL, '[NEWLINE]', $value);
+                    }
+
+                    if ($GLOBALS['TL_DCA'][$strTable]['fields'][$field]['csv'] != '')
+                    {
+                        $delim = $GLOBALS['TL_DCA'][$strTable]['fields'][$field]['csv'];
                         $value = explode($delim, StringUtil::deserialize($dataRecord[$field], true));
                     }
-                    elseif ($GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['eval']['multiple'] === true)
+                    elseif ($GLOBALS['TL_DCA'][$strTable]['fields'][$field]['eval']['multiple'] === true)
                     {
                         $value = StringUtil::deserialize($dataRecord[$field], true);
                     }
