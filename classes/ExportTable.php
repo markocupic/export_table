@@ -51,36 +51,47 @@ class ExportTable extends \Backend
         {
             // Deep link export requires an id
             $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE deepLinkExportKey=?')->execute($key);
+        }
+        elseif (TL_MODE === 'BE' && Input::get('id') !== '' && Input::get('do') === 'export_table')
+        {
+            // Deep link export requires an id
+            $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
+        }
+        else
+        {
+            throw new AccessDeniedException('You are not allowed to use this service.');
+        }
 
-            if ($objDb->numRows)
-            {
-                if (TL_MODE === 'FE' && !$objDb->activateDeepLinkExport)
-                {
-                    throw new AccessDeniedException('You are not allowed to use this service.');
-                }
 
-
-                $strTable = $objDb->export_table;
-                $arrSelectedFields = deserialize($objDb->fields, true);
-                $filterExpression = trim($objDb->filterExpression);
-                $exportType = $objDb->exportType;
-
-                if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
-                {
-                    $filterExpression = '';
-                }
-
-                $sortingExpression = '';
-                if ($objDb->sortBy != '' && $objDb->sortByDirection != '')
-                {
-                    $sortingExpression = $objDb->sortBy . ' ' . $objDb->sortByDirection;
-                }
-            }
-            else
+        if ($objDb->numRows)
+        {
+            if (TL_MODE === 'FE' && !$objDb->activateDeepLinkExport)
             {
                 throw new AccessDeniedException('You are not allowed to use this service.');
             }
+
+
+            $strTable = $objDb->export_table;
+            $arrSelectedFields = deserialize($objDb->fields, true);
+            $filterExpression = trim($objDb->filterExpression);
+            $exportType = $objDb->exportType;
+
+            if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
+            {
+                $filterExpression = '';
+            }
+
+            $sortingExpression = '';
+            if ($objDb->sortBy != '' && $objDb->sortByDirection != '')
+            {
+                $sortingExpression = $objDb->sortBy . ' ' . $objDb->sortByDirection;
+            }
         }
+        else
+        {
+            throw new AccessDeniedException('You are not allowed to use this service.');
+        }
+
 
         $options = array(
             'strSorting'          => $sortingExpression,
@@ -119,6 +130,7 @@ class ExportTable extends \Backend
             'arrSelectedFields'   => null,
             // useLabelForHeadline: can be null or en, de, fr, ...
             'useLabelForHeadline' => null,
+            'arrayDelimiter'      => '||',
         );
         $options = array_merge($preDefinedOptions, $options);
         $strSorting = $options['strSorting'];
@@ -129,6 +141,7 @@ class ExportTable extends \Backend
         $strDestination = $options['strDestination'];
         $arrSelectedFields = $options['arrSelectedFields'];
         $useLabelForHeadline = $options['useLabelForHeadline'];
+        $arrayDelimiter = $options['arrayDelimiter'];
 
 
         $arrData = array();
@@ -213,11 +226,11 @@ class ExportTable extends \Backend
                     if ($GLOBALS['TL_DCA'][$strTable]['fields'][$field]['csv'] != '')
                     {
                         $delim = $GLOBALS['TL_DCA'][$strTable]['fields'][$field]['csv'];
-                        $value = explode($delim, StringUtil::deserialize($dataRecord[$field], true));
+                        $value = implode($delim, StringUtil::deserialize($dataRecord[$field], true));
                     }
                     elseif ($GLOBALS['TL_DCA'][$strTable]['fields'][$field]['eval']['multiple'] === true)
                     {
-                        $value = StringUtil::deserialize($dataRecord[$field], true);
+                        $value = implode($arrayDelimiter, StringUtil::deserialize($dataRecord[$field], true));
                     }
                     else
                     {
