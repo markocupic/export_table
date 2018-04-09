@@ -27,6 +27,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['exportType'] = array('Export type', 'Sel
 $GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'] = array('Activate Deep-Link export functionality');
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'] = array('Deep-Link key', 'Add a key to protect the download from other users.');
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfo'] = array('Link-info');
+$GLOBALS['TL_LANG']['tl_export_table']['arrayDelimiter'] = array('Array Delimiter', 'Please insert an array delimiter. Normaly "||".');
 
 
 // Buttons

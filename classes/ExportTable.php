@@ -75,6 +75,8 @@ class ExportTable extends \Backend
             $arrSelectedFields = deserialize($objDb->fields, true);
             $filterExpression = trim($objDb->filterExpression);
             $exportType = $objDb->exportType;
+            $arrayDelimiter = $objDb->arrayDelimiter;
+
 
             if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
             {
@@ -102,6 +104,7 @@ class ExportTable extends \Backend
             'strDestination'      => null,
             'arrSelectedFields'   => $arrSelectedFields,
             'useLabelForHeadline' => null,
+            'arrayDelimiter'      => $arrayDelimiter,
         );
 
         // Call Export class
@@ -130,6 +133,7 @@ class ExportTable extends \Backend
             'arrSelectedFields'   => null,
             // useLabelForHeadline: can be null or en, de, fr, ...
             'useLabelForHeadline' => null,
+            // arrayDelimiter f.ex: ||
             'arrayDelimiter'      => '||',
         );
         $options = array_merge($preDefinedOptions, $options);

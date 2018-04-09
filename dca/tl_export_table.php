@@ -58,7 +58,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
     // Palettes
     'palettes'    => array(
         '__selector__' => array('activateDeepLinkExport'),
-        'default'      => '{title_legend},title;{settings},export_table,exportType,fields,filterExpression,sortBy,sortByDirection;{deep_link_legend},activateDeepLinkExport',
+        'default'      => '{title_legend},title;{settings},export_table,exportType,fields,filterExpression,sortBy,sortByDirection,arrayDelimiter;{deep_link_legend},activateDeepLinkExport',
     ),
     'subpalettes' => array(
         'activateDeepLinkExport' => 'deepLinkExportKey,deepLinkInfo',
@@ -121,6 +121,15 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
                 'orderField' => 'orderFields',
             ),
             'sql'              => "blob NULL",
+        ),
+        'arrayDelimiter'         => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_export_table']['arrayDelimiter'],
+            'exclude'   => true,
+            'search'    => true,
+            'default'   => '||',
+            'inputType' => 'text',
+            'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'clr'),
+            'sql'       => "varchar(255) NOT NULL default '||'",
         ),
         'orderFields'            => array(
             'label' => &$GLOBALS['TL_LANG']['tl_export_table']['orderFields'],
