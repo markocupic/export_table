@@ -248,7 +248,7 @@ class ExportTable extends \Backend
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback)
                     {
                         $objCallback = \System::importStatic($callback[0]);
-                        $value = $objCallback->{$callback[1]}($field, $value, $strTable, $dataRecord, $dca);
+                        $value = $objCallback->{$callback[1]}($field, $value, $strTable, $dataRecord, $dca, $options);
                     }
                 }
 
