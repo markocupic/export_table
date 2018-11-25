@@ -33,7 +33,7 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table')
 // With the exportTable Hook you can control the output
 // Please ensure that the hook container will be loaded before the export_table container.
 // In Contao 4 you have to load the hook container via the AppKernel.php right before the export_table container
-// $GLOBALS['TL_HOOKS']['exportTable'][] = array('MyNamespace\MyClass','myMethod');
+// $GLOBALS['TL_HOOKS']['exportTable'][] = array('\MyNamespace\MyPackage\MyClass','myMethod');
 
 // Deep-Link support
 if (Input::get('action') == 'exportTable' && Input::get('key') != '')
