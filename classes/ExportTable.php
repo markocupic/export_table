@@ -10,17 +10,23 @@
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
-
 /**
  * Run in a custom namespace, so the class can be replaced
  */
 
 namespace Markocupic\ExportTable;
 
-use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\Date;
+use Contao\File;
+use Contao\FilesModel;
+use Contao\Folder;
 use Contao\Input;
 use Contao\StringUtil;
+use Contao\Backend;
+use Contao\Database;
 use Contao\Controller;
+use Contao\System;
+use Contao\Validator;
 use League\Csv\Reader;
 use League\Csv\Writer;
 
@@ -30,16 +36,14 @@ use League\Csv\Writer;
  * @author Marko Cupic <m.cupic@gmx.ch>
  * @package export_table
  */
-class ExportTable extends \Backend
+class ExportTable extends Backend
 {
 
-
     /**
-     *
+     * @throws \Exception
      */
     public static function prepareExport()
     {
-
         $key = null;
 
         // Support Deep Link export
@@ -51,26 +55,24 @@ class ExportTable extends \Backend
         if ($key !== null)
         {
             // Deep link export requires an id
-            $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE deepLinkExportKey=?')->execute($key);
+            $objDb = Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE deepLinkExportKey=?')->execute($key);
         }
         elseif (TL_MODE === 'BE' && Input::get('id') !== '' && Input::get('do') === 'export_table')
         {
             // Deep link export requires an id
-            $objDb = \Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
+            $objDb = Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
         }
         else
         {
-            throw new AccessDeniedException('You are not allowed to use this service.');
+            throw new \Exception('You are not allowed to use this service.');
         }
-
 
         if ($objDb->numRows)
         {
             if (TL_MODE === 'FE' && !$objDb->activateDeepLinkExport)
             {
-                throw new AccessDeniedException('You are not allowed to use this service.');
+                throw new \Exception('You are not allowed to use this service.');
             }
-
 
             $strTable = $objDb->export_table;
             $arrSelectedFields = deserialize($objDb->fields, true);
@@ -78,7 +80,6 @@ class ExportTable extends \Backend
             $filterExpression = Controller::replaceInsertTags(trim($objDb->filterExpression));
             $exportType = $objDb->exportType;
             $arrayDelimiter = $objDb->arrayDelimiter;
-
 
             if (strpos(strtolower($filterExpression), 'delete') !== false || strpos(strtolower($filterExpression), 'update') !== false)
             {
@@ -93,9 +94,8 @@ class ExportTable extends \Backend
         }
         else
         {
-            throw new AccessDeniedException('You are not allowed to use this service.');
+            throw new \Exception('You are not allowed to use this service.');
         }
-
 
         $options = array(
             'strSorting'          => $sortingExpression,
@@ -113,10 +113,10 @@ class ExportTable extends \Backend
         self::exportTable($strTable, $options);
     }
 
-
     /**
      * @param $strTable
      * @param array $options
+     * @throws \Exception
      */
     public static function exportTable($strTable, array $options = array())
     {
@@ -149,13 +149,12 @@ class ExportTable extends \Backend
         $useLabelForHeadline = $options['useLabelForHeadline'];
         $arrayDelimiter = $options['arrayDelimiter'];
 
-
         $arrData = array();
 
         // Load Datacontainer
         if (!is_array($GLOBALS['TL_DCA'][$strTable]))
         {
-            \Controller::loadDataContainer($strTable, true);
+            Controller::loadDataContainer($strTable, true);
         }
 
         $dca = array();
@@ -167,14 +166,14 @@ class ExportTable extends \Backend
         // If no fields are selected, then list the whole table
         if ($arrSelectedFields === null || empty($arrSelectedFields))
         {
-            $arrSelectedFields = \Database::getInstance()->getFieldNames($strTable);
+            $arrSelectedFields = Database::getInstance()->getFieldNames($strTable);
         }
 
         // create headline
         if ($useLabelForHeadline !== null)
         {
             // Use language file
-            \Controller::loadLanguageFile($strTable, $useLabelForHeadline);
+            Controller::loadLanguageFile($strTable, $useLabelForHeadline);
         }
 
         $arrHeadline = array();
@@ -207,10 +206,8 @@ class ExportTable extends \Backend
 
         $arrProcedures[] = "id>=?";
         $arrValues[] = 0;
-        $arrFieldInfo = self::listFields($strTable);
 
-
-        $objDb = \Database::getInstance()->prepare("SELECT * FROM  " . $strTable . " WHERE " . implode(' AND ', $arrProcedures) . " ORDER BY " . $strSorting)->execute($arrValues);
+        $objDb = Database::getInstance()->prepare("SELECT * FROM  " . $strTable . " WHERE " . implode(' AND ', $arrProcedures) . " ORDER BY " . $strSorting)->execute($arrValues);
 
         while ($dataRecord = $objDb->fetchAssoc())
         {
@@ -249,7 +246,7 @@ class ExportTable extends \Backend
                 {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback)
                     {
-                        $objCallback = \System::importStatic($callback[0]);
+                        $objCallback = System::importStatic($callback[0]);
                         $value = $objCallback->{$callback[1]}($field, $value, $strTable, $dataRecord, $dca, $options);
                     }
                 }
@@ -258,7 +255,6 @@ class ExportTable extends \Backend
             }
             $arrData[] = $arrRow;
         }
-
 
         // xml-output
         if ($exportType === 'xml')
@@ -313,13 +309,13 @@ class ExportTable extends \Backend
             // Write output to file system
             if ($strDestination != '')
             {
-                new \Folder($strDestination);
-                $objFolder = \FilesModel::findByPath($strDestination);
+                new Folder($strDestination);
+                $objFolder = FilesModel::findByPath($strDestination);
                 if ($objFolder !== null)
                 {
                     if ($objFolder->type == 'folder' && is_dir(TL_ROOT . '/' . $objFolder->path))
                     {
-                        $objFile = new \File($objFolder->path . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.xml', false);
+                        $objFile = new File($objFolder->path . '/' . $strTable . '_' . Date::parse('Y-m-d_H-i-s') . '.xml', false);
                         $objFile->write($xml);
                         $objFile->close();
                         return;
@@ -347,8 +343,7 @@ class ExportTable extends \Backend
 
                 if (is_dir(TL_ROOT . '/' . $strDestination))
                 {
-
-                    $objFile = new \File($strDestination . '/' . $strTable . '_' . \Date::parse('Y-m-d_H-i-s') . '.csv');
+                    $objFile = new File($strDestination . '/' . $strTable . '_' . Date::parse('Y-m-d_H-i-s') . '.csv');
                     $objFile->write('');
                     // Convert special chars
                     $arrFinal = array();
@@ -359,7 +354,6 @@ class ExportTable extends \Backend
                         }, $arrRow);
                         $arrFinal[] = $arrLine;
                     }
-
 
                     // Load the CSV document from a string
                     $csv = Writer::createFromString('');
@@ -375,7 +369,6 @@ class ExportTable extends \Backend
                     $objFile->write($csv);
                     $objFile->close();
                     exit;
-
                 }
                 return;
             }
@@ -389,7 +382,6 @@ class ExportTable extends \Backend
                 }, $arrRow);
                 $arrFinal[] = $arrLine;
             }
-
 
             // Send file to browser
             header('Content-Encoding: UTF-8');
@@ -409,7 +401,6 @@ class ExportTable extends \Backend
             // Returns the CSV document as a string
             echo $csv;
             exit;
-
         }
     }
 
@@ -419,7 +410,7 @@ class ExportTable extends \Backend
      */
     public static function listFields($strTable)
     {
-        $objDb = \Database::getInstance();
+        $objDb = Database::getInstance();
         $arrFields = $objDb->listFields($strTable);
         $arrNew = array();
         if (is_array($arrFields))
@@ -431,7 +422,6 @@ class ExportTable extends \Backend
         }
         return $arrNew;
     }
-
 
     /**
      * array_map for multidimensional arrays
@@ -469,9 +459,9 @@ class ExportTable extends \Backend
     public static function binToUuid($value)
     {
         // Convert bin to uuid
-        if (\Validator::isBinaryUuid($value))
+        if (Validator::isBinaryUuid($value))
         {
-            return \StringUtil::binToUuid($value);
+            return StringUtil::binToUuid($value);
         }
         return $value;
     }
