@@ -20,6 +20,7 @@ namespace Markocupic\ExportTable;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Input;
 use Contao\StringUtil;
+use Contao\Controller;
 use League\Csv\Reader;
 use League\Csv\Writer;
 
@@ -73,7 +74,8 @@ class ExportTable extends \Backend
 
             $strTable = $objDb->export_table;
             $arrSelectedFields = deserialize($objDb->fields, true);
-            $filterExpression = trim($objDb->filterExpression);
+            // Replace insert tags
+            $filterExpression = Controller::replaceInsertTags(trim($objDb->filterExpression));
             $exportType = $objDb->exportType;
             $arrayDelimiter = $objDb->arrayDelimiter;
 

@@ -19,7 +19,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = 'Deep-Link settings
 // Fields
 $GLOBALS['TL_LANG']['tl_export_table']['export_table'] = array('Export data from this table', 'Choose a table for the export.');
 $GLOBALS['TL_LANG']['tl_export_table']['selected_fields'] = array('Select the fields for the export');
-$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'] = array('SQL "filter-expression"', 'Define filter as JSON-encoded Array -> [["published=?",1],["pid=6",1]]');
+$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'] = array('SQL "filter-expression"', 'Define filter as JSON-encoded Array -> [["published=?",1],["pid=6",1]] You can use insert tags as well: -> [["published=?",1],["id=?",{{user::id}}]]');
 $GLOBALS['TL_LANG']['tl_export_table']['sortBy'] = array('Sort by', '');
 $GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'] = array('Sort by direction', '');
 $GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'] = array('SQL "filter-expression"', 'Define filter as JSON-encoded Array -> [["published=?",1],["pid=6",1]]');

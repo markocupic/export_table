@@ -21,7 +21,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] = "Exportvorgang st
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'][0] = 'Export-Typ';
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'][1] = 'Bitte wählen Sie einen Export-Typ aus.';
 $GLOBALS['TL_LANG']['tl_export_table']['filterExpression'][0] = 'SQL-Filter';
-$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'][1] = 'Definieren Sie einen Filter in der Form eines JSON-kodierten Arrays -> [["published=?",1],["pid=6",1]]';
+$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'][1] = 'Definieren Sie einen Filter in der Form eines JSON-kodierten Arrays -> [["published=?",1],["pid=6",1]] Auch Insert Tags sind möglich: -> [["published=?",1],["id=?",{{user::id}}]]';
 $GLOBALS['TL_LANG']['tl_export_table']['sortBy'][0] = 'Sortierung';
 $GLOBALS['TL_LANG']['tl_export_table']['sortByDirection'][0] = 'Sortierrichtung';
 $GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'][0] = 'Deep-Link Export-Funktion aktivieren';
