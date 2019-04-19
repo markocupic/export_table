@@ -368,7 +368,6 @@ class ExportTable extends Backend
                     // Write csv into file
                     $objFile->write($csv);
                     $objFile->close();
-                    exit;
                 }
                 return;
             }
