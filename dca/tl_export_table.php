@@ -204,7 +204,6 @@ class tl_export_table extends Backend
 
     public function __construct()
     {
-
         parent::__construct();
         if (isset($_POST['exportTable']) && $_POST['FORM_SUBMIT'] == 'tl_export_table')
         {
@@ -319,5 +318,4 @@ class tl_export_table extends Backend
 
         return $html;
     }
-}           
-              
+}

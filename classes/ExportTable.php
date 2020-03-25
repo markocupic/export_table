@@ -47,7 +47,7 @@ class ExportTable extends Backend
         $key = null;
 
         // Support Deep Link export
-        if (Input::get('action') == 'exportTable' && Input::get('key') != '')
+        if (Input::get('action') === 'exportTable' && Input::get('key') != '')
         {
             $key = Input::get('key');
         }
@@ -75,7 +75,7 @@ class ExportTable extends Backend
             }
 
             $strTable = $objDb->export_table;
-            $arrSelectedFields = deserialize($objDb->fields, true);
+            $arrSelectedFields = StringUtil::deserialize($objDb->fields, true);
             // Replace insert tags
             $filterExpression = Controller::replaceInsertTags(trim($objDb->filterExpression));
             $exportType = $objDb->exportType;

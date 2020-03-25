@@ -13,7 +13,7 @@
 /**
  * Back end modules
  */
-if (TL_MODE == 'BE')
+if (TL_MODE === 'BE')
 {
     $GLOBALS['BE_MOD']['system']['export_table'] = array(
         'icon'   => 'system/modules/export_table/assets/file-export-icon-16.png',
@@ -24,7 +24,7 @@ if (TL_MODE == 'BE')
 }
 
 
-if (TL_MODE == 'BE' && $_GET['do'] == 'export_table')
+if (TL_MODE === 'BE' && $_GET['do'] === 'export_table')
 {
     $GLOBALS['TL_CSS'][] = 'system/modules/export_table/assets/export_table.css';
 }
@@ -36,9 +36,10 @@ if (TL_MODE == 'BE' && $_GET['do'] == 'export_table')
 // $GLOBALS['TL_HOOKS']['exportTable'][] = array('\MyNamespace\MyPackage\MyClass','myMethod');
 
 // Deep-Link support
-if (Input::get('action') == 'exportTable' && Input::get('key') != '')
+if (TL_MODE === 'FE' && Input::get('action') === 'exportTable' && Input::get('key') != '')
 {
-    $GLOBALS['TL_HOOKS']['generatePage'][] = array('\Markocupic\ExportTable\ExportTable', 'prepareExport');
+    // In Contao 4 initializeSystem won't work
+    $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('\Markocupic\ExportTable\ExportTable', 'prepareExport');
 }
 
 
