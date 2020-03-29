@@ -14,8 +14,6 @@ namespace Markocupic\ExportTable\Controller;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Doctrine\DBAL\Connection;
-use Markocupic\SacEventToolBundle\CalendarEventsHelper;
-use Markocupic\SacEventToolBundle\FrontendCache\SessionCache\SessionCache;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
