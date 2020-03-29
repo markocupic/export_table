@@ -16,7 +16,7 @@
 if (TL_MODE === 'BE')
 {
     $GLOBALS['BE_MOD']['system']['export_table'] = array(
-        'icon'   => 'system/modules/export_table/assets/file-export-icon-16.png',
+        'icon'   => 'bundles/markocupicexporttable/file-export-icon-16.png',
         'tables' => array(
             'tl_export_table',
         ),
@@ -26,7 +26,7 @@ if (TL_MODE === 'BE')
 
 if (TL_MODE === 'BE' && $_GET['do'] === 'export_table')
 {
-    $GLOBALS['TL_CSS'][] = 'system/modules/export_table/assets/export_table.css';
+    $GLOBALS['TL_CSS'][] = 'bundles/markocupicexporttable/export_table.css';
 }
 
 // ****** exportTable Hook *********
