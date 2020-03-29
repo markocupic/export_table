@@ -202,10 +202,10 @@ class tl_export_table extends Backend
     public function __construct()
     {
         parent::__construct();
-        if (isset($_POST['exportTable']) && $_POST['FORM_SUBMIT'] == 'tl_export_table')
+        if (isset($_POST['exportTable']) && $_POST['FORM_SUBMIT'] === 'tl_export_table')
         {
             unset($_POST['exportTable']);
-            $objDb = Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
+            $objDb = \Contao\Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
             if ($objDb->numRows)
             {
                 \Markocupic\ExportTable\ExportTable::prepareExport();
@@ -220,7 +220,7 @@ class tl_export_table extends Backend
      */
     public function optionsCbGetTables()
     {
-        $objTables = $this->Database->listTables();
+        $objTables = \Contao\Database::getInstance()->listTables();
         $arrOptions = [];
         foreach ($objTables as $table)
         {
@@ -237,7 +237,7 @@ class tl_export_table extends Backend
      */
     public function buttonsCallback($arrButtons, DC_Table $dc)
     {
-        if (Input::get('act') == 'edit')
+        if (\Contao\Input::get('act') == 'edit')
         {
             $save = $arrButtons['save'];
             $exportTable = '<button type="submit" name="exportTable" id="exportTable" class="tl_submit" accesskey="n">' . $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] . '</button>';
@@ -262,12 +262,12 @@ class tl_export_table extends Backend
      */
     public function optionsCbSelectedFields()
     {
-        $objDb = $this->Database->prepare("SELECT * FROM tl_export_table WHERE id = ? LIMIT 0,1")->execute(\Input::get('id'));
+        $objDb = \Contao\Database::getInstance()->prepare("SELECT * FROM tl_export_table WHERE id = ? LIMIT 0,1")->execute(\Contao\Input::get('id'));
         if ($objDb->export_table == '')
         {
             return;
         }
-        $objFields = $this->Database->listFields($objDb->export_table, 1);
+        $objFields = \Contao\Database::getInstance()->listFields($objDb->export_table, 1);
         $arrOptions = [];
         foreach ($objFields as $field)
         {
@@ -286,10 +286,9 @@ class tl_export_table extends Backend
      */
     public function generateDeepLinkInfo()
     {
-        $objDb = $this->Database->prepare('SELECT * FROM tl_export_table WHERE id=? LIMIT 0,1')->execute($this->Input->get('id'));
-        $host = Environment::get('host');
-        $query = '?action=exportTable&amp;key=' . $objDb->deepLinkExportKey;
-        $href = 'http://' . $host . $query;
+        $objDb = \Contao\Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=? LIMIT 0,1')->execute(\Contao\Input::get('id'));
+        $key = $objDb->deepLinkExportKey;
+        $href = sprintf('%s/_export_table_download_table?action=exportTable&amp;key=%s', \Contao\Environment::get('url'), $key);
 
         $html = '
 <div class="clr widget deep_link_info">

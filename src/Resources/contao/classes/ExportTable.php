@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Export table module for Contao CMS
  * Copyright (c) 2008-2020 Marko Cupic
@@ -10,15 +12,15 @@
 
 namespace Markocupic\ExportTable;
 
+use Contao\Backend;
+use Contao\Controller;
+use Contao\Database;
 use Contao\Date;
 use Contao\File;
 use Contao\FilesModel;
 use Contao\Folder;
 use Contao\Input;
 use Contao\StringUtil;
-use Contao\Backend;
-use Contao\Database;
-use Contao\Controller;
 use Contao\System;
 use Contao\Validator;
 use League\Csv\Reader;

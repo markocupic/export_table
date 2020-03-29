@@ -14,6 +14,7 @@ namespace Markocupic\ExportTable\Controller;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Doctrine\DBAL\Connection;
+use Markocupic\ExportTable\ExportTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,6 +61,7 @@ class DownloadController extends AbstractController
      */
     public function downloadAction()
     {
-
+        ExportTable::prepareExport();
+        exit;
     }
 }
