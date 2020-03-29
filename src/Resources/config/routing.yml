@@ -1,0 +1,4 @@
+
+export_table:
+  resource: "@MarkocupicExportTable/Controller"
+  type: annotation

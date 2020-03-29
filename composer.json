@@ -6,7 +6,7 @@
     "export table"
   ],
   "type": "contao-module",
-  "license": "LGPL-3.0+",
+  "license": "MIT",
   "authors": [
     {
       "name": "Marko Cupic",
@@ -20,22 +20,28 @@
     "source": "https://github.com/markocupic/export_table"
   },
   "require": {
-    "php": ">=7.1",
-    "contao/core-bundle": ">=4.4",
+    "contao/core-bundle": ">4.8",
     "league/csv": "^9.1"
   },
   "replace": {
     "contao-legacy/export_table": "*"
   },
-  "conflict": {
-    "contao/core": "3.0.*"
-  },
   "autoload": {
+    "psr-4": {
+      "Markocupic\\ExportTable\\": "src/"
+    },
     "classmap": [
-      ""
+      "src/Resources/contao"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/assets",
+      "src/Resources/contao/config",
+      "src/Resources/contao/dca",
+      "src/Resources/contao/languages"
     ]
   },
   "extra": {
+    "contao-manager-plugin": "Markocupic\\ExportTable\\ContaoManager\\Plugin",
     "contao": {
       "sources": {
         "": "system/modules/export_table"
@@ -43,3 +49,4 @@
     }
   }
 }
+

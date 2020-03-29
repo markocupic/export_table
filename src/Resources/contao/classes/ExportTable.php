@@ -97,17 +97,17 @@ class ExportTable extends Backend
             throw new \Exception('You are not allowed to use this service.');
         }
 
-        $options = array(
+        $options = [
             'strSorting'          => $sortingExpression,
             'exportType'          => $exportType,
             'strDelimiter'        => ';',
             'strEnclosure'        => '"',
-            'arrFilter'           => $filterExpression != '' ? json_decode($filterExpression) : array(),
+            'arrFilter'           => $filterExpression != '' ? json_decode($filterExpression) : [],
             'strDestination'      => null,
             'arrSelectedFields'   => $arrSelectedFields,
             'useLabelForHeadline' => null,
             'arrayDelimiter'      => $arrayDelimiter,
-        );
+        ];
 
         // Call Export class
         self::exportTable($strTable, $options);
@@ -118,17 +118,17 @@ class ExportTable extends Backend
      * @param array $options
      * @throws \Exception
      */
-    public static function exportTable($strTable, array $options = array())
+    public static function exportTable($strTable, array $options = [])
     {
         // Defaults
-        $preDefinedOptions = array(
+        $preDefinedOptions = [
             'strSorting'          => 'id ASC',
             // Export Type csv or xml
             'exportType'          => 'csv',
             'strDelimiter'        => ';',
             'strEnclosure'        => '"',
             // arrFilter array(array("published=?",1),array("pid=6",1))
-            'arrFilter'           => array(),
+            'arrFilter'           => [],
             // strDestination f.ex: files/mydir
             'strDestination'      => null,
             // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
@@ -137,7 +137,7 @@ class ExportTable extends Backend
             'useLabelForHeadline' => null,
             // arrayDelimiter f.ex: ||
             'arrayDelimiter'      => '||',
-        );
+        ];
         $options = array_merge($preDefinedOptions, $options);
         $strSorting = $options['strSorting'];
         $exportType = $options['exportType'];
@@ -149,7 +149,7 @@ class ExportTable extends Backend
         $useLabelForHeadline = $options['useLabelForHeadline'];
         $arrayDelimiter = $options['arrayDelimiter'];
 
-        $arrData = array();
+        $arrData = [];
 
         // Load Datacontainer
         if (!is_array($GLOBALS['TL_DCA'][$strTable]))
@@ -157,7 +157,7 @@ class ExportTable extends Backend
             Controller::loadDataContainer($strTable, true);
         }
 
-        $dca = array();
+        $dca = [];
         if (is_array($GLOBALS['TL_DCA'][$strTable]))
         {
             $dca = $GLOBALS['TL_DCA'][$strTable];
@@ -176,7 +176,7 @@ class ExportTable extends Backend
             Controller::loadLanguageFile($strTable, $useLabelForHeadline);
         }
 
-        $arrHeadline = array();
+        $arrHeadline = [];
         foreach ($arrSelectedFields as $fieldname)
         {
             $arrLang = $GLOBALS['TL_DCA'][$strTable]['fields'][$fieldname]['label'];
@@ -194,7 +194,7 @@ class ExportTable extends Backend
         // add rows to $arrData
         if (empty($arrFilter) || !is_array($arrFilter))
         {
-            $arrFilter = array();
+            $arrFilter = [];
         }
         $arrProcedures = [];
         $arrValues = [];
@@ -211,7 +211,7 @@ class ExportTable extends Backend
 
         while ($dataRecord = $objDb->fetchAssoc())
         {
-            $arrRow = array();
+            $arrRow = [];
             foreach ($arrSelectedFields as $field)
             {
                 $value = '';
@@ -346,7 +346,7 @@ class ExportTable extends Backend
                     $objFile = new File($strDestination . '/' . $strTable . '_' . Date::parse('Y-m-d_H-i-s') . '.csv');
                     $objFile->write('');
                     // Convert special chars
-                    $arrFinal = array();
+                    $arrFinal = [];
                     foreach ($arrData as $arrRow)
                     {
                         $arrLine = array_map(function ($v) {
@@ -373,7 +373,7 @@ class ExportTable extends Backend
             }
 
             // Convert special chars
-            $arrFinal = array();
+            $arrFinal = [];
             foreach ($arrData as $arrRow)
             {
                 $arrLine = array_map(function ($v) {
@@ -411,7 +411,7 @@ class ExportTable extends Backend
     {
         $objDb = Database::getInstance();
         $arrFields = $objDb->listFields($strTable);
-        $arrNew = array();
+        $arrNew = [];
         if (is_array($arrFields))
         {
             foreach ($arrFields as $arrField)
@@ -429,7 +429,7 @@ class ExportTable extends Backend
      */
     private static function array_map_deep($array)
     {
-        $new = array();
+        $new = [];
         if (is_array($array))
         {
             foreach ($array as $key => $val)
