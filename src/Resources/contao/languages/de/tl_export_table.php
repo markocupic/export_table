@@ -1,12 +1,13 @@
 <?php
+
 /**
- * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ * Export table module for Contao CMS
+ * Copyright (c) 2008-2020 Marko Cupic
  * @package export_table
- * @author Marko Cupic 2014
+ * @author Marko Cupic m.cupic@gmx.ch, 2020
  * @link https://github.com/markocupic/export_table
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
+
 $GLOBALS['TL_LANG']['tl_export_table']['title_legend'] = "Titel-Einstellungen";
 $GLOBALS['TL_LANG']['tl_export_table']['settings'] = "Einstellungen";
 $GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = "Deep-Link Einstellungen";

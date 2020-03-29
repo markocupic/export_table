@@ -8,4 +8,14 @@
  * @link https://github.com/markocupic/export_table
  */
 
-$GLOBALS['TL_LANG']['MOD']['export_table'] = ['csv/xml Table Export'];
+namespace Markocupic\ExportTable;
+
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+/**
+ * Class MarkocupicExportTable
+ * @package Markocupic\ExportTable
+ */
+class MarkocupicExportTable extends Bundle
+{
+}

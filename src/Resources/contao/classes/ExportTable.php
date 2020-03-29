@@ -1,17 +1,11 @@
 <?php
 
 /**
- * Contao Open Source CMS
- *
- * Copyright (c) 2005-2017 Leo Feyer
- *
+ * Export table module for Contao CMS
+ * Copyright (c) 2008-2020 Marko Cupic
  * @package export_table
- * @link    https://contao.org
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- */
-
-/**
- * Run in a custom namespace, so the class can be replaced
+ * @author Marko Cupic m.cupic@gmx.ch, 2020
+ * @link https://github.com/markocupic/export_table
  */
 
 namespace Markocupic\ExportTable;
@@ -32,9 +26,7 @@ use League\Csv\Writer;
 
 /**
  * Class ExportTable
- * Copyright: 2017 Marko Cupic
- * @author Marko Cupic <m.cupic@gmx.ch>
- * @package export_table
+ * @package Markocupic\ExportTable
  */
 class ExportTable extends Backend
 {

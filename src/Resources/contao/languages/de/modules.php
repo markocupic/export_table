@@ -1,11 +1,11 @@
 <?php
+
 /**
- * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ * Export table module for Contao CMS
+ * Copyright (c) 2008-2020 Marko Cupic
  * @package export_table
- * @author Marko Cupic 2014
- * @link https://github.com/markocupic/csv_export
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @author Marko Cupic m.cupic@gmx.ch, 2020
+ * @link https://github.com/markocupic/export_table
  */
 
 $GLOBALS['TL_LANG']['MOD']['export_table']['0'] = "csv/xml Datenbankexport";
