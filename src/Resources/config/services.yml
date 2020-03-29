@@ -1,1 +1,7 @@
 services:
+  Markocupic\ExportTable\Controller\DownloadController:
+  arguments:
+  - '@contao.framework'
+  - '@request_stack'
+  - '@database_connection'
+  public: true
