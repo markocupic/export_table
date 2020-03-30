@@ -11,7 +11,7 @@
     {
       "name": "Marko Cupic",
       "email": "m.cupic@gmx.ch",
-      "homepage": "http://4ae-racing-team.ch",
+      "homepage": "https://github.com/markocupic",
       "role": "Developer"
     }
   ],
@@ -20,7 +20,7 @@
     "source": "https://github.com/markocupic/export_table"
   },
   "require": {
-    "contao/core-bundle": ">4.8",
+    "contao/core-bundle": "^4.5",
     "league/csv": "^9.1"
   },
   "replace": {
@@ -34,7 +34,6 @@
       "src/Resources/contao"
     ],
     "exclude-from-classmap": [
-      "src/Resources/contao/assets",
       "src/Resources/contao/config",
       "src/Resources/contao/dca",
       "src/Resources/contao/languages"

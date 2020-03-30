@@ -51,9 +51,9 @@ class ExportTableHook
      */
     public static function exportTableHook($field, $value = '', $table, $dataRecord, $dca)
     {
-        if ($table == 'tl_calendar_events')
+        if ($table === 'tl_calendar_events')
         {
-            if ($field == 'startDate' || $field == 'endDate' || $field == 'tstamp')
+            if ($field === 'startDate' || $field === 'endDate' || $field === 'tstamp')
             {
                 if ($value > 0)
                 {
@@ -66,49 +66,7 @@ class ExportTableHook
 }
 
 ```
-
-Wichtig!!!
-Versichere dich, dass der Hook-Container vor dem export_table Container geladen wird. In Contao 4 erreichst du dies, indem du in der AppKernel.php den Hook-Container vor dem export_table-Container registrierst.
-
-
-```php
-<?php
-// app/AppKernel.php
-<?php
-
-/*
- * This file is part of Contao.
- *
- * Copyright (c) 2005-2016 Leo Feyer
- *
- * @license LGPL-3.0+
- */
-
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\HttpKernel\Kernel;
-
-class AppKernel extends Kernel
-{
-    /**
-     * {@inheritdoc}
-     */
-    public function registerBundles()
-    {
-        $bundles = [
-            // ...other
-            new Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle(('aaa_export_table_hooks'), $this->getRootDir()),
-            new Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle(('export_table'), $this->getRootDir()),
-            // ..other
-
-
-        ];
-
-        // .....
-
-        return $bundles;
-    }
-
-```
+ 
 
 ## ExportTable aus eigener Erweiterung heraus nutzen
 Die ExportTable Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
@@ -124,4 +82,4 @@ Markocupic\ExportTable\ExportTable::exportTable('tl_calendar_events_member', $op
 ```
 
 
-Viel Spass mit Export Table!
+Viel Spass mit Export Table! 

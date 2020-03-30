@@ -208,7 +208,8 @@ class tl_export_table extends Backend
             $objDb = \Contao\Database::getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute(Input::get('id'));
             if ($objDb->numRows)
             {
-                \Markocupic\ExportTable\ExportTable::prepareExport();
+                $export = \Contao\System::getContainer()->get('Markocupic\ExportTable\Export\ExportTable');
+                $export->prepareExport();
                 exit();
             }
         }

@@ -14,7 +14,7 @@ namespace Markocupic\ExportTable\Controller;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Doctrine\DBAL\Connection;
-use Markocupic\ExportTable\ExportTable;
+use Markocupic\ExportTable\Export\ExportTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,16 +41,23 @@ class DownloadController extends AbstractController
     private $connection;
 
     /**
+     * @var ExportTable
+     */
+    private $exportTable;
+
+    /**
      * DownloadController constructor.
      * @param ContaoFramework $framework
      * @param RequestStack $requestStack
      * @param Connection $connection
+     * @param ExportTable $exportTable
      */
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, Connection $connection)
+    public function __construct(ContaoFramework $framework, RequestStack $requestStack, Connection $connection, ExportTable $exportTable)
     {
         $this->framework = $framework;
         $this->requestStack = $requestStack;
         $this->connection = $connection;
+        $this->exportTable = $exportTable;
 
         $this->framework->initialize();
     }
@@ -61,7 +68,7 @@ class DownloadController extends AbstractController
      */
     public function downloadAction()
     {
-        ExportTable::prepareExport();
+        $this->exportTable->prepareExport();
         exit;
     }
 }
