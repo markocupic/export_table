@@ -263,10 +263,12 @@ class ExportTable extends Backend
                 $arrHeadline[] = $fieldname;
             }
         }
+        // Add headline to  $this->arrData[]
         $this->arrData[] = $arrHeadline;
 
-        // add rows to $this->arrData
-        if (empty($this->arrOptions['arrFilter']) || !is_array($this->arrOptions['arrFilter']))
+        // Handle filter expression
+        $arrFilter = $this->arrOptions['arrFilter'];
+        if (empty($arrFilter) || !is_array($arrFilter))
         {
             $arrFilter = [];
         }
