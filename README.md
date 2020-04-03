@@ -63,7 +63,7 @@ $opt = array();
 $opt['arrSelectedFields'] = array('stateOfSubscription', 'hasParticipated', 'addedOn', 'eventName', 'firstname', 'lastname', 'sacMemberId', 'gender', 'street', 'postal', 'city', 'phone', 'email', 'dateOfBirth');
 $opt['useLabelForHeadline'] = 'de';
 $opt['exportType'] = 'csv';
-$opt['arrFilter'][] = array('pid=?', Input::get('id'));
+$opt['arrFilter'][] = array('pid=?', \Contao\Input::get('id'));
 $export = \Contao\System::getContainer()->get('Markocupic\ExportTable\Export\ExportTable');
 $export->exportTable('tl_calendar_events_member', $opt);
 ```
