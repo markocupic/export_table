@@ -15,29 +15,15 @@ $GLOBALS['TL_HOOKS']['exportTable'][] = array('Markocupic\ExportTable\ExportTabl
 <?php
 // system/modules/aaa_export_table_hooks/classes/ExportTableHook.php
 
-/**
- * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
- * @package csv_export
- * @author Marko Cupic 2017
- * @link https://github.com/markocupic/csv_export
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- */
-
-/**
- * Run in a custom namespace, so the class can be replaced
- */
 namespace Markocupic\ExportTable;
 
-
+use Contao\Date;
 
 /**
  * Class ExportTableHook
- * Copyright: 2017 Marko Cupic
+ * Copyright: 2020 Marko Cupic
  * @author Marko Cupic <m.cupic@gmx.ch>
  */
-
-
 class ExportTableHook
 {
 
@@ -57,7 +43,7 @@ class ExportTableHook
             {
                 if ($value > 0)
                 {
-                    $value = \Date::parse('d.m.Y', $value);
+                    $value = Date::parse('d.m.Y', $value);
                 }
             }
         }
@@ -72,13 +58,14 @@ class ExportTableHook
 Die ExportTable Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
 
 ```php
+// Mitglieder exportieren
 $opt = array();
 $opt['arrSelectedFields'] = array('stateOfSubscription', 'hasParticipated', 'addedOn', 'eventName', 'firstname', 'lastname', 'sacMemberId', 'gender', 'street', 'postal', 'city', 'phone', 'email', 'dateOfBirth');
 $opt['useLabelForHeadline'] = 'de';
 $opt['exportType'] = 'csv';
 $opt['arrFilter'][] = array('pid=?', Input::get('id'));
-$GLOBALS['TL_HOOKS']['exportTable'][] = array('Markocupic\SacpilatusBundle\CalendarKurse', 'exportRegistrationListHook');
-Markocupic\ExportTable\ExportTable::exportTable('tl_calendar_events_member', $opt);
+$export = \Contao\System::getContainer()->get('Markocupic\ExportTable\Export\ExportTable');
+$export->exportTable('tl_calendar_events_member', $opt);
 ```
 
 

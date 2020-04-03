@@ -127,7 +127,7 @@ class ExportTable extends Backend
         }
         else
         {
-            if (!$objDb->activateDeepLinkExport)
+            if (TL_MODE === 'FE' && !$objDb->activateDeepLinkExport)
             {
                 throw new \Exception('You are not allowed to use this service.');
             }
