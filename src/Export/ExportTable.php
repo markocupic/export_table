@@ -136,7 +136,7 @@ class ExportTable extends Backend
             $arrSelectedFields = $stringUtilAdapter->deserialize($objDb->fields, true);
 
             // Replace insert tags
-            $filterExpression = $controllerAdapter->replaceInsertTags(trim($objDb->filterExpression));
+            $filterExpression = $controllerAdapter->replaceInsertTags(trim((string) $objDb->filterExpression));
 
             $exportType = $objDb->exportType;
             $arrayDelimiter = $objDb->arrayDelimiter;
@@ -267,23 +267,46 @@ class ExportTable extends Backend
         $this->arrData[] = $arrHeadline;
 
         // Handle filter expression
+        // Get filter as json encoded array [[tablename.field=? OR tablename.field=?],["valueA","valueB"]]
         $arrFilter = $this->arrOptions['arrFilter'];
         if (empty($arrFilter) || !is_array($arrFilter))
         {
             $arrFilter = [];
         }
-        $arrProcedures = [];
-        $arrValues = [];
-        foreach ($arrFilter as $filter)
+
+        $filterStmt = $this->strTable . ".id>?";
+        $arrValues = [0];
+
+        if (!empty($arrFilter) && is_array($arrFilter))
         {
-            $arrProcedures[] = $filter[0];
-            $arrValues[] = $filter[1];
+            if (count($arrFilter) === 2)
+            {
+                // Statement
+                if (is_array($arrFilter[0]))
+                {
+                    $filterStmt .= ' AND ' . implode(' AND ', $arrFilter[0]);
+                }
+                else
+                {
+                    $filterStmt .= ' AND ' . $arrFilter[0];
+                }
+
+                // Values
+                if (is_array($arrFilter[1]))
+                {
+                    foreach ($arrFilter[1] as $v)
+                    {
+                        $arrValues[] = $v;
+                    }
+                }
+                else
+                {
+                    $arrValues[] = $arrFilter[1];
+                }
+            }
         }
 
-        $arrProcedures[] = "id>=?";
-        $arrValues[] = 0;
-
-        $objDb = $databaseAdapter->getInstance()->prepare("SELECT * FROM  " . $this->strTable . " WHERE " . implode(' AND ', $arrProcedures) . " ORDER BY " . $this->arrOptions['strSorting'])->execute($arrValues);
+        $objDb = $databaseAdapter->getInstance()->prepare("SELECT * FROM  " . $this->strTable . " WHERE " . $filterStmt . " ORDER BY " . $this->arrOptions['strSorting'])->execute($arrValues);
 
         while ($dataRecord = $objDb->fetchAssoc())
         {

@@ -276,6 +276,10 @@ class tl_export_table extends Backend
             {
                 continue;
             }
+            if ($field['name'] === 'PRIMARY')
+            {
+                continue;
+            }
             $arrOptions[$field['name']] = $field['name'] . ' [' . $field['type'] . ']';
         }
         return $arrOptions;
