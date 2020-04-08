@@ -27,8 +27,8 @@ class ExportTable
      */
     public static function exportTable(string $strTable, array $options = [])
     {
-        $export = System::getContainer()->get('Markocupic\ExportTable\ExportTable\ExportTable');
-        $export->prepareExport($strTable, $options);
+        $export = System::getContainer()->get('Markocupic\ExportTable\Export\ExportTable');
+        $export->exportTable($strTable, $options);
     }
 }
 

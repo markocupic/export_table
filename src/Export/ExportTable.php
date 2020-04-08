@@ -366,6 +366,8 @@ class ExportTable extends Backend
         {
             $this->exportAsCsv();
         }
+
+        exit;
     }
 
     /**
