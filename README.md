@@ -1,30 +1,30 @@
 # Export Table
 
-## Tabellen-Export-Modul für Contao 3 und Contao 4
+## Tabellen-Export-Modul für Contao 4 
 
 Mit dem Modul lassen sich Contao Tabellen im csv/xml-Format exportieren. Mit dem exportTable-Hook kann der Feldinhalt angepasst werden.
 Erstelle dazu in system/modules ein neues Verzeichnis: aaa_export_table_hooks. Darin erstellst du in den entsprechenden Verzeichnissen die beiden php-Dateien. Anschliessend noch den autoload-Creatoor im Backend laufen lassen.
 ```php
 <?php
 // system/modules/aaa_export_table_hooks/config/config.php
-$GLOBALS['TL_HOOKS']['exportTable'][] = array('Markocupic\ExportTable\ExportTableHook', 'exportTableHook');
+$GLOBALS['TL_HOOKS']['exportTable'][] = array('Vendorname\ExportTableBundle\ContaoHooks\ExportTable', 'exportTableHook');
 
 ```
 
 ```php
 <?php
-// system/modules/aaa_export_table_hooks/classes/ExportTableHook.php
+// vendor/vendorname/export-table-bundle/src/ContaoHooks/ExportTable.php
 
-namespace Markocupic\ExportTable;
+namespace Vendorname\ExportTableBundle\ContaoHooks;
 
 use Contao\Date;
 
 /**
- * Class ExportTableHook
+ * Class ExportTable
  * Copyright: 2020 Marko Cupic
  * @author Marko Cupic <m.cupic@gmx.ch>
  */
-class ExportTableHook
+class ExportTable
 {
 
     /**

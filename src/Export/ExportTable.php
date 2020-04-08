@@ -132,14 +132,14 @@ class ExportTable extends Backend
                 throw new \Exception('You are not allowed to use this service.');
             }
 
-            $strTable = $objDb->export_table;
+            $strTable = (string) $objDb->export_table;
             $arrSelectedFields = $stringUtilAdapter->deserialize($objDb->fields, true);
 
             // Replace insert tags
             $filterExpression = $controllerAdapter->replaceInsertTags(trim((string) $objDb->filterExpression));
 
-            $exportType = $objDb->exportType;
-            $arrayDelimiter = $objDb->arrayDelimiter;
+            $exportType = (string) $objDb->exportType;
+            $arrayDelimiter = (string) $objDb->arrayDelimiter;
 
             $arrForbidden = [
                 'delete',
@@ -183,11 +183,11 @@ class ExportTable extends Backend
     }
 
     /**
-     * @param $strTable
+     * @param string $strTable
      * @param array $options
      * @throws \Exception
      */
-    public function exportTable($strTable, array $options = [])
+    public function exportTable(string $strTable, array $options = [])
     {
         $this->strTable = $strTable;
 
