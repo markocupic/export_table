@@ -135,8 +135,19 @@ class ExportTable extends Backend
             $strTable = (string) $objDb->export_table;
             $arrSelectedFields = $stringUtilAdapter->deserialize($objDb->fields, true);
 
+            $filterExpression = trim((string) $objDb->filterExpression);
+
+            // Replace {{GET::*}} with GET parameter
+            if (preg_match_all('/{{GET::(.*)}}/', $filterExpression, $matches))
+            {
+                foreach ($matches[0] as $k => $v)
+                {
+                    $filterExpression = str_replace($matches[0][$k], $inputAdapter->get($matches[1][$k]), $filterExpression);
+                }
+            }
+
             // Replace insert tags
-            $filterExpression = $controllerAdapter->replaceInsertTags(trim((string) $objDb->filterExpression));
+            $filterExpression = $controllerAdapter->replaceInsertTags($filterExpression);
 
             $exportType = (string) $objDb->exportType;
             $arrayDelimiter = (string) $objDb->arrayDelimiter;
