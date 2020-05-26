@@ -137,14 +137,22 @@ class ExportTable extends Backend
 
             $filterExpression = trim((string) $objDb->filterExpression);
 
-            // Replace {{GET::*}} with GET parameter
-            if (preg_match_all('/{{GET::(.*)}}/', $filterExpression, $matches))
+            if (TL_MODE === 'FE' && $objDb->activateDeepLinkExport)
             {
-                foreach ($matches[0] as $k => $v)
+                // Replace {{GET::*}} with GET parameter
+                if (preg_match_all('/{{GET::(.*)}}/', $filterExpression, $matches))
                 {
-                    $filterExpression = str_replace($matches[0][$k], $inputAdapter->get($matches[1][$k]), $filterExpression);
+                    foreach ($matches[0] as $k => $v)
+                    {
+                        if ($inputAdapter->get($matches[1][$k]))
+                        {
+                            $filterExpression = str_replace($matches[0][$k], $inputAdapter->get($matches[1][$k]), $filterExpression);
+                        }
+                    }
                 }
             }
+            // Sanitize $filterExpression from {{GET::*}}
+            $filterExpression = preg_replace('/{{GET::(.*)}}/', '"empty-string"', $filterExpression);
 
             // Replace insert tags
             $filterExpression = $controllerAdapter->replaceInsertTags($filterExpression);
