@@ -46,7 +46,7 @@ use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
 
 /**
- * @Hook(FormatDateListener::HOOK, priority=FormatDateListener::PRIORITY)
+ * @Hook(MyCustomFormatDateListener::HOOK, priority=MyCustomFormatDateListener::PRIORITY)
  */
 class MyCustomFormatDateListener
 {

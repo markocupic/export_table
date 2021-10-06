@@ -53,8 +53,6 @@ class ExportTableHandleArraysListener
             return $varValue;
         }
 
-        ExportTableFormatDateListener::$disableHook = true;
-
         $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
 
         if ($arrDca['fields'][$strFieldname]['eval']['csv'] && '' !== $arrDca['fields'][$strFieldname]['eval']['csv']) {
