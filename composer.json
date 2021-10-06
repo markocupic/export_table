@@ -1,9 +1,11 @@
 {
   "name": "markocupic/export_table",
-  "description": "Export Contao tables to csv- or xml-file.",
+  "description": "Export Contao database tables to CSV- or XML-files.",
   "keywords": [
     "contao",
-    "export table"
+    "export",
+    "csv",
+    "xml"
   ],
   "type": "contao-module",
   "license": "MIT",
@@ -21,18 +23,15 @@
   },
   "require": {
     "contao/core-bundle": "^4.9",
-    "codefog/contao-haste": "^4.20",
+    "codefog/contao-haste": "^4.20"
   },
-  "replace": {
-    "contao-legacy/export_table": "*"
+  "require-dev": {
+    "contao/easy-coding-standard": "^3.2"
   },
   "autoload": {
     "psr-4": {
       "Markocupic\\ExportTable\\": "src/"
     },
-    "classmap": [
-      "src/Resources/contao"
-    ],
     "exclude-from-classmap": [
       "src/Resources/contao/config",
       "src/Resources/contao/dca",
@@ -40,12 +39,7 @@
     ]
   },
   "extra": {
-    "contao-manager-plugin": "Markocupic\\ExportTable\\ContaoManager\\Plugin",
-    "contao": {
-      "sources": {
-        "": "system/modules/export_table"
-      }
-    }
+    "contao-manager-plugin": "Markocupic\\ExportTable\\ContaoManager\\Plugin"
   }
 }
 
