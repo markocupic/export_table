@@ -1,71 +1,164 @@
-# Export Table
+![Alt text](docs/logo.png?raw=true "logo")
 
-## Tabellen-Export-Modul für Contao 4 
+# Export Table für Contao CMS
 
-Mit dem Modul lassen sich Contao Tabellen im csv/xml-Format exportieren. Mit dem exportTable-Hook kann der Feldinhalt angepasst werden.
-Erstelle dazu in system/modules ein neues Verzeichnis: aaa_export_table_hooks. Darin erstellst du in den entsprechenden Verzeichnissen die beiden php-Dateien. Anschliessend noch den autoload-Creatoor im Backend laufen lassen.
+Mit dieser Erweiterung lassen sich über eine Contao Backend Erweiterung Datenbank-Tabellen ins CSV- oder XML-Format exportieren. Dabei kann der Export konfiguriert werden.
+- Tabelle auswählbar
+- Felder auswählbar
+- Über die Eingabe eines json-Arrays Datensätze filtern
+- Ausgabe sortierbar (Feldname und Richtung)
+- Delimiter einstellbar (Default: ;)
+- Enclosure einstellbar (Default: ")
+- Trennzeichen für Arrays einstellbar
+- Deeplink Support
+
+![Alt text](docs/backend.png?raw=true "Backend")
+
+## Der Einsatz von Filtern
+Folgender einfacher Filter für tl_member lässt nur **Frauen** aus **Luzern** zu:\
+`[["gender=? AND city=?"],["female","Luzern"]]`
+
+Oder nur **Frauen** aus **Luzern** oder **Bern**:\
+`[["gender=? AND (city=? OR city=?)"],["female","Luzern", "Bern"]]`
+
+Auch Contao Insert Tags sind möglich:\
+[["lastname=? AND city=?"],["{{user::lastname}}","Oberkirch"]]
+
+Oder Parameterübergabe aus der URL:\
+[["lastname=? AND city=?"],["{{GET::lastname}}","Oberkirch"]]
+
+## Für Entwickler: Die Ausgabe über den "exportTable" HOOK anpassen
+
+Via Hook kann die Ausgabe angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden,dass der neue Hook vor dem bestehenden aufgerufen wird.\
+Siehe Beispiel:
+
 ```php
-<?php
-// system/modules/aaa_export_table_hooks/config/config.php
-$GLOBALS['TL_HOOKS']['exportTable'][] = array('Vendorname\ExportTableBundle\ContaoHooks\ExportTable', 'exportTableHook');
+// App/eventListener/ExportTable/FormatDateListener.php
 
-```
+declare(strict_types=1);
 
-```php
-<?php
-// vendor/vendorname/export-table-bundle/src/ContaoHooks/ExportTable.php
+namespace App\EventListener\ExportTable;
 
-namespace Vendorname\ExportTableBundle\ContaoHooks;
-
+use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Date;
+use Markocupic\ExportTable\Config\Config;
+use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
 
 /**
- * Class ExportTable
- * Copyright: 2020 Marko Cupic
- * @author Marko Cupic <m.cupic@gmx.ch>
+ * @Hook(FormatDateListener::HOOK, priority=FormatDateListener::PRIORITY)
  */
-class ExportTable
+class MyCustomFormatDateListener
 {
+    public const HOOK = 'exportTable';
+    public const PRIORITY = 100;
+    
+    public static $disableHook = false;
+    private $framework;
+
+    public function __construct(ContaoFramework $framework)
+    {
+        $this->framework = $framework;
+    }
 
     /**
-     * @param $field
-     * @param string $value
-     * @param $table
-     * @param $dataRecord
-     * @param $dca
-     * @return string
+     * @param $varValue
+     *
+     * @return mixed
      */
-    public static function exportTableHook($field, $value = '', $table, $dataRecord, $dca)
+    public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
-        if ($table === 'tl_calendar_events')
-        {
-            if ($field === 'startDate' || $field === 'endDate' || $field === 'tstamp')
-            {
-                if ($value > 0)
-                {
-                    $value = Date::parse('d.m.Y', $value);
-                }
+        if (static::$disableHook) {
+            return false;
+        }
+        
+        // Disable original Hook that is shipped with the export table extension.
+        ExportTableFormatDateListener::$disableHook = true;
+        
+        $dateAdapter = $this->framework->getAdapter(Date::class);
+
+        $dca = $arrDca['fields'][$strFieldname] ?? null;
+
+        if ($dca) {
+            $strRgxp = $dca['eval']['rgxp'];
+
+            if ('' !== $varValue && $strRgxp && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
+                $dateFormat = $dateAdapter->getFormatFromRgxp($strRgxp);
+                $varValue = $dateAdapter->parse($dateFormat, $varValue);
             }
         }
-        return $value;
+
+        return $varValue;
     }
 }
+
 
 ```
  
 
-## ExportTable aus eigener Erweiterung heraus nutzen
+## ExportTable aus eigenem Controller heraus nutzen
 Die ExportTable Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
 
 ```php
-// Mitglieder exportieren
-$opt = array();
-$opt['arrSelectedFields'] = array('stateOfSubscription', 'hasParticipated', 'addedOn', 'eventName', 'firstname', 'lastname', 'sacMemberId', 'gender', 'street', 'postal', 'city', 'phone', 'email', 'dateOfBirth');
-$opt['useLabelForHeadline'] = 'de';
-$opt['exportType'] = 'csv';
-$opt['arrFilter'][] = array('pid=?', \Contao\Input::get('id'));
-$export = \Contao\System::getContainer()->get('Markocupic\ExportTable\Export\ExportTable');
-$export->exportTable('tl_calendar_events_member', $opt);
+// App/Controller/CustomController.php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Contao\CoreBundle\Exception\ResponseException;
+use Contao\CoreBundle\Framework\ContaoFramework;
+use Markocupic\ExportTable\Config\Config;
+use Markocupic\ExportTable\Export\ExportTable;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+/**
+ * @Route("/_test_export", name="_test_export", defaults={"_scope" = "frontend", "_token_check" = false})
+ */
+class CustomController extends AbstractController
+{
+    /**
+     * @var ContaoFramework
+     */
+    private $framework;
+
+    /**
+     * @var ExportTable
+     */
+    private $exportTable;
+
+    public function __construct(ContaoFramework $framework, ExportTable $exportTable)
+    {
+        $this->framework = $framework;
+        $this->exportTable = $exportTable;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function __invoke(): Response
+    {
+        $this->framework->initialize();
+
+        $config = (new Config())
+            ->setExportType('csv')
+            ->setTable('tl_member')
+            ->setFields(['firstname', 'lastname', 'dateOfBirth'])
+            ->setDelimiter(',')
+            ->setEnclosure('"')
+            ->setFilter('[["city=?"],["Oberkirch"]]')
+            // Define a target path, otherwise the file will be stored in system/tmp
+            ->setTargetFolder('files')
+            // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
+            ->setFilename('export.csv')
+        ;
+
+        return $this->exportTable->exportTable($config);
+    }
+}
+
 ```
 
 

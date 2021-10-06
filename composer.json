@@ -20,8 +20,8 @@
     "source": "https://github.com/markocupic/export_table"
   },
   "require": {
-    "contao/core-bundle": "^4.5",
-    "league/csv": "^9.1"
+    "contao/core-bundle": "^4.9",
+    "codefog/contao-haste": "^4.20",
   },
   "replace": {
     "contao-legacy/export_table": "*"

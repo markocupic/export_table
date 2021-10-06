@@ -12,10 +12,13 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable;
+namespace Markocupic\ExportTable\Config;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Contao\StringUtil;
+use Markocupic\ExportTable\Model\ExportTableModel;
 
-class MarkocupicExportTable extends Bundle
+interface ConfigInterface
 {
+    public function get(): Config;
+
 }

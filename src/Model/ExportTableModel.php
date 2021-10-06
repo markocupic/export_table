@@ -12,10 +12,14 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable;
+namespace Markocupic\ExportTable\Model;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Contao\Model;
 
-class MarkocupicExportTable extends Bundle
+class ExportTableModel extends Model
 {
+    /**
+     * @var string
+     */
+    protected static $strTable = 'tl_export_table';
 }
