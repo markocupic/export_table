@@ -2,7 +2,7 @@
 
 # Export Table für Contao CMS
 
-Mit dieser Erweiterung lassen sich vom Contao Backend aus Datenbank-Tabellen ins CSV- oder XML-Format exportieren. Dabei kann der Export konfiguriert werden.
+Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabellen ins CSV- oder XML-Format exportieren. Dabei kann der Export konfiguriert werden.
 - Tabelle auswählbar
 - Felder auswählbar
 - Über die Eingabe eines json-Arrays Datensätze filtern
