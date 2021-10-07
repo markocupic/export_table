@@ -98,7 +98,7 @@ class ExportTable extends Backend
         $controllerAdapter->loadDataContainer($this->strTable, true);
         $arrDca = $GLOBALS['TL_DCA'][$this->strTable] ?? [];
 
-        // If no fields are chosen, then list all fields of the table
+        // If no fields are chosen, then list all fields from the selected table
         $arrSelectedFields = $objConfig->getFields();
         if (empty($arrSelectedFields)) {
             $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
