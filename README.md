@@ -22,10 +22,10 @@ Oder nur **Frauen** aus **Luzern** oder **Bern**:\
 `[["gender=? AND (city=? OR city=?)"],["female","Luzern", "Bern"]]`
 
 Auch Contao Insert Tags sind möglich:\
-[["lastname=? AND city=?"],["{{user::lastname}}","Oberkirch"]]
+`[["lastname=? AND city=?"],["{{user::lastname}}","Oberkirch"]]`
 
 Oder Parameterübergabe aus der URL:\
-[["lastname=? AND city=?"],["{{GET::lastname}}","Oberkirch"]]
+`[["lastname=? AND city=?"],["{{GET::lastname}}","Oberkirch"]]`
 
 ## Für Entwickler: Die Ausgabe über den "exportTable" HOOK anpassen
 
