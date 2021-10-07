@@ -2,7 +2,7 @@
 
 # Export Table für Contao CMS
 
-Mit dieser Erweiterung lassen sich über eine Contao Backend Erweiterung Datenbank-Tabellen ins CSV- oder XML-Format exportieren. Dabei kann der Export konfiguriert werden.
+Mit dieser Erweiterung lassen sich vom Contao Backend aus Datenbank-Tabellen ins CSV- oder XML-Format exportieren. Dabei kann der Export konfiguriert werden.
 - Tabelle auswählbar
 - Felder auswählbar
 - Über die Eingabe eines json-Arrays Datensätze filtern
@@ -15,22 +15,24 @@ Mit dieser Erweiterung lassen sich über eine Contao Backend Erweiterung Datenba
 ![Alt text](docs/backend.png?raw=true "Backend")
 
 ## Der Einsatz von Filtern
-Folgender einfacher Filter für tl_member lässt nur **Frauen** aus **Luzern** zu:\
+Der Export ist über Filter konfigurierbar.
+
+Folgender einfacher Filter für die Mitgliedertabelle *tl_member* lässt nur **Frauen** aus **Luzern** zu:\
 `[["gender=? AND city=?"],["female","Luzern"]]`
 
 Oder nur **Frauen** aus **Luzern** oder **Bern**:\
 `[["gender=? AND (city=? OR city=?)"],["female","Luzern", "Bern"]]`
 
-Auch Contao Insert Tags sind möglich:\
+Auch der Gebrauch von Contao Insert Tags ist möglich:\
 `[["lastname=? AND city=?"],["{{user::lastname}}","Oberkirch"]]`
 
 Oder Parameterübergabe aus der URL:\
 `[["lastname=? AND city=?"],["{{GET::lastname}}","Oberkirch"]]`
 
-## Für Entwickler: Die Ausgabe über den "exportTable" HOOK anpassen
+## Für Entwickler: Die Ausgabe über den "exportTable" HOOK steuern
 
-Via Hook kann die Ausgabe angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden,dass der neue Hook vor dem bestehenden aufgerufen wird.\
-Siehe Beispiel:
+Via Hook kann die Ausgabe angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden, dass der neue Hook vor dem bestehenden aufgerufen wird.\
+Siehe dieses Beispiel:
 
 ```php
 // App/eventListener/ExportTable/FormatDateListener.php
@@ -97,7 +99,7 @@ class MyCustomFormatDateListener
  
 
 ## ExportTable aus eigenem Controller heraus nutzen
-Die ExportTable Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
+Die ExportTable-Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
 
 ```php
 // App/Controller/CustomController.php
