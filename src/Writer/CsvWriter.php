@@ -1,7 +1,18 @@
 <?php
 
-namespace Markocupic\ExportTable\Writer;
+declare(strict_types=1);
 
+/*
+ * This file is part of Export Table for Contao CMS.
+ *
+ * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * @license GPL-3.0-or-later
+ * For the full copyright and license information,
+ * please view the LICENSE file that was distributed with this source code.
+ * @link https://github.com/markocupic/export_table
+ */
+
+namespace Markocupic\ExportTable\Writer;
 
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\File;
@@ -21,7 +32,7 @@ class CsvWriter implements WriterInterface{
     {
         $targetFolder = $config->getTargetFolder() ?? $config->getTempFolder();
 
-        // Get reader from array
+        // Get the array reader object from Contao Haste
         $objReader = new ArrayReader($arrData);
 
         $strFilename = $config->getFilename() ?? $config->getTable().'.csv';
@@ -31,10 +42,10 @@ class CsvWriter implements WriterInterface{
         $objWriter->setDelimiter($config->getDelimiter());
         $objWriter->setEnclosure($config->getEnclosure());
 
-        // Create a file
+        // Write content into a file
         $objWriter->writeFrom($objReader);
 
-        // Download the file
+        // Sent the created file to the browser
         $objFile = new File($objWriter->getFilename());
 
         $response = new Response($objFile->sendToBrowser());
