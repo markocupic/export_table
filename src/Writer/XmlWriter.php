@@ -33,16 +33,16 @@ class XmlWriter implements WriterInterface
         $objXml->startElement($config->getTable());
 
         foreach ($arrData as $row => $arrRow) {
-            // Headline
+            // Skip the headline
             if (0 === $row) {
                 continue;
             }
 
-            // New row
+            // Add a new row
             $objXml->startElement('datarecord');
 
             foreach ($arrRow as $i => $fieldvalue) {
-                // New field
+                // Add a field
                 $objXml->startElement($arrData[0][$i]);
 
                 if (is_numeric($fieldvalue) || null === $fieldvalue || '' === $fieldvalue) {
@@ -52,19 +52,19 @@ class XmlWriter implements WriterInterface
                     $objXml->writeCdata($fieldvalue);
                 }
 
-                //end field-tag
+                // Add the closing field tag
                 $objXml->endElement();
             }
-            // End row-tag
+            // Add the closing row tag
             $objXml->endElement();
         }
-        // End table-tag
+        // Add the closing table tag
         $objXml->endElement();
 
-        // End document
+        // Add the closing document tag
         $objXml->endDocument();
 
-        // Write output to file system
+        // Write output to the file system
         $strFilename = $config->getFilename() ?? $config->getTable().'.xml';
         $targetFolder = $config->getTargetFolder() ?? $config->getTempFolder();
 
