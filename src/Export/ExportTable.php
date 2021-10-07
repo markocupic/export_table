@@ -41,7 +41,7 @@ class ExportTable extends Backend
     private $framework;
 
     /**
-     * @var
+     * @var RequestStack
      */
     private $requestStack;
 
@@ -94,17 +94,17 @@ class ExportTable extends Backend
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
         $systemAdapter = $this->framework->getAdapter(System::class);
 
-        // Load Datacontainer
+        // Load the data container array
         $controllerAdapter->loadDataContainer($this->strTable, true);
         $arrDca = $GLOBALS['TL_DCA'][$this->strTable] ?? [];
 
-        // If no fields are chosen, then list all fields from the selected table
+        // If no fields are chosen, then do list all the fields from the selected table.
         $arrSelectedFields = $objConfig->getFields();
         if (empty($arrSelectedFields)) {
             $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
         }
 
-        // Load language for the headline fields
+        // Load the language files for the headline fields.
         if (!empty($objConfig->getHeadlineLabelLang())) {
             $controllerAdapter->loadLanguageFile($this->strTable, $objConfig->getHeadlineLabelLang());
         }
@@ -115,12 +115,14 @@ class ExportTable extends Backend
             $arrHeadline[] = $arrDca[$strFieldname][0] ?? $strFieldname;
         }
 
-        // Add the headline first to data array
+        // First add the headline to the data array.
         $this->arrData[] = $arrHeadline;
 
-        // Handle filter expression
-        // Get filter as JSON encoded arrays -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]]
-        $arrFilterStmt = $this->getFilterStmt($objConfig->getFilter(), $objConfig);
+        // Generate filter expression
+        // Enter the filter expression as a JSON encoded array -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]]
+        $arrFilterStmt = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
+        
+        // Generate the sorting expression.
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
         $objDb = $databaseAdapter->getInstance()
@@ -134,7 +136,7 @@ class ExportTable extends Backend
             foreach ($arrSelectedFields as $strFieldname) {
                 $varValue = $arrDataRecord[$strFieldname];
 
-                // HOOK: Process data with your custom hooks
+                // HOOK: Process data with your custom hooks.
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = $systemAdapter->importStatic($callback[0]);
@@ -147,18 +149,18 @@ class ExportTable extends Backend
             $this->arrData[] = $arrRow;
         }
 
-        // xml-output
+        // XML
         if ('xml' === $objConfig->getExportType()) {
             $this->xmlWriter->write($this->arrData, $objConfig);
         }
 
-        // csv-output
-        if ('csv' === $objConfig->getExportType()) {
+        // CSV
+        elseif ('csv' === $objConfig->getExportType()) {
             $this->csvWriter->write($this->arrData, $objConfig);
         }
     }
 
-    private function getFilterStmt(array $arrFilter, Config $objConfig): array
+    private function generateFilterStmt(array $arrFilter, Config $objConfig): array
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -210,7 +212,7 @@ class ExportTable extends Backend
             }
         }
 
-        // Check for invalid strings
+        // Check for invalid input.
         if ($this->str->containsInvalidChars(strtolower($filterStmt.' '.$arrValues), $objConfig->getInvalidFilterExpr())) {
             $message = sprintf(
                 'Illegal filter statements detected. Do not use "%s" in your filter expression.',
