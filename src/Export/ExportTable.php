@@ -98,9 +98,8 @@ class ExportTable extends Backend
         $controllerAdapter->loadDataContainer($this->strTable, true);
         $arrDca = $GLOBALS['TL_DCA'][$this->strTable] ?? [];
 
-        // If no fields are selected, then list the whole table
+        // If no fields are chosen, then list all fields of the table
         $arrSelectedFields = $objConfig->getFields();
-
         if (empty($arrSelectedFields)) {
             $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
         }
@@ -116,11 +115,11 @@ class ExportTable extends Backend
             $arrHeadline[] = $arrDca[$strFieldname][0] ?? $strFieldname;
         }
 
-        // Add headline to  $this->arrData[]
+        // Add the headline first to data array
         $this->arrData[] = $arrHeadline;
 
         // Handle filter expression
-        // Get filter as json encoded array [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]]
+        // Get filter as JSON encoded arrays -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]]
         $arrFilterStmt = $this->getFilterStmt($objConfig->getFilter(), $objConfig);
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
@@ -135,7 +134,7 @@ class ExportTable extends Backend
             foreach ($arrSelectedFields as $strFieldname) {
                 $varValue = $arrDataRecord[$strFieldname];
 
-                // HOOK: Add custom value
+                // HOOK: Process data with your custom hooks
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = $systemAdapter->importStatic($callback[0]);
@@ -166,8 +165,8 @@ class ExportTable extends Backend
         $strFilter = json_encode($arrFilter);
 
         if ($objConfig->getActivateDeepLinkExport()) {
-            // Replace {{GET::*}} with GET parameter --> ....?firstname=James&lastname=Bond
-            //[["firstname={{GET::firstname}} AND lastname={{GET::lastname}}]]
+            // Replace {{GET::*}} with the value of a GET parameter --> ...?firstname=James&lastname=Bond
+            // [["firstname={{GET::firstname}} AND lastname={{GET::lastname}}]]
             if (preg_match_all('/{{GET::(.*)}}/', $strFilter, $matches)) {
                 foreach (array_keys($matches) as $k) {
                     if ($matches[1][$k] && $request->query->has($matches[1][$k])) {
