@@ -55,7 +55,14 @@ class MyCustomFormatDateListener
     public const HOOK = 'exportTable';
     public const PRIORITY = 100;
     
+    /**
+     * @var bool
+     */
     public static $disableHook = false;
+    
+    /**
+     * @var ContaoFramework
+     */
     private $framework;
 
     public function __construct(ContaoFramework $framework)
