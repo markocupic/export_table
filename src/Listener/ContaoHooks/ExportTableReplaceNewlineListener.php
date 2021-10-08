@@ -47,7 +47,7 @@ class ExportTableReplaceNewlineListener
         }
 
         // Replace newlines with [NEWLINE]
-        if ('textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
+        if ($varValue && $varValue !== '' && 'textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
             $varValue = str_replace(PHP_EOL, '[NEWLINE]', (string) $varValue);
         }
 
