@@ -60,7 +60,7 @@ class ExportTableFormatDateListener
         if ($dca) {
             $strRgxp = $dca['eval']['rgxp'];
 
-            if ('' !== $varValue && $strRgxp && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
+            if ($varValue && '' !== $varValue && $strRgxp && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
                 $dateFormat = $dateAdapter->getFormatFromRgxp($strRgxp);
                 $varValue = $dateAdapter->parse($dateFormat, $varValue);
             }
