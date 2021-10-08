@@ -54,11 +54,13 @@ class ExportTableHandleArraysListener
         }
 
         $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
+        
+        $dcaEval = $arrDca['fields'][$strFieldname]['eval'];
 
-        if ($arrDca['fields'][$strFieldname]['eval']['csv'] && '' !== $arrDca['fields'][$strFieldname]['eval']['csv']) {
-            $delim = $arrDca['fields'][$strFieldname]['csv'];
+        if ($dcaEval['csv'] && '' !== $dcaEval['csv']) {
+            $delim = $dcaEval['csv'];
             $varValue = implode($delim, $stringUtilAdapter->deserialize($varValue, true));
-        } elseif (true === $arrDca['fields'][$strFieldname]['eval']['multiple']) {
+        } elseif ($dcaEval['multiple'] && true === $dcaEval['multiple']) {
             $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
         }
 
