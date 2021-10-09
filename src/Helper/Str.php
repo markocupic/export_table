@@ -12,10 +12,18 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable;
+namespace Markocupic\ExportTable\Helper;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class MarkocupicExportTable extends Bundle
+class Str
 {
+    public function testAgainstSet(string $strTest, $arrStrings): bool
+    {
+        foreach ($arrStrings as $str) {
+            if (false !== strpos($strTest, $str)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

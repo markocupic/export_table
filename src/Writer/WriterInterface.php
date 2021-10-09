@@ -12,10 +12,11 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable;
+namespace Markocupic\ExportTable\Writer;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Markocupic\ExportTable\Config\Config;
 
-class MarkocupicExportTable extends Bundle
+interface WriterInterface
 {
+    public function write(array $arrData, Config $config);
 }

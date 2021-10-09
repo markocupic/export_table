@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-/**
- * Export table module for Contao CMS
- * Copyright (c) 2008-2020 Marko Cupic
- * @package export_table
- * @author Marko Cupic m.cupic@gmx.ch, 2020
+/*
+ * This file is part of Export Table for Contao CMS.
+ *
+ * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * @license GPL-3.0-or-later
+ * For the full copyright and license information,
+ * please view the LICENSE file that was distributed with this source code.
  * @link https://github.com/markocupic/export_table
  */
 
@@ -16,30 +18,19 @@ use Contao\Backend;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
-use Contao\Date;
-use Contao\File;
-use Contao\Folder;
-use Contao\Input;
-use Contao\StringUtil;
 use Contao\System;
-use Doctrine\DBAL\Connection;
-use League\Csv\Reader;
-use League\Csv\Writer;
+use Markocupic\ExportTable\Config\Config;
+use Markocupic\ExportTable\Helper\Str;
+use Markocupic\ExportTable\Writer\CsvWriter;
+use Markocupic\ExportTable\Writer\XmlWriter;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class ExportTable
- * @package Markocupic\ExportTable\Export
+ * Class ExportTable.
  */
 class ExportTable extends Backend
 {
-
-    /**
-     * @var string
-     */
-    private $projectDir;
-
     /**
      * @var ContaoFramework
      */
@@ -51,9 +42,29 @@ class ExportTable extends Backend
     private $requestStack;
 
     /**
-     * @var Connection
+     * @var CsvWriter
      */
-    private $connection;
+    private $csvWriter;
+
+    /**
+     * @var XmlWriter
+     */
+    private $xmlWriter;
+
+    /**
+     * @var Str
+     */
+    private $strHelper;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @var string
+     */
+    private $projectDir;
 
     /**
      * @var string
@@ -63,473 +74,163 @@ class ExportTable extends Backend
     /**
      * @var array
      */
-    private $arrOptions;
-
-    /**
-     * @var array
-     */
     private $arrData = [];
 
-    /**
-     * ExportTable constructor.
-     * @param string $projectDir
-     * @param ContaoFramework $framework
-     * @param RequestStack $requestStack
-     * @param Connection $connection
-     */
-    public function __construct(string $projectDir, ContaoFramework $framework, RequestStack $requestStack, Connection $connection)
+    public function __construct(ContaoFramework $framework, RequestStack $requestStack, CsvWriter $csvWriter, XmlWriter $xmlWriter, Str $strHelper, TranslatorInterface $translator, string $projectDir)
     {
-        $this->projectDir = $projectDir;
         $this->framework = $framework;
         $this->requestStack = $requestStack;
-        $this->connection = $connection;
-
-        $this->framework->initialize();
+        $this->csvWriter = $csvWriter;
+        $this->xmlWriter = $xmlWriter;
+        $this->strHelper = $strHelper;
+        $this->translator = $translator;
+        $this->projectDir = $projectDir;
     }
 
     /**
      * @throws \Exception
      */
-    public function prepareExport()
+    public function run(Config $objConfig): void
     {
-        /** @var Database $databaseAdapter */
+        $this->strTable = $objConfig->getTable();
+
         $databaseAdapter = $this->framework->getAdapter(Database::class);
-
-        /** @var Input $inputAdapter */
-        $inputAdapter = $this->framework->getAdapter(Input::class);
-
-        /** @var StringUtil $stringUtilAdapter */
-        $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
-
-        /** @var Controller $controllerAdapter */
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
-
-        if (TL_MODE === 'FE' && $inputAdapter->get('action') === 'exportTable' && $inputAdapter->get('key') != '')
-        {
-            // Deep link export requires an id
-            $token = $inputAdapter->get('key');
-            $objDb = $databaseAdapter->getInstance()->prepare('SELECT * FROM tl_export_table WHERE activateDeepLinkExport=? AND deepLinkExportKey=?')->execute('1', $token);
-        }
-        elseif (TL_MODE === 'BE' && $inputAdapter->get('id') !== '' && $inputAdapter->get('do') === 'export_table')
-        {
-            // Deep link export requires an id
-            $id = $inputAdapter->get('id');
-            $objDb = $databaseAdapter->getInstance()->prepare('SELECT * FROM tl_export_table WHERE id=?')->execute($id);
-        }
-        else
-        {
-            throw new \Exception('You are not allowed to use this service.');
-        }
-
-        if (!$objDb->numRows)
-        {
-            throw new \Exception('You are not allowed to use this service.');
-        }
-        else
-        {
-            if (TL_MODE === 'FE' && !$objDb->activateDeepLinkExport)
-            {
-                throw new \Exception('You are not allowed to use this service.');
-            }
-
-            $strTable = (string) $objDb->export_table;
-            $arrSelectedFields = $stringUtilAdapter->deserialize($objDb->fields, true);
-
-            $filterExpression = trim((string) $objDb->filterExpression);
-
-            if (TL_MODE === 'FE' && $objDb->activateDeepLinkExport)
-            {
-                // Replace {{GET::*}} with GET parameter
-                if (preg_match_all('/{{GET::(.*)}}/', $filterExpression, $matches))
-                {
-                    foreach ($matches[0] as $k => $v)
-                    {
-                        if ($inputAdapter->get($matches[1][$k]))
-                        {
-                            $filterExpression = str_replace($matches[0][$k], $inputAdapter->get($matches[1][$k]), $filterExpression);
-                        }
-                    }
-                }
-            }
-            // Sanitize $filterExpression from {{GET::*}}
-            $filterExpression = preg_replace('/{{GET::(.*)}}/', '"empty-string"', $filterExpression);
-
-            // Replace insert tags
-            $filterExpression = $controllerAdapter->replaceInsertTags($filterExpression);
-
-            $exportType = (string) $objDb->exportType;
-            $arrayDelimiter = (string) $objDb->arrayDelimiter;
-
-            $arrForbidden = [
-                'delete',
-                'drop',
-                'update',
-                'alter',
-                'truncate',
-                'insert',
-                'create',
-                'clone',
-            ];
-            foreach ($arrForbidden as $expr)
-            {
-                if (strpos(strtolower($filterExpression), $expr) !== false)
-                {
-                    throw new \Exception('Illegal filter expression! Do not use "' . strtoupper($expr) . '" in your filter expression.');
-                }
-            }
-
-            $sortingExpression = '';
-            if ($objDb->sortBy != '' && $objDb->sortByDirection != '')
-            {
-                $sortingExpression = $objDb->sortBy . ' ' . $objDb->sortByDirection;
-            }
-        }
-
-        $options = [
-            'strSorting'          => $sortingExpression,
-            'exportType'          => $exportType,
-            'strDelimiter'        => ';',
-            'strEnclosure'        => '"',
-            'arrFilter'           => $filterExpression != '' ? json_decode($filterExpression) : [],
-            'strDestination'      => null,
-            'arrSelectedFields'   => $arrSelectedFields,
-            'useLabelForHeadline' => null,
-            'arrayDelimiter'      => $arrayDelimiter,
-        ];
-
-        // Call Export class
-        $this->exportTable($strTable, $options);
-    }
-
-    /**
-     * @param string $strTable
-     * @param array $options
-     * @throws \Exception
-     */
-    public function exportTable(string $strTable, array $options = [])
-    {
-        $this->strTable = $strTable;
-
-        // Defaults
-        $preDefinedOptions = [
-            'strSorting'          => 'id ASC',
-            // Export Type csv or xml
-            'exportType'          => 'csv',
-            'strDelimiter'        => ';',
-            'strEnclosure'        => '"',
-            // arrFilter array(array("published=?",1),array("pid=6",1))
-            'arrFilter'           => [],
-            // strDestination relative to the root dir f.ex: files/mydir
-            'strDestination'      => null,
-            // arrSelectedFields f.ex: array('firstname', 'lastname', 'street')
-            'arrSelectedFields'   => null,
-            // useLabelForHeadline: can be null or en, de, fr, ...
-            'useLabelForHeadline' => null,
-            // arrayDelimiter f.ex: ||
-            'arrayDelimiter'      => '||',
-        ];
-
-        $this->arrOptions = array_merge($preDefinedOptions, $options);
-
-        /** @var Database $databaseAdapter */
-        $databaseAdapter = $this->framework->getAdapter(Database::class);
-
-        /** @var StringUtil $stringUtilAdapter */
-        $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
-
-        /** @var Controller $controllerAdapter */
-        $controllerAdapter = $this->framework->getAdapter(Controller::class);
-
-        /** @var System $systemAdapter */
         $systemAdapter = $this->framework->getAdapter(System::class);
 
-        // Load Datacontainer
-        if (!is_array($GLOBALS['TL_DCA'][$this->strTable]))
-        {
-            $controllerAdapter->loadDataContainer($this->strTable, true);
-        }
+        // Load the data container array.
+        $controllerAdapter->loadDataContainer($this->strTable, true);
+        $arrDca = $GLOBALS['TL_DCA'][$this->strTable] ?? [];
 
-        $dca = [];
-        if (is_array($GLOBALS['TL_DCA'][$this->strTable]))
-        {
-            $dca = $GLOBALS['TL_DCA'][$this->strTable];
-        }
+        // If no fields are chosen, then do list all the fields from the selected table.
+        $arrSelectedFields = $objConfig->getFields();
 
-        // If no fields are selected, then list the whole table
-        $arrSelectedFields = $this->arrOptions['arrSelectedFields'];
-        if ($arrSelectedFields === null || empty($arrSelectedFields))
-        {
+        if (empty($arrSelectedFields)) {
             $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
         }
 
-        // create headline
-        if ($this->arrOptions['useLabelForHeadline'] !== null)
-        {
-            // Use language file
-            $controllerAdapter->loadLanguageFile($this->strTable, $this->arrOptions['useLabelForHeadline']);
+        // Load the language files for the headline fields.
+        if (!empty($objConfig->getHeadlineLabelLang())) {
+            $controllerAdapter->loadLanguageFile($this->strTable, $objConfig->getHeadlineLabelLang());
         }
 
         $arrHeadline = [];
-        foreach ($arrSelectedFields as $fieldname)
-        {
-            $arrLang = $GLOBALS['TL_LANG'][$this->strTable][$fieldname];
-            if (is_array($arrLang) && isset($arrLang[0]))
-            {
-                $arrHeadline[] = strlen($arrLang[0]) ? $arrLang[0] : $fieldname;
-            }
-            else
-            {
-                $arrHeadline[] = $fieldname;
-            }
+
+        foreach ($arrSelectedFields as $strFieldname) {
+            $arrHeadline[] = $arrDca[$strFieldname][0] ?? $strFieldname;
         }
-        // Add headline to  $this->arrData[]
+
+        // First add the headline to the data array.
         $this->arrData[] = $arrHeadline;
 
-        // Handle filter expression
-        // Get filter as json encoded array [[tablename.field=? OR tablename.field=?],["valueA","valueB"]]
-        $arrFilter = $this->arrOptions['arrFilter'];
-        if (empty($arrFilter) || !is_array($arrFilter))
-        {
-            $arrFilter = [];
+        // Generate filter expression.
+        // Enter the filter expression as a JSON encoded array -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]].
+        $arrFilterStmt = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
+
+        // Generate the sorting expression.
+        $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
+
+        $objDb = $databaseAdapter->getInstance()
+            ->prepare('SELECT * FROM  '.$this->strTable.' WHERE '.$arrFilterStmt['stmt'].' ORDER BY '.$strSortingStmt)
+            ->execute(...$arrFilterStmt['values'])
+        ;
+
+        while ($arrDataRecord = $objDb->fetchAssoc()) {
+            $arrRow = [];
+
+            foreach ($arrSelectedFields as $strFieldname) {
+                $varValue = $arrDataRecord[$strFieldname];
+
+                // HOOK: Process data with your custom hooks.
+                if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
+                    foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
+                        $objCallback = $systemAdapter->importStatic($callback[0]);
+                        $varValue = $objCallback->{$callback[1]}($strFieldname, $varValue, $this->strTable, $arrDataRecord, $arrDca, $objConfig);
+                    }
+                }
+
+                $arrRow[] = $varValue;
+            }
+            $this->arrData[] = $arrRow;
         }
 
-        $filterStmt = $this->strTable . ".id>?";
+        // XML
+        if ('xml' === $objConfig->getExportType()) {
+            $this->xmlWriter->write($this->arrData, $objConfig);
+        }
+
+        // CSV
+        elseif ('csv' === $objConfig->getExportType()) {
+            $this->csvWriter->write($this->arrData, $objConfig);
+        }
+    }
+
+    private function generateFilterStmt(array $arrFilter, Config $objConfig): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        $strFilter = json_encode($arrFilter);
+
+        if ($objConfig->isActivateDeepLinkExport()) {
+            // Replace {{GET::*}} with the value of a GET parameter --> ...?firstname=James&lastname=Bond
+            // [["firstname={{GET::firstname}} AND lastname={{GET::lastname}}]]
+            if (preg_match_all('/{{GET::(.*)}}/', $strFilter, $matches)) {
+                foreach (array_keys($matches) as $k) {
+                    if ($matches[1][$k] && $request->query->has($matches[1][$k])) {
+                        $strReplace = $request->query->get($matches[1][$k]);
+                        $strFilter = str_replace($matches[0][$k], $strReplace, $strFilter);
+                    }
+                }
+            }
+        }
+
+        // Sanitize $strFilter from {{GET::*}}
+        $strFilter = preg_replace('/{{GET::(.*)}}/', 'empty-string', $strFilter);
+
+        // Replace insert tags.
+        $controllerAdapter = $this->framework->getAdapter(Controller::class);
+        $strFilter = $controllerAdapter->replaceInsertTags($strFilter);
+
+        $arrFilter = json_decode($strFilter);
+
+        // Default filter statement
+        $filterStmt = $this->strTable.'.id>?';
         $arrValues = [0];
 
-        if (!empty($arrFilter) && is_array($arrFilter))
-        {
-            if (count($arrFilter) === 2)
-            {
+        if (!empty($arrFilter)) {
+            if (2 === \count($arrFilter)) {
                 // Statement
-                if (is_array($arrFilter[0]))
-                {
-                    $filterStmt .= ' AND ' . implode(' AND ', $arrFilter[0]);
-                }
-                else
-                {
-                    $filterStmt .= ' AND ' . $arrFilter[0];
+                if (\is_array($arrFilter[0])) {
+                    $filterStmt .= ' AND '.implode(' AND ', $arrFilter[0]);
+                } else {
+                    $filterStmt .= ' AND '.$arrFilter[0];
                 }
 
                 // Values
-                if (is_array($arrFilter[1]))
-                {
-                    foreach ($arrFilter[1] as $v)
-                    {
+                if (\is_array($arrFilter[1])) {
+                    foreach ($arrFilter[1] as $v) {
                         $arrValues[] = $v;
                     }
-                }
-                else
-                {
+                } else {
                     $arrValues[] = $arrFilter[1];
                 }
             }
         }
 
-        $objDb = $databaseAdapter->getInstance()->prepare("SELECT * FROM  " . $this->strTable . " WHERE " . $filterStmt . " ORDER BY " . $this->arrOptions['strSorting'])->execute($arrValues);
+        // Check for invalid input.
+        if ($this->strHelper->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
+            $message = $this->translator->trans('XPT.exportTblNotAllowedFilterExpression', [implode(', ', $objConfig->getNotAllowedFilterExpr())], 'contao_default');
 
-        while ($dataRecord = $objDb->fetchAssoc())
-        {
-            $arrRow = [];
-            foreach ($arrSelectedFields as $field)
-            {
-                $value = '';
-
-                // Handle arrays correctly
-                if ($dataRecord[$field] != '')
-                {
-                    // Replace newlines with [NEWLINE]
-                    if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'] === 'textarea')
-                    {
-                        $value = $dataRecord[$field];
-                        $dataRecord[$field] = str_replace(PHP_EOL, '[NEWLINE]', $value);
-                    }
-
-                    if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['csv'] != '')
-                    {
-                        $delim = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['csv'];
-                        $value = implode($delim, $stringUtilAdapter->deserialize($dataRecord[$field], true));
-                    }
-                    elseif ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple'] === true)
-                    {
-                        $value = implode($this->arrOptions['arrayDelimiter'], $stringUtilAdapter->deserialize($dataRecord[$field], true));
-                    }
-                    else
-                    {
-                        $value = $dataRecord[$field];
-                    }
-                }
-
-                // HOOK: add custom value
-                if (isset($GLOBALS['TL_HOOKS']['exportTable']) && is_array($GLOBALS['TL_HOOKS']['exportTable']))
-                {
-                    foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback)
-                    {
-                        $objCallback = $systemAdapter->importStatic($callback[0]);
-                        $value = $objCallback->{$callback[1]}($field, $value, $this->strTable, $dataRecord, $dca, $this->arrOptions);
-                    }
-                }
-
-                $arrRow[] = $value;
-            }
-            $this->arrData[] = $arrRow;
+            throw new \Exception($message);
         }
 
-        // xml-output
-        if ($this->arrOptions['exportType'] === 'xml')
-        {
-            $this->exportAsXml();
-        }
-
-        // csv-output
-        if ($this->arrOptions['exportType'] === 'csv')
-        {
-            $this->exportAsCsv();
-        }
-
-        exit;
+        return ['stmt' => $filterStmt, 'values' => $arrValues];
     }
 
-    /**
-     * @return Response|void
-     * @throws \Exception
-     */
-    protected function exportAsCsv()
+    private function getSortingStmt(string $strFieldname = 'id', string $direction = 'desc'): string
     {
-        /** @var Date $dateAdapter */
-        $dateAdapter = $this->framework->getAdapter(Date::class);
+        $arrSorting = [$strFieldname, $direction];
 
-        // Convert special chars
-        $arrFinal = [];
-        foreach ($this->arrData as $arrRow)
-        {
-            $arrLine = array_map(function ($v) {
-                return html_entity_decode(htmlspecialchars_decode($v));
-            }, $arrRow);
-            $arrFinal[] = $arrLine;
-        }
-
-        // Load the CSV document from a string
-        $csv = Writer::createFromString('');
-        $csv->setOutputBOM(Reader::BOM_UTF8);
-        $csv->setDelimiter($this->arrOptions['strDelimiter']);
-        $csv->setEnclosure($this->arrOptions['strEnclosure']);
-
-        // Insert all the records
-        $csv->insertAll($arrFinal);
-
-        // Write output to file system
-        if ($this->arrOptions['strDestination'] !== null)
-        {
-            $target = $this->arrOptions['strDestination'] . '/' . $this->strTable . '_' . $dateAdapter->parse('Y-m-d_H-i-s') . '.csv';
-            return $this->writeToFile($csv->getContent(), $target);
-        }
-        else
-        {
-            // Send file to browser
-            return $this->sendToBrowser($csv->getContent(), 'csv');
-        }
+        return implode(' ', $arrSorting);
     }
-
-    /**
-     * @throws \Exception
-     */
-    protected function exportAsXml()
-    {
-        /** @var Date $dateAdapter */
-        $dateAdapter = $this->framework->getAdapter(Date::class);
-
-        $objXml = new \XMLWriter();
-        $objXml->openMemory();
-        $objXml->setIndent(true);
-        $objXml->setIndentString("\t");
-        $objXml->startDocument('1.0', 'UTF-8');
-
-        $objXml->startElement($this->strTable);
-
-        foreach ($this->arrData as $row => $arrRow)
-        {
-            // Headline
-            if ($row == 0)
-            {
-                continue;
-            }
-
-            // New row
-            $objXml->startElement('datarecord');
-
-            foreach ($arrRow as $i => $fieldvalue)
-            {
-                // New field
-                $objXml->startElement($this->arrData[0][$i]);
-
-                if (is_numeric($fieldvalue) || is_null($fieldvalue) || $fieldvalue == '')
-                {
-                    $objXml->text($fieldvalue);
-                }
-                else
-                {
-                    // Write CDATA
-                    $objXml->writeCdata($fieldvalue);
-                }
-
-                //end field-tag
-                $objXml->endElement();
-            }
-            // End row-tag
-            $objXml->endElement();
-        }
-        // End table-tag
-        $objXml->endElement();
-
-        // End document
-        $objXml->endDocument();
-
-        // Write output to file system
-        if ($this->arrOptions['strDestination'] != '')
-        {
-            $target = $this->arrOptions['strDestination'] . '/' . $this->strTable . '_' . $dateAdapter->parse('Y-m-d_H-i-s') . '.xml';
-            return $this->writeToFile($objXml->outputMemory(), $target);
-        }
-
-        // Send file to browser
-        return $this->sendToBrowser($objXml->outputMemory(), 'xml');
-    }
-
-    /**
-     * @param string $strContent
-     * @param string $target
-     * @throws \Exception
-     */
-    protected function writeToFile(string $strContent = '', string $target): void
-    {
-        if (!is_dir(dirname($this->projectDir . '/' . $target)))
-        {
-            new Folder(dirname($target));
-        }
-
-        $objFile = new File($target);
-
-        // Write csv into file
-        $objFile->write($strContent);
-        $objFile->close();
-    }
-
-    /**
-     * @param string $strContent
-     * @param string $fileEnding
-     * @return Response
-     */
-    protected function sendToBrowser(string $strContent = '', string $fileEnding = 'csv'): Response
-    {
-        // Send file to browser
-        $response = new Response($strContent);
-        $response->headers->set('Content-Encoding', ' UTF-8');
-        $response->headers->set('Cache-Control', 'max-age=0, no-cache, must-revalidate, proxy-revalidate');
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $this->strTable . '.' . $fileEnding);
-        $response->headers->set('Content-Type', 'text/' . $fileEnding . '; charset=UTF-8');
-        $response->headers->set('Content-Transfer-Encoding', 'binary');
-
-        return $response->send();
-    }
-
 }

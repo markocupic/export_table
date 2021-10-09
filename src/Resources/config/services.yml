@@ -1,16 +1,13 @@
 services:
-  Markocupic\ExportTable\Controller\DownloadController:
-    arguments:
-    - '@contao.framework'
-    - '@request_stack'
-    - '@database_connection'
-    - '@Markocupic\ExportTable\Export\ExportTable'
+  _defaults:
+    autowire: true
+    autoconfigure: true
     public: true
+    bind:
+      $projectDir: '%kernel.project_dir%'
 
-  Markocupic\ExportTable\Export\ExportTable:
-    arguments:
-    - '%kernel.project_dir%'
-    - '@contao.framework'
-    - '@request_stack'
-    - '@database_connection'
-    public: true
+  Markocupic\ExportTable\:
+    resource: ../../
+    exclude: ../../{Model,DependencyInjection,Resources}
+
+

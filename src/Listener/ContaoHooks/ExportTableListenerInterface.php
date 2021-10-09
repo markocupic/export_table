@@ -12,10 +12,11 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable;
+namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class MarkocupicExportTable extends Bundle
+interface ExportTableListenerInterface
 {
+    public static function disableHook(): void;
+
+    public static function enableHook(): void;
 }
