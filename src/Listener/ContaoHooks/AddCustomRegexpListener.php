@@ -70,7 +70,7 @@ class AddCustomRegexpListener
                 );
             } elseif ('' !== $input && $this->strHelper->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
                 $widget->addError(
-                    $this->translator->trans('ERR.exportTblNotAllowedFilterExpression', [strtoupper(implode(', ', self::ILLEGAL_EXPR))], 'contao_default')
+                    $this->translator->trans('ERR.exportTblNotAllowedFilterExpression', [strtoupper(implode(', ', $this->config->getNotAllowedFilterExpr()))], 'contao_default')
                 );
             }
 
