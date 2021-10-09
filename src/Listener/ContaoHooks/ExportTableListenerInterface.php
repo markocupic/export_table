@@ -14,15 +14,9 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Contao\Widget;
-use Markocupic\ExportTable\Config\Config;
-use Markocupic\ExportTable\Helper\Str;
-
 interface ExportTableListenerInterface
 {
-
     public static function disableHook(): void;
-    public static function enableHook(): void;
 
+    public static function enableHook(): void;
 }

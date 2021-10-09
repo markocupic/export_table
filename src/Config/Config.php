@@ -156,7 +156,7 @@ class Config
 
     public function setFilter(string $jsonArrFilter = ''): self
     {
-        $arrFilter = $jsonArrFilter === '' ? [] : json_decode($jsonArrFilter);
+        $arrFilter = '' === $jsonArrFilter ? [] : json_decode($jsonArrFilter);
 
         if (!\is_array($arrFilter)) {
             throw new \Exception('Wrong argument passed. Please pass a json encoded array e.g. [["city=?"],["New York"]].');

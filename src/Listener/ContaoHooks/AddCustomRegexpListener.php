@@ -18,6 +18,7 @@ use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Widget;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Helper\Str;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Hook(AddCustomRegexpListener::HOOK,  priority=AddCustomRegexpListener::PRIORITY)
@@ -35,17 +36,23 @@ class AddCustomRegexpListener
     /**
      * @var Str
      */
-    private $str;
+    private $strHelper;
 
     /**
      * @var Config
      */
     private $config;
 
-    public function __construct(Str $str, Config $config)
+    /**
+     * @var Translator
+     */
+    private $translator;
+
+    public function __construct(Str $strHelper, Config $config, TranslatorInterface $translator)
     {
-        $this->str = $str;
+        $this->strHelper = $strHelper;
         $this->config = $config;
+        $this->translator = $translator;
     }
 
     public function __invoke(string $regexp, $input, Widget $widget): bool
@@ -59,14 +66,11 @@ class AddCustomRegexpListener
 
             if (!\is_array($array)) {
                 $widget->addError(
-                    'Invalid expression. Please insert a json array.'
+                    $this->translator->trans('ERR.exportTblInvalidFilterExpression', [], 'contao_default')
                 );
-            } elseif ('' !== $input && $this->str->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
+            } elseif ('' !== $input && $this->strHelper->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
                 $widget->addError(
-                    sprintf(
-                        'Illegal filter expression! Do not use "%s" in your filter expression.',
-                        strtoupper(implode(', ', self::ILLEGAL_EXPR)),
-                    )
+                    $this->translator->trans('ERR.exportTblNotAllowedFilterExpression', [strtoupper(implode(', ', self::ILLEGAL_EXPR))], 'contao_default')
                 );
             }
 

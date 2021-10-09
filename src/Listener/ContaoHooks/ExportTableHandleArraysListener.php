@@ -42,16 +42,6 @@ class ExportTableHandleArraysListener implements ExportTableListenerInterface
         $this->framework = $framework;
     }
 
-    public static function disableHook(): void
-    {
-        self::$disableHook = true;
-    }
-
-    public static function enableHook(): void
-    {
-        self::$disableHook = false;
-    }
-
     /**
      * @param $varValue
      *
@@ -75,5 +65,15 @@ class ExportTableHandleArraysListener implements ExportTableListenerInterface
         }
 
         return $varValue;
+    }
+
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
     }
 }

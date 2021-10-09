@@ -55,12 +55,12 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 100;
-    
+
     /**
      * @var bool
      */
     private static $disableHook = false;
-    
+
     /**
      * @var ContaoFramework
      */
@@ -81,10 +81,10 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
         if (static::$disableHook) {
             return false;
         }
-        
+
         // Disable original Hook that is shipped with the export table extension.
         ExportTableFormatDateListener::disableHook();
-        
+
         $dateAdapter = $this->framework->getAdapter(Date::class);
 
         $dca = $arrDca['fields'][$strFieldname] ?? null;
@@ -100,7 +100,7 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
 
         return $varValue;
     }
-    
+
     public static function disableHook(): void
     {
         self::$disableHook = true;
@@ -114,10 +114,26 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
 
 
 ```
- 
+
 
 ## ExportTable aus eigenem Controller heraus nutzen
-Die ExportTable-Klasse lässt sich auch sehr gut aus anderen Erweiterungen heraus nutzen. Unten siehst du ein Beispiel dazu.
+Die ExportTable-Klasse lässt sich recht simpel auch aus anderen Erweiterungen heraus nutzen.
+
+Dazu muss als Erstes der Export als Erstes konfiguriert werden.
+
+```
+$config = (new Config())
+    ->setTable('tl_user');
+```
+Der eigentliche Export-Service wird mit der Methode `$this->exportTable->run($objConfig)` aufgerufen, welche als einzigen Parameter das vorher erstellte Config-Objekt erwartet.
+```
+$config = (new Config())
+    ->setTable('tl_user');
+
+return $this->exportTable->run($config);
+```
+
+Hier das ausführlichere Beispiel eingebettet in einem custom controller.
 
 ```php
 // App/Controller/CustomController.php
@@ -182,4 +198,4 @@ class CustomController extends AbstractController
 ```
 
 
-Viel Spass mit Export Table! 
+Viel Spass mit Export Table!

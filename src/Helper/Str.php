@@ -16,11 +16,10 @@ namespace Markocupic\ExportTable\Helper;
 
 class Str
 {
-    public function testAgainstSet(string $str, $arrInvalid): bool
+    public function testAgainstSet(string $strTest, $arrStrings): bool
     {
-
-        foreach ($arrInvalid as $strInvalid) {
-            if (false !== strpos($str, $strInvalid)) {
+        foreach ($arrStrings as $str) {
+            if (false !== strpos($strTest, $str)) {
                 return true;
             }
         }

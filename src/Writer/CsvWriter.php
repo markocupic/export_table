@@ -21,18 +21,16 @@ use Haste\IO\Writer\CsvFileWriter;
 use Markocupic\ExportTable\Config\Config;
 use Symfony\Component\HttpFoundation\Response;
 
-class CsvWriter implements WriterInterface{
-
+class CsvWriter implements WriterInterface
+{
     /**
-     * @param array $arrData
-     * @param Config $config
      * @throws \Exception
      */
     public function write(array $arrData, Config $config)
     {
         $targetFolder = $config->getTargetFolder() ?? $config->getTempFolder();
 
-        // Get the array reader object from Contao Haste
+        // Use codefog haste and its ArrayReader- and CsvFileWriter-class
         $objReader = new ArrayReader($arrData);
 
         $strFilename = $config->getFilename() ?? $config->getTable().'.csv';
@@ -45,11 +43,11 @@ class CsvWriter implements WriterInterface{
         // Write content into a file
         $objWriter->writeFrom($objReader);
 
-        // Sent the created file to the browser
+        // Send the created file to the browser
         $objFile = new File($objWriter->getFilename());
 
         $response = new Response($objFile->sendToBrowser());
+
         return new ResponseException($response);
     }
-
 }

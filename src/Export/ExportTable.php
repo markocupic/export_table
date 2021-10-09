@@ -24,6 +24,7 @@ use Markocupic\ExportTable\Helper\Str;
 use Markocupic\ExportTable\Writer\CsvWriter;
 use Markocupic\ExportTable\Writer\XmlWriter;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ExportTable.
@@ -53,7 +54,12 @@ class ExportTable extends Backend
     /**
      * @var Str
      */
-    private $str;
+    private $strHelper;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * @var string
@@ -70,13 +76,14 @@ class ExportTable extends Backend
      */
     private $arrData = [];
 
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, CsvWriter $csvWriter, XmlWriter $xmlWriter, Str $str, string $projectDir)
+    public function __construct(ContaoFramework $framework, RequestStack $requestStack, CsvWriter $csvWriter, XmlWriter $xmlWriter, Str $strHelper, TranslatorInterface $translator, string $projectDir)
     {
         $this->framework = $framework;
         $this->requestStack = $requestStack;
         $this->csvWriter = $csvWriter;
         $this->xmlWriter = $xmlWriter;
-        $this->str = $str;
+        $this->strHelper = $strHelper;
+        $this->translator = $translator;
         $this->projectDir = $projectDir;
     }
 
@@ -211,11 +218,8 @@ class ExportTable extends Backend
         }
 
         // Check for invalid input.
-        if ($this->str->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
-            $message = sprintf(
-                'Illegal filter statements detected. Do not use "%s" in your filter expression.',
-                implode(', ', $objConfig->getNotAllowedFilterExpr()),
-            );
+        if ($this->strHelper->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
+            $message = $this->translator->trans('XPT.exportTblNotAllowedFilterExpression', [implode(', ', $objConfig->getNotAllowedFilterExpr())], 'contao_default');
 
             throw new \Exception($message);
         }

@@ -14,16 +14,13 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Writer;
 
-use Contao\CoreBundle\Exception\ResponseException;
 use Contao\File;
 use Markocupic\ExportTable\Config\Config;
-use Symfony\Component\HttpFoundation\Response;
 
 class XmlWriter implements WriterInterface
 {
     public function write(array $arrData, Config $config)
     {
-
         $objXml = new \XMLWriter();
         $objXml->openMemory();
         $objXml->setIndent(true);

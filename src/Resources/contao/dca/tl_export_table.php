@@ -89,7 +89,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 		'sortBy'                 => array(
 			'inputType' => 'select',
 			'eval'      => array('multiple' => false, 'mandatory' => true, 'tl_class' => 'w50'),
-			'sql'       => "varchar(255) NOT NULL default ''",
+			'sql'       => "varchar(64) NOT NULL default ''",
 		),
 		'sortDirection'          => array(
 			'inputType' => 'select',

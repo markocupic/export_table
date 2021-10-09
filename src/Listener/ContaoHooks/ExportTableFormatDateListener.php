@@ -42,16 +42,6 @@ class ExportTableFormatDateListener implements ExportTableListenerInterface
         $this->framework = $framework;
     }
 
-    public static function disableHook(): void
-    {
-        self::$disableHook = true;
-    }
-
-    public static function enableHook(): void
-    {
-        self::$disableHook = false;
-    }
-
     /**
      * @param $varValue
      *
@@ -77,5 +67,15 @@ class ExportTableFormatDateListener implements ExportTableListenerInterface
         }
 
         return $varValue;
+    }
+
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
     }
 }

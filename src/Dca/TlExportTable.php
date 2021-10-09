@@ -79,19 +79,13 @@ class TlExportTable extends Backend
     /**
      * @Callback(table="tl_export_table", target="fields.table.options")
      */
-    public function optionsCbGetTables(): array
+    public function getTableNames(): array
     {
-        $objTables = Database::getInstance()
+        $arrTableNames = Database::getInstance()
             ->listTables()
         ;
 
-        $arrOptions = [];
-
-        foreach ($objTables as $table) {
-            $arrOptions[] = $table;
-        }
-
-        return $arrOptions;
+        return \is_array($arrTableNames) ? $arrTableNames : [];
     }
 
     /**

@@ -30,16 +30,6 @@ class ExportTableReplaceNewlineListener implements ExportTableListenerInterface
      */
     private static $disableHook;
 
-    public static function disableHook(): void
-    {
-        self::$disableHook = true;
-    }
-
-    public static function enableHook(): void
-    {
-        self::$disableHook = false;
-    }
-
     /**
      * @param $varValue
      *
@@ -53,9 +43,19 @@ class ExportTableReplaceNewlineListener implements ExportTableListenerInterface
 
         // Replace newlines with [NEWLINE]
         if ($varValue && '' !== $varValue && 'textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
-            $varValue = str_replace(PHP_EOL, '[NEWLINE]', (string) $varValue);
+            $varValue = preg_replace('/(?>\r\n|\n|\r)/sm','[NEWLINE]', (string) $varValue);
         }
 
         return $varValue;
+    }
+
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
     }
 }

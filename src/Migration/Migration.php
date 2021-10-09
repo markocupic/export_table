@@ -70,7 +70,7 @@ class Migration extends AbstractMigration
 
         $schemaManager = $this->connection->getSchemaManager();
 
-        // #4 Rename tl_module.calendar_event_booking_member_list_partial_template to tl_module.calendarEventBookingMemberListPartialTemplate
+        // Rename fields
         if ($schemaManager->tablesExist(['tl_export_table'])) {
             $columns = $schemaManager->listTableColumns('tl_export_table');
 
