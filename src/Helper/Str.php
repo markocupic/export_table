@@ -14,19 +14,8 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Helper;
 
-use Markocupic\ExportTable\Config\Config;
-
 class Str
 {
-    /**
-     * @var Config
-     */
-    private $config;
-
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
 
     public function containsInvalidChars(string $str, $arrInvalid): bool
     {
