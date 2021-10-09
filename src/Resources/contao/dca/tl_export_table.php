@@ -10,6 +10,8 @@
  * @link https://github.com/markocupic/export_table
  */
 
+use Ramsey\Uuid\Uuid;
+
 $GLOBALS['TL_DCA']['tl_export_table'] = array(
 	'config'      => array(
 		'dataContainer' => 'Table',
@@ -20,27 +22,24 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 		),
 	),
 	'list'        => array(
-		'sorting'           => array(
+		'sorting'    => array(
 			'fields' => array('tstamp DESC'),
 		),
-		'label'             => array(
+		'label'      => array(
 			'fields' => array('title', 'export_table'),
 			'format' => '%s Tabelle: %s',
 		),
-		'operations'        => array(
+		'operations' => array(
 			'edit'   => array(
-				'label' => &$GLOBALS['TL_LANG']['MSC']['edit'],
 				'href'  => 'act=edit',
 				'icon'  => 'edit.gif',
 			),
 			'delete' => array(
-				'label'      => &$GLOBALS['TL_LANG']['MSC']['delete'],
 				'href'       => 'act=delete',
 				'icon'       => 'delete.gif',
 				'attributes' => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
 			),
 			'show'   => array(
-				'label' => &$GLOBALS['TL_LANG']['MSC']['show'],
 				'href'  => 'act=show',
 				'icon'  => 'show.gif',
 			),
@@ -48,10 +47,10 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 	),
 	'palettes'    => array(
 		'__selector__' => array('activateDeepLinkExport'),
-		'default'      => '{title_legend},title;{settings},exportType,exportTable,fields,sortBy,sortDirection,filterExpression,enclosure,delimiter,arrayDelimiter;{deep_link_legend},activateDeepLinkExport',
+		'default'      => '{title_legend},title;{settings},exportType,table,fields,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter;{deep_link_legend},activateDeepLinkExport',
 	),
 	'subpalettes' => array(
-		'activateDeepLinkExport' => 'deepLinkExportKey,deepLinkInfo',
+		'activateDeepLinkExport' => 'token,deepLinkInfo',
 	),
 	'fields'      => array(
 		'id'                     => array(
@@ -74,31 +73,31 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 			'eval'      => array('multiple' => false, 'mandatory' => true, 'tl_class' => 'w50'),
 			'sql'       => "varchar(12) NOT NULL default 'csv'",
 		),
-		'exportTable'            => array(
+		'table'                  => array(
 			'inputType' => 'select',
-			'eval' => array('multiple' => false, 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true, 'tl_class' => 'w50'),
-			'sql'  => "varchar(255) NOT NULL default ''",
+			'eval'      => array('multiple' => false, 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true, 'tl_class' => 'w50'),
+			'sql'       => "varchar(255) NOT NULL default ''",
 		),
 		'fields'                 => array(
 			'inputType' => 'checkboxWizard',
-			'eval' => array('multiple' => true, 'mandatory' => true, 'orderField' => 'orderFields', 'tl_class' => 'clr'),
-			'sql'  => "blob NULL",
+			'eval'      => array('multiple' => true, 'mandatory' => true, 'orderField' => 'orderFields', 'tl_class' => 'clr'),
+			'sql'       => "blob NULL",
 		),
 		'orderFields'            => array(
-			'sql'   => "blob NULL",
+			'sql' => "blob NULL",
 		),
 		'sortBy'                 => array(
 			'inputType' => 'select',
 			'eval'      => array('multiple' => false, 'mandatory' => true, 'tl_class' => 'w50'),
-			'sql'       => "blob NULL",
+			'sql'       => "varchar(255) NOT NULL default ''",
 		),
 		'sortDirection'          => array(
 			'inputType' => 'select',
 			'options'   => array('ASC', 'DESC'),
 			'eval'      => array('multiple' => false, 'mandatory' => true, 'tl_class' => 'w50'),
-            'sql'       => "varchar(64) NOT NULL default ''",
+			'sql'       => "varchar(64) NOT NULL default ''",
 		),
-		'filterExpression'       => array(
+		'filter'                 => array(
 			'inputType' => 'text',
 			'eval'      => array('mandatory' => false, 'rgxp' => 'jsonarray', 'useRawRequestData' => true, 'decodeEntities' => false, 'tl_class' => 'clr'),
 			'sql'       => "varchar(255) NOT NULL default ''",
@@ -117,7 +116,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 			'eval'      => array('mandatory' => true, 'maxlength' => 1, 'tl_class' => 'w50', 'useRawRequestData' => true),
 			'sql'       => "char(1) NOT NULL default ';'",
 		),
-		'arrayDelimiter'              => array(
+		'arrayDelimiter'         => array(
 			'exclude'   => true,
 			'default'   => '||',
 			'inputType' => 'text',
@@ -130,10 +129,10 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 			'eval'      => array('submitOnChange' => true),
 			'sql'       => "char(1) NOT NULL default ''",
 		),
-		'deepLinkExportKey'      => array(
+		'token'                  => array(
 			'exclude'   => true,
 			'search'    => true,
-			'default'   => md5(microtime() . random_int(0, getrandmax())),
+			'default'   => Uuid::uuid4()->toString(),
 			'inputType' => 'text',
 			'eval'      => array('mandatory' => true, 'maxlength' => 250),
 			'sql'       => "varchar(255) NOT NULL default ''",

@@ -61,7 +61,7 @@ class AddCustomRegexpListener
                 $widget->addError(
                     'Invalid expression. Please insert a json array.'
                 );
-            } elseif ($input !== '' && $this->str->containsInvalidChars(strtolower($input), $this->config->getInvalidFilterExpr())) {
+            } elseif ('' !== $input && $this->str->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
                 $widget->addError(
                     sprintf(
                         'Illegal filter expression! Do not use "%s" in your filter expression.',

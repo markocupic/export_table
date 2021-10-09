@@ -46,11 +46,12 @@ use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Date;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
+use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
 /**
  * @Hook(MyCustomFormatDateListener::HOOK, priority=MyCustomFormatDateListener::PRIORITY)
  */
-class MyCustomFormatDateListener
+class MyCustomFormatDateListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 100;
@@ -58,7 +59,7 @@ class MyCustomFormatDateListener
     /**
      * @var bool
      */
-    public static $disableHook = false;
+    private static $disableHook = false;
     
     /**
      * @var ContaoFramework
@@ -82,7 +83,7 @@ class MyCustomFormatDateListener
         }
         
         // Disable original Hook that is shipped with the export table extension.
-        ExportTableFormatDateListener::$disableHook = true;
+        ExportTableFormatDateListener::disableHook();
         
         $dateAdapter = $this->framework->getAdapter(Date::class);
 
@@ -98,6 +99,16 @@ class MyCustomFormatDateListener
         }
 
         return $varValue;
+    }
+    
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
     }
 }
 
@@ -164,7 +175,7 @@ class CustomController extends AbstractController
             ->setFilename('export.csv')
         ;
 
-        return $this->exportTable->exportTable($config);
+        return $this->exportTable->run($config);
     }
 }
 

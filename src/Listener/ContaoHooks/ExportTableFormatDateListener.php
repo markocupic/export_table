@@ -22,7 +22,7 @@ use Markocupic\ExportTable\Config\Config;
 /**
  * @Hook(ExportTableFormatDateListener::HOOK, priority=ExportTableFormatDateListener::PRIORITY)
  */
-class ExportTableFormatDateListener
+class ExportTableFormatDateListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 10;
@@ -30,7 +30,7 @@ class ExportTableFormatDateListener
     /**
      * @var bool
      */
-    public static $disableHook = false;
+    private static $disableHook = false;
 
     /**
      * @var ContaoFramework
@@ -42,6 +42,16 @@ class ExportTableFormatDateListener
         $this->framework = $framework;
     }
 
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
+    }
+
     /**
      * @param $varValue
      *
@@ -49,7 +59,7 @@ class ExportTableFormatDateListener
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
-        if(static::$disableHook){
+        if (static::$disableHook) {
             return $varValue;
         }
 

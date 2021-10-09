@@ -22,7 +22,7 @@ use Markocupic\ExportTable\Config\Config;
 /**
  * @Hook(ExportTableHandleArraysListener::HOOK, priority=ExportTableHandleArraysListener::PRIORITY)
  */
-class ExportTableHandleArraysListener
+class ExportTableHandleArraysListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 30;
@@ -30,7 +30,7 @@ class ExportTableHandleArraysListener
     /**
      * @var bool
      */
-    public static $disableHook;
+    private static $disableHook;
 
     /**
      * @var ContaoFramework
@@ -40,6 +40,16 @@ class ExportTableHandleArraysListener
     public function __construct(ContaoFramework $framework)
     {
         $this->framework = $framework;
+    }
+
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
     }
 
     /**
@@ -54,7 +64,7 @@ class ExportTableHandleArraysListener
         }
 
         $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
-        
+
         $dcaEval = $arrDca['fields'][$strFieldname]['eval'];
 
         if ($dcaEval['csv'] && '' !== $dcaEval['csv']) {

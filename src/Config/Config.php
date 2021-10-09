@@ -14,230 +14,256 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Config;
 
-use http\Exception\InvalidArgumentException;
-
 class Config
 {
-    private $strTable = 'tl_member';
-    private $strExportType = 'csv';
-    private $strSortBy = 'id';
-    private $strSortDirection = 'asc';
-    private $strDelimiter = ';';
-    private $strEnclosure = '"';
-    private $arrFilter = [];
-    private $strTargetFolder;
-    private $strTempFolder = 'system/tmp';
-    private $arrFields = [];
-    private $strHeadlineLabelLang;
-    private $strArrayDelimiter = '||';
-    private $strFilename;
-    private $activateDeepLinkExport = false;
-    private $deepLinkExportKey = '';
-    private $invalidFilterExpr = [
-        'delete',
-        'drop',
-        'update',
-        'alter',
-        'truncate',
-        'insert',
-        'create',
-        'clone',
+    private $arrData = [
+        'title' => '',
+        'table' => 'tl_member',
+        'exportType' => 'csv',
+        'sortBy' => 'id',
+        'sortDirection' => 'ASC',
+        'delimiter' => ';',
+        'enclosure' => '"',
+        'filter' => [],
+        'arrayDelimiter' => '||',
+        'targetFolder' => null,
+        'tempFolder' => 'system/tmp',
+        'fields' => [],
+        'headlineLabelLang' => null,
+        'filename' => null,
+        'activateDeepLinkExport' => false,
+        'token' => null,
+        'notAllowedFilterExpr' => [
+            'delete',
+            'drop',
+            'update',
+            'alter',
+            'truncate',
+            'insert',
+            'create',
+            'clone',
+        ],
     ];
+
+    public function getTitle(): string
+    {
+        return $this->arrData['title'];
+    }
+
+    public function setTitle(string $strTitle): self
+    {
+        $this->arrData['title'] = $strTable;
+
+        return $this;
+    }
 
     public function getTable(): ?string
     {
-        return $this->strTable;
+        return $this->arrData['table'];
     }
 
     public function setTable(string $strTable): self
     {
-        $this->strTable = $strTable;
+        $this->arrData['table'] = $strTable;
 
         return $this;
     }
 
     public function getExportType(): ?string
     {
-        return $this->strExportType;
+        return $this->arrData['exportType'];
     }
 
     public function setExportType(string $strExportType): self
     {
-        $this->strExportType = $strExportType;
+        $this->arrData['exportType'] = $strExportType;
 
         return $this;
     }
 
     public function getSortBy(): string
     {
-        return $this->strSortBy;
+        return $this->arrData['sortBy'];
     }
 
     public function setSortBy(string $strSortBy): self
     {
-        $this->strSortBy = $strSortBy;
+        $this->arrData['sortBy'] = $strSortBy;
 
         return $this;
     }
 
     public function getSortDirection(): string
     {
-        return $this->strSortDirection;
+        return $this->arrData['sortDirection'];
     }
 
-    public function setSortDirection(string $strSortDirection): self
+    /**
+     * @return $this
+     */
+    public function setSortDirection(string $strSortDirection = 'ASC'): self
     {
-        $this->strSortDirection = $strSortDirection;
+        $strSortDirection = strtoupper($strSortDirection);
+
+        if (!\in_array($strSortDirection, ['ASC', 'DESC'], true)) {
+            throw new \Exception(sprintf('Sort direction should be "ASC" or "DESC", %s given.', $strSortDirection));
+        }
+        $this->arrData['sortDirection'] = $strSortDirection;
 
         return $this;
     }
 
     public function getDelimiter(): string
     {
-        return $this->strDelimiter;
+        return $this->arrData['delimiter'];
     }
 
     public function setDelimiter(string $strDelimiter = ';'): self
     {
-        $this->strDelimiter = $strDelimiter;
+        $this->arrData['delimiter'] = $strDelimiter;
 
         return $this;
     }
 
     public function getEnclosure(): string
     {
-        return $this->strEnclosure;
+        return $this->arrData['enclosure'];
     }
 
     public function setEnclosure(string $strEnclosure = '"'): self
     {
-        $this->strEnclosure = $strEnclosure;
+        $this->arrData['enclosure'] = $strEnclosure;
 
         return $this;
     }
 
     public function getArrayDelimiter(): string
     {
-        return $this->strArrayDelimiter;
+        return $this->arrData['arrayDelimiter'];
     }
 
     public function setArrayDelimiter(string $strArrayDelimiter): self
     {
-        $this->strArrayDelimiter = $strArrayDelimiter;
+        $this->arrData['arrayDelimiter'] = $strArrayDelimiter;
 
         return $this;
     }
 
     public function getFilter(): array
     {
-        return $this->arrFilter;
+        return $this->arrData['filter'];
     }
 
     public function setFilter(string $jsonArrFilter = ''): self
     {
-        $arrFilter = json_decode($jsonArrFilter);
+        $arrFilter = $jsonArrFilter === '' ? [] : json_decode($jsonArrFilter);
 
         if (!\is_array($arrFilter)) {
-            throw new InvalidArgumentException('Wrong argument for $jsonArrFilter. Please use a json encoded array e.g. [["city=?"],["New York"]]');
+            throw new \Exception('Wrong argument passed. Please pass a json encoded array e.g. [["city=?"],["New York"]].');
         }
-        $this->arrFilter = $arrFilter;
+        $this->arrData['filter'] = $arrFilter;
 
         return $this;
     }
 
-    public function getInvalidFilterExpr(): array
+    public function getNotAllowedFilterExpr(): array
     {
-        return $this->invalidFilterExpr;
+        return $this->arrData['notAllowedFilterExpr'];
     }
 
-    public function setInvalidFilterExpr(array $invalidFilterExpr = []): self
+    public function setNotAllowedFilterExpr(array $notAllowedFilterExpr = []): self
     {
-        $this->invalidFilterExpr = $invalidFilterExpr;
+        $this->arrData['notAllowedFilterExpr'] = $notAllowedFilterExpr;
 
         return $this;
     }
 
     public function getTargetFolder(): ?string
     {
-        return $this->strTargetFolder;
+        return $this->arrData['targetFolder'];
     }
 
     public function setTargetFolder(string $strTargetFolder): self
     {
-        $this->strTargetFolder = $strTargetFolder;
+        $this->arrData['targetFolder'] = $strTargetFolder;
 
         return $this;
     }
 
     public function getFilename(): ?string
     {
-        return $this->strFilename;
+        return $this->arrData['filename'];
     }
 
     public function setFilename(string $strFilename): self
     {
-        $this->strFilename = $strFilename;
+        $this->arrData['filename'] = $strFilename;
 
         return $this;
     }
 
     public function getTempFolder(): string
     {
-        return $this->strTempFolder;
+        return $this->arrData['tempFolder'];
     }
 
     public function setTempFolder(string $strTempFolder): self
     {
-        $this->strTempFolder = $strTempFolder;
+        $this->arrData['tempFolder'] = $strTempFolder;
 
         return $this;
     }
 
     public function getFields(): array
     {
-        return $this->arrFields;
+        return $this->arrData['fields'];
     }
 
     public function setFields(array $arrFields): self
     {
-        $this->arrFields = $arrFields;
+        $this->arrData['fields'] = $arrFields;
 
         return $this;
     }
 
     public function getHeadlineLabelLang(): ?string
     {
-        return $this->strHeadlineLabelLang;
+        return $this->arrData['headlineLabelLang'];
     }
 
     public function setHeadlineLabelLang(string $strHeadlineLabelLang): self
     {
-        $this->strHeadlineLabelLang = $strHeadlineLabelLang;
+        $this->arrData['headlineLabelLang'] = $strHeadlineLabelLang;
 
         return $this;
     }
 
-    public function getActivateDeepLinkExport(): bool
+    public function isActivateDeepLinkExport(): bool
     {
-        return $this->activateDeepLinkExport;
+        return $this->arrData['activateDeepLinkExport'];
     }
 
     public function setActivateDeepLinkExport(bool $blnActivate): self
     {
-        $this->activateDeepLinkExport = $blnActivate;
+        $this->arrData['activateDeepLinkExport'] = $blnActivate;
 
         return $this;
     }
 
-    public function getDeepLinkExportKey(): string
+    public function getToken(): string
     {
-        return $this->deepLinkExportKey;
+        return $this->arrData['token'];
     }
 
-    public function setDeepLinkExportKey(string $token): self
+    public function setToken(string $token): self
     {
-        $this->deepLinkExportKey = $token;
+        $this->arrData['token'] = $token;
 
         return $this;
+    }
+
+    public function getAll(): array
+    {
+        return $this->arrData;
     }
 }

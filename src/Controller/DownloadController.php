@@ -60,8 +60,9 @@ class DownloadController extends AbstractController
         $this->framework->initialize();
         $request = $this->requestStack->getCurrentRequest();
         $strToken = $request->query->get('key');
-        
+
         $objConfig = $this->getConfigFromToken->get($strToken);
-        return $this->exportTable->exportTable($objConfig);
+
+        return $this->exportTable->run($objConfig);
     }
 }

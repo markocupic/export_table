@@ -70,14 +70,14 @@ class TlExportTable extends Backend
                 /** @var ExportTable$objExport */
                 $objExport = System::getContainer()->get(ExportTable::class);
 
-                $objExport->exportTable($objConfig->get($model));
+                $objExport->run($objConfig->get($model));
                 exit();
             }
         }
     }
 
     /**
-     * @Callback(table="tl_export_table", target="fields.exportTable.options")
+     * @Callback(table="tl_export_table", target="fields.table.options")
      */
     public function optionsCbGetTables(): array
     {
@@ -123,7 +123,7 @@ class TlExportTable extends Backend
      */
     public function optionsCbSelectedFields(DataContainer $dc): array
     {
-        return $this->getFieldsFromTable($dc->activeRecord->exportTable);
+        return $this->getFieldsFromTable($dc->activeRecord->table);
     }
 
     /**
@@ -137,7 +137,7 @@ class TlExportTable extends Backend
                 Input::get('id')
             )
         ;
-        $key = $objDb->deepLinkExportKey;
+        $key = $objDb->token;
         $href = sprintf(
             '%s/_export_table_download_table?action=exportTable&amp;key=%s',
             Environment::get('url'),

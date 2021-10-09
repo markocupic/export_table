@@ -22,18 +22,18 @@ class GetConfigFromModel
     public function get(ExportTableModel $model): Config
     {
         return (new Config())
-            ->setTable($model->exportTable)
+            ->setTable($model->table)
             ->setExportType($model->exportType)
-            ->setTable($model->exportTable)
+            ->setTable($model->table)
             ->setSortBy($model->sortBy)
             ->setSortDirection($model->sortDirection)
             ->setEnclosure($model->enclosure)
             ->setDelimiter($model->delimiter)
             ->setFields(StringUtil::deserialize($model->fields, true))
             ->setArrayDelimiter($model->arrayDelimiter)
-            ->setFilter($model->filterExpression)
-            ->setActivateDeepLinkExport((bool)$model->activateDeepLinkExport)
-            ->setDeepLinkExportKey($model->deepLinkExportKey)
+            ->setFilter($model->filter)
+            ->setActivateDeepLinkExport((bool) $model->activateDeepLinkExport)
+            ->setToken($model->token)
         ;
     }
 }

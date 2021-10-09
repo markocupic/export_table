@@ -23,7 +23,8 @@
   },
   "require": {
     "contao/core-bundle": "^4.9",
-    "codefog/contao-haste": "^4.20"
+    "codefog/contao-haste": "^4.20",
+    "ramsey/uuid": "^3.0 || ^4.0"
   },
   "require-dev": {
     "contao/easy-coding-standard": "^3.2"

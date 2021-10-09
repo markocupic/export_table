@@ -31,11 +31,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ExportTable extends Backend
 {
     /**
-     * @var string
-     */
-    private $projectDir;
-
-    /**
      * @var ContaoFramework
      */
     private $framework;
@@ -44,11 +39,6 @@ class ExportTable extends Backend
      * @var RequestStack
      */
     private $requestStack;
-
-    /**
-     * @var Str
-     */
-    private $str;
 
     /**
      * @var CsvWriter
@@ -61,6 +51,16 @@ class ExportTable extends Backend
     private $xmlWriter;
 
     /**
+     * @var Str
+     */
+    private $str;
+
+    /**
+     * @var string
+     */
+    private $projectDir;
+
+    /**
      * @var string
      */
     private $strTable;
@@ -70,23 +70,20 @@ class ExportTable extends Backend
      */
     private $arrData = [];
 
-    /**
-     * ExportTable constructor.
-     */
-    public function __construct(string $projectDir, ContaoFramework $framework, RequestStack $requestStack, Str $str, CsvWriter $csvWriter, XmlWriter $xmlWriter)
+    public function __construct(ContaoFramework $framework, RequestStack $requestStack, CsvWriter $csvWriter, XmlWriter $xmlWriter, Str $str, string $projectDir)
     {
-        $this->projectDir = $projectDir;
         $this->framework = $framework;
         $this->requestStack = $requestStack;
-        $this->str = $str;
         $this->csvWriter = $csvWriter;
         $this->xmlWriter = $xmlWriter;
+        $this->str = $str;
+        $this->projectDir = $projectDir;
     }
 
     /**
      * @throws \Exception
      */
-    public function exportTable(Config $objConfig): void
+    public function run(Config $objConfig): void
     {
         $this->strTable = $objConfig->getTable();
 
@@ -94,12 +91,13 @@ class ExportTable extends Backend
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
         $systemAdapter = $this->framework->getAdapter(System::class);
 
-        // Load the data container array
+        // Load the data container array.
         $controllerAdapter->loadDataContainer($this->strTable, true);
         $arrDca = $GLOBALS['TL_DCA'][$this->strTable] ?? [];
 
         // If no fields are chosen, then do list all the fields from the selected table.
         $arrSelectedFields = $objConfig->getFields();
+
         if (empty($arrSelectedFields)) {
             $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
         }
@@ -118,10 +116,10 @@ class ExportTable extends Backend
         // First add the headline to the data array.
         $this->arrData[] = $arrHeadline;
 
-        // Generate filter expression
-        // Enter the filter expression as a JSON encoded array -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]]
+        // Generate filter expression.
+        // Enter the filter expression as a JSON encoded array -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]].
         $arrFilterStmt = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
-        
+
         // Generate the sorting expression.
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
@@ -166,7 +164,7 @@ class ExportTable extends Backend
 
         $strFilter = json_encode($arrFilter);
 
-        if ($objConfig->getActivateDeepLinkExport()) {
+        if ($objConfig->isActivateDeepLinkExport()) {
             // Replace {{GET::*}} with the value of a GET parameter --> ...?firstname=James&lastname=Bond
             // [["firstname={{GET::firstname}} AND lastname={{GET::lastname}}]]
             if (preg_match_all('/{{GET::(.*)}}/', $strFilter, $matches)) {
@@ -182,7 +180,7 @@ class ExportTable extends Backend
         // Sanitize $strFilter from {{GET::*}}
         $strFilter = preg_replace('/{{GET::(.*)}}/', 'empty-string', $strFilter);
 
-        // Replace insert tags
+        // Replace insert tags.
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
         $strFilter = $controllerAdapter->replaceInsertTags($strFilter);
 
@@ -213,10 +211,10 @@ class ExportTable extends Backend
         }
 
         // Check for invalid input.
-        if ($this->str->containsInvalidChars(strtolower($filterStmt.' '.$arrValues), $objConfig->getInvalidFilterExpr())) {
+        if ($this->str->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
             $message = sprintf(
                 'Illegal filter statements detected. Do not use "%s" in your filter expression.',
-                implode(', ', $objConfig->getInvalidFilterExpr()),
+                implode(', ', $objConfig->getNotAllowedFilterExpr()),
             );
 
             throw new \Exception($message);

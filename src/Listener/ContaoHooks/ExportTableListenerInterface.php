@@ -12,19 +12,17 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable\Helper;
+namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-class Str
+use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\Widget;
+use Markocupic\ExportTable\Config\Config;
+use Markocupic\ExportTable\Helper\Str;
+
+interface ExportTableListenerInterface
 {
-    public function testAgainstSet(string $str, $arrInvalid): bool
-    {
 
-        foreach ($arrInvalid as $strInvalid) {
-            if (false !== strpos($str, $strInvalid)) {
-                return true;
-            }
-        }
+    public static function disableHook(): void;
+    public static function enableHook(): void;
 
-        return false;
-    }
 }

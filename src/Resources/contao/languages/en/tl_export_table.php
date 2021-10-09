@@ -19,9 +19,9 @@ $GLOBALS['TL_LANG']['tl_export_table']['settings'] = 'Settings';
 $GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = 'Deep-Link settings';
 
 // Fields
-$GLOBALS['TL_LANG']['tl_export_table']['exportTable'] = ['Export data from this table', 'Select a data table for the export please.'];
+$GLOBALS['TL_LANG']['tl_export_table']['table'] = ['Export data from this table', 'Select a data table for the export please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['selected_fields'] = ['Select the fields for the export','Select the fields for the export please.'];
-$GLOBALS['TL_LANG']['tl_export_table']['filterExpression'] = ['SQL "filter-expression"', 'Define filter as JSON-encoded Array -> [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]] You can add insert tags as well: -> [["tl_member.id=?"],[{{user::id}}]]'];
+$GLOBALS['TL_LANG']['tl_export_table']['filter'] = ['SQL "filter-expression"', 'Define filter as JSON-encoded Array -> [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]] You can add insert tags as well: -> [["tl_member.id=?"],[{{user::id}}]]'];
 $GLOBALS['TL_LANG']['tl_export_table']['sortBy'] = ['Sort by', 'Please add a sort by field.'];
 $GLOBALS['TL_LANG']['tl_export_table']['sortDirection'] = ['Sort by direction', 'Select sorting direction please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['enclosure'] = ['Enclosure', 'Please enter the enclosure tag (normally \'"\').'];
@@ -29,7 +29,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['delimiter'] = ['Delimiter', 'Please ente
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'] = ['Export type', 'Select the export type please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['arrayDelimiter'] = ['Array Delimiter', 'Please insert an array delimiter. Normaly "||".'];
 $GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'] = ['Activate Deep-Link export functionality'];
-$GLOBALS['TL_LANG']['tl_export_table']['deepLinkExportKey'] = ['Deep-Link key', 'Add a key to protect the download from other users.'];
+$GLOBALS['TL_LANG']['tl_export_table']['token'] = ['Deep-Link key', 'Add a key to protect the download from other users.'];
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfo'] = ['Link-info'];
 
 // Buttons

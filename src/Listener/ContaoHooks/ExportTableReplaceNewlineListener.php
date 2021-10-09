@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Contao\Date;
 use Markocupic\ExportTable\Config\Config;
 
 /**
  * @Hook(ExportTableReplaceNewlineListener::HOOK, priority=ExportTableReplaceNewlineListener::PRIORITY)
  */
-class ExportTableReplaceNewlineListener
+class ExportTableReplaceNewlineListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 20;
@@ -30,9 +28,17 @@ class ExportTableReplaceNewlineListener
     /**
      * @var bool
      */
-    public static $disableHook;
+    private static $disableHook;
 
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
 
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
+    }
 
     /**
      * @param $varValue
@@ -41,13 +47,12 @@ class ExportTableReplaceNewlineListener
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
-
-        if(static::$disableHook){
+        if (static::$disableHook) {
             return $varValue;
         }
 
         // Replace newlines with [NEWLINE]
-        if ($varValue && $varValue !== '' && 'textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
+        if ($varValue && '' !== $varValue && 'textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
             $varValue = str_replace(PHP_EOL, '[NEWLINE]', (string) $varValue);
         }
 

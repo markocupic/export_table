@@ -40,12 +40,22 @@ class Migration extends AbstractMigration
         if ($schemaManager->tablesExist(['tl_export_table'])) {
             $columns = $schemaManager->listTableColumns('tl_export_table');
 
-            // # Rename tl_export_table.export_table -> tl_export_table.exporttable
-            if (isset($columns['export_table']) && !isset($columns['exporttable'])) {
+            // # Rename tl_export_table.export_table -> tl_export_table.table
+            if (isset($columns['export_table']) && !isset($columns['table'])) {
                 $doMigration = true;
             }
 
-            // # Rename tl_export_table.sortbydirection -> tl_export_table.sortdirection
+            // # Rename tl_export_table.filterExpression-> tl_export_table.filter
+            if (isset($columns['filterexpression']) && !isset($columns['filter'])) {
+                $doMigration = true;
+            }
+
+            // # Rename tl_export_table.deepLinkExportkey-> tl_export_table.token
+            if (isset($columns['deeplinkexportkey']) && !isset($columns['token'])) {
+                $doMigration = true;
+            }
+
+            // # Rename tl_export_table.sortByDirection -> tl_export_table.sortdirection
             if (isset($columns['sortbydirection']) && !isset($columns['sortdirection'])) {
                 $doMigration = true;
             }
@@ -64,9 +74,19 @@ class Migration extends AbstractMigration
         if ($schemaManager->tablesExist(['tl_export_table'])) {
             $columns = $schemaManager->listTableColumns('tl_export_table');
 
-            if (isset($columns['export_table']) && !isset($columns['exporttable'])) {
-                $this->connection->query('ALTER TABLE tl_export_table CHANGE export_table exportTable varchar(255)');
-                $arrMessage[] = 'Rename field tl_export_table.export_table to tl_export_table.exportTable.';
+            if (isset($columns['export_table']) && !isset($columns['table'])) {
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE table table varchar(255)');
+                $arrMessage[] = 'Rename field tl_export_table.export_table to tl_export_table.table.';
+            }
+
+            if (isset($columns['filterexpression']) && !isset($columns['filter'])) {
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE filterexpression filter varchar(255)');
+                $arrMessage[] = 'Rename field tl_export_table.filterExpression to tl_export_table.filter.';
+            }
+
+            if (isset($columns['deeplinkexportkey']) && !isset($columns['token'])) {
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE deeplinkexportkey token varchar(255)');
+                $arrMessage[] = 'Rename field tl_export_table.deepLinkExportKey to tl_export_table.token.';
             }
 
             if (isset($columns['sortbydirection']) && !isset($columns['sortdirection'])) {

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Controller;
 
-use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Export\ExportTable;
@@ -65,7 +64,6 @@ class CustomController extends AbstractController
             ->setFilename('export.csv')
         ;
 
-        return $this->exportTable->exportTable($config);
-
+        return $this->exportTable->run($config);
     }
 }

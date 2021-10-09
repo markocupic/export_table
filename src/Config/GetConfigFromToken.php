@@ -48,7 +48,7 @@ class GetConfigFromToken
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
 
-        if (null !== ($objExport = $exportTableModelAdapter->findOneByDeepLinkExportKey($strToken))) {
+        if (null !== ($objExport = $exportTableModelAdapter->findOneByToken($strToken))) {
             if ($objExport->activateDeepLinkExport) {
                 return true;
             }
@@ -61,7 +61,7 @@ class GetConfigFromToken
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
 
-        if (null !== ($objExport = $exportTableModelAdapter->findOneByDeepLinkExportKey($strToken))) {
+        if (null !== ($objExport = $exportTableModelAdapter->findOneByToken($strToken))) {
             if ($objExport->activateDeepLinkExport) {
                 return $objExport;
             }
