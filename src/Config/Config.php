@@ -60,12 +60,12 @@ class Config
     {
         $this->arrData['model'] = $model;
 
-        return self;
+        return $this;
     }
 
     public function getTitle(): string
     {
-        return $this->arrData['title'];
+        $this->arrData['title'];
     }
 
     /**
