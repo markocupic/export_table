@@ -167,27 +167,10 @@ class ExportTable extends Backend
 
     private function generateFilterStmt(array $arrFilter, Config $objConfig): array
     {
-        $request = $this->requestStack->getCurrentRequest();
 
         $strFilter = json_encode($arrFilter);
 
-        if ($objConfig->isActivateDeepLinkExport()) {
-            // Replace {{GET::*}} with the value of a GET parameter --> ...?firstname=James&lastname=Bond
-            // [["firstname={{GET::firstname}} AND lastname={{GET::lastname}}]]
-            if (preg_match_all('/{{GET::(.*)}}/', $strFilter, $matches)) {
-                foreach (array_keys($matches) as $k) {
-                    if ($matches[1][$k] && $request->query->has($matches[1][$k])) {
-                        $strReplace = $request->query->get($matches[1][$k]);
-                        $strFilter = str_replace($matches[0][$k], $strReplace, $strFilter);
-                    }
-                }
-            }
-        }
-
-        // Sanitize $strFilter from {{GET::*}}
-        $strFilter = preg_replace('/{{GET::(.*)}}/', 'empty-string', $strFilter);
-
-        // Replace insert tags.
+        // Replace insert tags: Replace {{GET::key}} with a given value of certain $_GET parameter.
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
         $strFilter = $controllerAdapter->replaceInsertTags($strFilter);
 

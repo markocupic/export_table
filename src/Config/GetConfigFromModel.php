@@ -21,10 +21,9 @@ class GetConfigFromModel
 {
     public function get(ExportTableModel $model): Config
     {
-        return (new Config())
+        $config = (new Config($model->table))
             ->setModel($model)
             ->setTitle($model->title)
-            ->setTable($model->table)
             ->setExportType($model->exportType)
             ->setTable($model->table)
             ->setSortBy($model->sortBy)
@@ -33,9 +32,14 @@ class GetConfigFromModel
             ->setDelimiter($model->delimiter)
             ->setFields(StringUtil::deserialize($model->fields, true))
             ->setArrayDelimiter($model->arrayDelimiter)
-            ->setFilter($model->filter)
             ->setActivateDeepLinkExport((bool) $model->activateDeepLinkExport)
             ->setToken($model->token)
         ;
+
+        if ('' !== $model->filter) {
+            $config->setFilter(json_decode($model->filter));
+        }
+
+        return $config;
     }
 }

@@ -41,7 +41,7 @@ class GetConfigFromToken
             throw new \Exception('You are not allowed to use this service.');
         }
 
-        return $this->getConfigFromModel->get($this->getExportByKey($strToken));
+        return $this->getConfigFromModel->get($this->getExportFromToken($strToken));
     }
 
     private function isValidKey(string $strToken): bool
@@ -57,7 +57,7 @@ class GetConfigFromToken
         return false;
     }
 
-    private function getExportByKey(string $strToken): ?ExportTableModel
+    private function getExportFromToken(string $strToken): ?ExportTableModel
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
 

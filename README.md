@@ -119,21 +119,19 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
 ## ExportTable aus eigenem Controller heraus nutzen
 Die ExportTable-Klasse lässt sich recht simpel auch aus anderen Erweiterungen heraus nutzen.
 
-Dazu muss als Erstes der Export als Erstes konfiguriert werden.
+Dazu muss als Erstes der Export als Erstes konfiguriert werden. Als Konstruktor-Argument wird der Name der zu exportierenden Tabelle übergeben. Mit dieser Minimalkonfiguration werden überall die Default-Einstellungen übernommen. Eine etwas ausführlichere Konfiguration findest du weiter unten.
 
 ```
-$config = (new Config())
-    ->setTable('tl_user');
+$config = new Config('tl_member');
 ```
 Der eigentliche Export-Service wird mit der Methode `$this->exportTable->run($objConfig)` aufgerufen, welche als einzigen Parameter das vorher erstellte Config-Objekt erwartet.
 ```
-$config = (new Config())
-    ->setTable('tl_user');
+$config = new Config('tl_member');
 
 return $this->exportTable->run($config);
 ```
 
-Hier das ausführlichere Beispiel eingebettet in einem custom controller.
+Hier ein etwas ausführlicheres Beispiel eingebettet in einem Custom Controller.
 
 ```php
 // App/Controller/CustomController.php
@@ -178,13 +176,13 @@ class CustomController extends AbstractController
     {
         $this->framework->initialize();
 
-        $config = (new Config())
+        $config = (new Config('tl_member'))
             ->setExportType('csv')
-            ->setTable('tl_member')
             ->setFields(['firstname', 'lastname', 'dateOfBirth'])
             ->setDelimiter(',')
             ->setEnclosure('"')
-            ->setFilter('[["city=?"],["Oberkirch"]]')
+            // Select * FROM tl_member WHERE tl_member.city = 'Oberkirch'
+            ->setFilter([["city=?"],["Oberkirch"]])
             // Define a target path, otherwise the file will be stored in system/tmp
             ->setTargetFolder('files')
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv

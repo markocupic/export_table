@@ -21,7 +21,7 @@ class Config
     private $arrData = [
         'model' => null,
         'title' => '',
-        'table' => 'tl_member',
+        'table' => null,
         'exportType' => 'csv',
         'sortBy' => 'id',
         'sortDirection' => 'ASC',
@@ -47,6 +47,11 @@ class Config
             'clone',
         ],
     ];
+
+    public function __construct(string $strTable = 'tl_member')
+    {
+        $this->arrData['table'] = $strTable;
+    }
 
     public function getModel(): ?ExportTableModel
     {
@@ -196,13 +201,8 @@ class Config
     /**
      * @return $this
      */
-    public function setFilter(string $jsonArrFilter = ''): self
+    public function setFilter(array $arrFilter): self
     {
-        $arrFilter = '' === $jsonArrFilter ? [] : json_decode($jsonArrFilter);
-
-        if (!\is_array($arrFilter)) {
-            throw new \Exception('Wrong argument passed. Please pass a json encoded array e.g. [["city=?"],["New York"]].');
-        }
         $this->arrData['filter'] = $arrFilter;
 
         return $this;

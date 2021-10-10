@@ -21,9 +21,9 @@ use Markocupic\ExportTable\Helper\Str;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @Hook(AddCustomRegexpListener::HOOK,  priority=AddCustomRegexpListener::PRIORITY)
+ * @Hook(JsonArrayRegexpListener::HOOK,  priority=JsonArrayRegexpListener::PRIORITY)
  */
-class AddCustomRegexpListener
+class JsonArrayRegexpListener
 {
     public const HOOK = 'addCustomRegexp';
     public const PRIORITY = 10;
