@@ -75,22 +75,22 @@ class Migration extends AbstractMigration
             $columns = $schemaManager->listTableColumns('tl_export_table');
 
             if (isset($columns['export_table']) && !isset($columns['table'])) {
-                $this->connection->query('ALTER TABLE tl_export_table CHANGE table table varchar(255)');
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE `export_table` `table` varchar(255)');
                 $arrMessage[] = 'Rename field tl_export_table.export_table to tl_export_table.table.';
             }
 
             if (isset($columns['filterexpression']) && !isset($columns['filter'])) {
-                $this->connection->query('ALTER TABLE tl_export_table CHANGE filterexpression filter varchar(255)');
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE `filterexpression` `filter` varchar(255)');
                 $arrMessage[] = 'Rename field tl_export_table.filterExpression to tl_export_table.filter.';
             }
 
             if (isset($columns['deeplinkexportkey']) && !isset($columns['token'])) {
-                $this->connection->query('ALTER TABLE tl_export_table CHANGE deeplinkexportkey token varchar(255)');
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE `deeplinkexportkey` `token` varchar(255)');
                 $arrMessage[] = 'Rename field tl_export_table.deepLinkExportKey to tl_export_table.token.';
             }
 
             if (isset($columns['sortbydirection']) && !isset($columns['sortdirection'])) {
-                $this->connection->query('ALTER TABLE tl_export_table CHANGE sortByDirection sortDirection varchar(64)');
+                $this->connection->query('ALTER TABLE tl_export_table CHANGE `sortByDirection` `sortDirection` varchar(64)');
                 $arrMessage[] = 'Rename field tl_export_table.sortByDirection to tl_export_table.sortDirection.';
             }
         }
