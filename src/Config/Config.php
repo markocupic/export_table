@@ -14,9 +14,12 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Config;
 
+use Markocupic\ExportTable\Model\ExportTableModel;
+
 class Config
 {
     private $arrData = [
+        'model' => null,
         'title' => '',
         'table' => 'tl_member',
         'exportType' => 'csv',
@@ -45,12 +48,30 @@ class Config
         ],
     ];
 
+    public function getModel(): ?ExportTableModel
+    {
+        return $this->arrData['model'];
+    }
+
+    /**
+     * @return $this
+     */
+    public function setModel(ExportTableModel $model): self
+    {
+        $this->arrData['model'] = $model;
+
+        return self;
+    }
+
     public function getTitle(): string
     {
         return $this->arrData['title'];
     }
 
-    public function setTitle(string $strTitle): self
+    /**
+     * @return $this
+     */
+    public function setTitle(string $strTitle = ''): self
     {
         $this->arrData['title'] = $strTable;
 
@@ -62,6 +83,9 @@ class Config
         return $this->arrData['table'];
     }
 
+    /**
+     * @return $this
+     */
     public function setTable(string $strTable): self
     {
         $this->arrData['table'] = $strTable;
@@ -74,6 +98,9 @@ class Config
         return $this->arrData['exportType'];
     }
 
+    /**
+     * @return $this
+     */
     public function setExportType(string $strExportType): self
     {
         $this->arrData['exportType'] = $strExportType;
@@ -86,6 +113,9 @@ class Config
         return $this->arrData['sortBy'];
     }
 
+    /**
+     * @return $this
+     */
     public function setSortBy(string $strSortBy): self
     {
         $this->arrData['sortBy'] = $strSortBy;
@@ -118,6 +148,9 @@ class Config
         return $this->arrData['delimiter'];
     }
 
+    /**
+     * @return $this
+     */
     public function setDelimiter(string $strDelimiter = ';'): self
     {
         $this->arrData['delimiter'] = $strDelimiter;
@@ -130,6 +163,9 @@ class Config
         return $this->arrData['enclosure'];
     }
 
+    /**
+     * @return $this
+     */
     public function setEnclosure(string $strEnclosure = '"'): self
     {
         $this->arrData['enclosure'] = $strEnclosure;
@@ -142,6 +178,9 @@ class Config
         return $this->arrData['arrayDelimiter'];
     }
 
+    /**
+     * @return $this
+     */
     public function setArrayDelimiter(string $strArrayDelimiter): self
     {
         $this->arrData['arrayDelimiter'] = $strArrayDelimiter;
@@ -154,6 +193,9 @@ class Config
         return $this->arrData['filter'];
     }
 
+    /**
+     * @return $this
+     */
     public function setFilter(string $jsonArrFilter = ''): self
     {
         $arrFilter = '' === $jsonArrFilter ? [] : json_decode($jsonArrFilter);
@@ -171,6 +213,9 @@ class Config
         return $this->arrData['notAllowedFilterExpr'];
     }
 
+    /**
+     * @return $this
+     */
     public function setNotAllowedFilterExpr(array $notAllowedFilterExpr = []): self
     {
         $this->arrData['notAllowedFilterExpr'] = $notAllowedFilterExpr;
@@ -183,6 +228,9 @@ class Config
         return $this->arrData['targetFolder'];
     }
 
+    /**
+     * @return $this
+     */
     public function setTargetFolder(string $strTargetFolder): self
     {
         $this->arrData['targetFolder'] = $strTargetFolder;
@@ -195,6 +243,9 @@ class Config
         return $this->arrData['filename'];
     }
 
+    /**
+     * @return $this
+     */
     public function setFilename(string $strFilename): self
     {
         $this->arrData['filename'] = $strFilename;
@@ -207,6 +258,9 @@ class Config
         return $this->arrData['tempFolder'];
     }
 
+    /**
+     * @return $this
+     */
     public function setTempFolder(string $strTempFolder): self
     {
         $this->arrData['tempFolder'] = $strTempFolder;
@@ -219,6 +273,9 @@ class Config
         return $this->arrData['fields'];
     }
 
+    /**
+     * @return $this
+     */
     public function setFields(array $arrFields): self
     {
         $this->arrData['fields'] = $arrFields;
@@ -231,6 +288,9 @@ class Config
         return $this->arrData['headlineLabelLang'];
     }
 
+    /**
+     * @return $this
+     */
     public function setHeadlineLabelLang(string $strHeadlineLabelLang): self
     {
         $this->arrData['headlineLabelLang'] = $strHeadlineLabelLang;
@@ -243,6 +303,9 @@ class Config
         return $this->arrData['activateDeepLinkExport'];
     }
 
+    /**
+     * @return $this
+     */
     public function setActivateDeepLinkExport(bool $blnActivate): self
     {
         $this->arrData['activateDeepLinkExport'] = $blnActivate;
@@ -255,6 +318,9 @@ class Config
         return $this->arrData['token'];
     }
 
+    /**
+     * @return $this
+     */
     public function setToken(string $token): self
     {
         $this->arrData['token'] = $token;

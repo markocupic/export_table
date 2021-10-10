@@ -22,6 +22,8 @@ class GetConfigFromModel
     public function get(ExportTableModel $model): Config
     {
         return (new Config())
+            ->setModel($model)
+            ->setTitle($model->title)
             ->setTable($model->table)
             ->setExportType($model->exportType)
             ->setTable($model->table)

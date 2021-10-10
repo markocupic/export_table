@@ -43,7 +43,7 @@ class ExportTableReplaceNewlineListener implements ExportTableListenerInterface
 
         // Replace newlines with [NEWLINE]
         if ($varValue && '' !== $varValue && 'textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
-            $varValue = preg_replace('/(?>\r\n|\n|\r)/sm','[NEWLINE]', (string) $varValue);
+            $varValue = preg_replace('/(?>\r\n|\n|\r)/sm', '[NEWLINE]', (string) $varValue);
         }
 
         return $varValue;
