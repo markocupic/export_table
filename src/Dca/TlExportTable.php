@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\Dca;
 
 use Contao\Backend;
+use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Database;
 use Contao\DataContainer;
@@ -26,6 +27,7 @@ use Markocupic\ExportTable\Config\GetConfigFromModel;
 use Markocupic\ExportTable\Export\ExportTable;
 use Markocupic\ExportTable\Model\ExportTableModel;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 class TlExportTable extends Backend
 {
@@ -56,7 +58,7 @@ class TlExportTable extends Backend
     /**
      * @Callback(table="tl_export_table", target="config.onsubmit")
      */
-    public function runExport(): void
+    public function runExport(): Response
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -70,8 +72,8 @@ class TlExportTable extends Backend
                 /** @var ExportTable$objExport */
                 $objExport = System::getContainer()->get(ExportTable::class);
 
-                $objExport->run($objConfig->get($model));
-                exit();
+                $response = new Response($objExport->run($objConfig->get($model)));
+                return new ResponseException($response);
             }
         }
     }

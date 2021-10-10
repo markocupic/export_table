@@ -37,6 +37,12 @@ class GetConfigFromModel
         ;
 
         if ('' !== $model->filter) {
+
+            if(!is_array(json_decode($model->filter))){
+                $message = 'Invalid filter expression. Please insert a JSON array as filter expression: [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]]';
+                throw new \Exception($message);
+            }
+
             $config->setFilter(json_decode($model->filter));
         }
 
