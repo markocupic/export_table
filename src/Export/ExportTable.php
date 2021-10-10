@@ -130,28 +130,31 @@ class ExportTable extends Backend
         // Generate the sorting expression.
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
+        // Selected fields
+        $strFields = empty($arrSelectedFields) ? '*' : implode(',',$arrSelectedFields);
+
         $objDb = $databaseAdapter->getInstance()
-            ->prepare('SELECT * FROM  '.$this->strTable.' WHERE '.$arrFilterStmt['stmt'].' ORDER BY '.$strSortingStmt)
+            ->prepare('SELECT '.$strFields.' FROM  '.$this->strTable.' WHERE '.$arrFilterStmt['stmt'].' ORDER BY '.$strSortingStmt)
             ->execute(...$arrFilterStmt['values'])
         ;
 
-        while ($arrDataRecord = $objDb->fetchAssoc()) {
-            $arrRow = [];
-
+        while ($arrRow = $objDb->fetchAssoc()) {
             foreach ($arrSelectedFields as $strFieldname) {
-                $varValue = $arrDataRecord[$strFieldname];
-
                 // HOOK: Process data with your custom hooks.
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = $systemAdapter->importStatic($callback[0]);
-                        $varValue = $objCallback->{$callback[1]}($strFieldname, $varValue, $this->strTable, $arrDataRecord, $arrDca, $objConfig);
+                        $arrRow[$strFieldname] = $objCallback->{$callback[1]}($strFieldname, $arrRow[$strFieldname], $this->strTable, $arrRow, $arrDca, $objConfig);
                     }
                 }
-
-                $arrRow[] = $varValue;
             }
-            $this->arrData[] = $arrRow;
+
+            // Handle row callback.
+            if (null !== ($callback = $objConfig->getRowCallback())) {
+                $arrRow = $callback($arrRow);
+            }
+
+            $this->arrData[] = array_values($arrRow);
         }
 
         // XML
@@ -167,7 +170,6 @@ class ExportTable extends Backend
 
     private function generateFilterStmt(array $arrFilter, Config $objConfig): array
     {
-
         $strFilter = json_encode($arrFilter);
 
         // Replace insert tags: Replace {{GET::key}} with a given value of certain $_GET parameter.

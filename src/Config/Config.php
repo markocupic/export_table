@@ -36,6 +36,7 @@ class Config
         'filename' => null,
         'activateDeepLinkExport' => false,
         'token' => null,
+        'rowCallback' => null,
         'notAllowedFilterExpr' => [
             'delete',
             'drop',
@@ -325,6 +326,20 @@ class Config
     {
         $this->arrData['token'] = $token;
 
+        return $this;
+    }
+
+    public function getRowCallback(): ?callable
+    {
+        return $this->arrData['rowCallback'];
+    }
+
+    /**
+     * @return $this
+     */
+    public function setRowCallback(?callable $callback): self
+    {
+        $this->arrData['rowCallback'] = $callback;
         return $this;
     }
 

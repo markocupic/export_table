@@ -58,7 +58,7 @@ class TlExportTable extends Backend
     /**
      * @Callback(table="tl_export_table", target="config.onsubmit")
      */
-    public function runExport(): Response
+    public function runExport()
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -73,6 +73,7 @@ class TlExportTable extends Backend
                 $objExport = System::getContainer()->get(ExportTable::class);
 
                 $response = new Response($objExport->run($objConfig->get($model)));
+
                 return new ResponseException($response);
             }
         }
