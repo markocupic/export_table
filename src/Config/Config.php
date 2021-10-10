@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\Config;
 
 use Markocupic\ExportTable\Model\ExportTableModel;
+use mysql_xdevapi\Exception;
 
 class Config
 {
@@ -105,10 +106,18 @@ class Config
     }
 
     /**
+     * @param string $strExportType
      * @return $this
      */
     public function setExportType(string $strExportType): self
     {
+        $strExportType = strtolower($strExportType);
+
+        if(!in_array($strExportType,['csv','xml']))
+        {
+            throw new Exception(sprintf('Export type should be "csv" or "xml", "%s" given.',$strExportType));
+        }
+
         $this->arrData['exportType'] = $strExportType;
 
         return $this;
@@ -340,6 +349,7 @@ class Config
     public function setRowCallback(?callable $callback): self
     {
         $this->arrData['rowCallback'] = $callback;
+
         return $this;
     }
 
