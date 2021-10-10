@@ -119,7 +119,7 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
 ## ExportTable aus eigenem Controller heraus nutzen
 Die ExportTable-Klasse lässt sich recht simpel auch aus anderen Erweiterungen heraus nutzen.
 
-Dazu muss als Erstes der Export als Erstes konfiguriert werden. Als Konstruktor-Argument wird der Name der zu exportierenden Tabelle übergeben. Mit dieser Minimalkonfiguration werden überall die Default-Einstellungen übernommen. Eine etwas ausführlichere Konfiguration findest du weiter unten.
+Dazu muss als Erstes der Export konfiguriert werden. Als Konstruktor-Argument wird der Konfigurationsklasse der Name der zu exportierenden Tabelle übergeben. Mit dieser Minimalkonfiguration werden die Default-Einstellungen übernommen. Ein Beispiel mit einer etwas ausführlicheren Konfiguration findest du weiter unten.
 
 ```
 $config = new Config('tl_member');
@@ -176,6 +176,7 @@ class CustomController extends AbstractController
     {
         $this->framework->initialize();
 
+        // First you have to config your data export.
         $config = (new Config('tl_member'))
             ->setExportType('csv')
             ->setFields(['firstname', 'lastname', 'dateOfBirth'])
@@ -189,6 +190,7 @@ class CustomController extends AbstractController
             ->setFilename('export.csv')
         ;
 
+        // The export class takes the config object as single parameter.
         return $this->exportTable->run($config);
     }
 }
