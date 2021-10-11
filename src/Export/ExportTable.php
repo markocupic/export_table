@@ -91,12 +91,11 @@ class ExportTable extends Backend
 
         // If no fields are chosen, then do list all the fields from the selected table.
         $arrSelectedFields = $objConfig->getFields();
-        $arrSelectedFields = $this->databaseHelper->listFields($this->strTable);
-        die(print_r($arrSelectedFields, true));
 
         if (empty($arrSelectedFields)) {
-            $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
+            $arrSelectedFields = $this->databaseHelper->listFields($this->strTable, false, false);
         }
+
         $strFields = empty($arrSelectedFields) ? '*' : implode(',', $arrSelectedFields);
 
         // Load the language files for the headline fields.

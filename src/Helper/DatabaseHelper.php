@@ -17,7 +17,6 @@ namespace Markocupic\ExportTable\Helper;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 
-
 class DatabaseHelper
 {
     /**
@@ -25,41 +24,47 @@ class DatabaseHelper
      */
     private $framework;
 
-    public function __construct(ContaoFramework $framework){
+    public function __construct(ContaoFramework $framework)
+    {
         $this->framework = $framework;
     }
 
-    public function listFields($strTable, $blnAssociative = false): array
+    public function listFields($strTable, $blnAssociative = false, $blnAddType = false): array
     {
         $databaseAdapter = $this->framework->getAdapter(Database::class);
 
-        if ('' === $strTable) {
-            return [];
-        }
-
-        $objFields = $databaseAdapter->getInstance()
-            ->listFields($strTable, 1)
-        ;
-
         $arrFields = [];
 
-        foreach ($objFields as $field) {
-            if(!$databaseAdapter->getInstance()->fieldExists($field)){
+        if ('' === $strTable) {
+            return $arrFields;
+        }
+
+        $objFields = $databaseAdapter->getInstance()->listFields($strTable, true);
+
+        foreach ($objFields as $arrField) {
+            if (!$databaseAdapter->getInstance()->fieldExists($arrField['name'], $strTable)) {
                 continue;
             }
 
-            if (\in_array($field['name'], $arrFields, true)) {
+            if (\in_array($arrField['name'], $arrFields, true)) {
                 continue;
             }
 
-            if ('PRIMARY' === $field['name']) {
+            if ('index' === $arrField['type']) {
                 continue;
             }
 
-            $arrFields[$field['name']] = $field['name'].' ['.$field['type'].']';
+            if ('PRIMARY' === $arrField['name']) {
+                continue;
+            }
+
+            if ($blnAddType) {
+                $arrFields[$arrField['name']] = $arrField['name'].' - '.$arrField['origtype'];
+            } else {
+                $arrFields[$arrField['name']] = $arrField['name'];
+            }
         }
 
         return $blnAssociative ? $arrFields : array_values($arrFields);
-
     }
 }
