@@ -17,7 +17,7 @@ namespace Markocupic\ExportTable\Listener\ContaoHooks;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Widget;
 use Markocupic\ExportTable\Config\Config;
-use Markocupic\ExportTable\Helper\Str;
+use Markocupic\ExportTable\Helper\StringHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -36,7 +36,7 @@ class JsonArrayRegexpListener
     /**
      * @var Str
      */
-    private $strHelper;
+    private $stringHelper;
 
     /**
      * @var Config
@@ -48,9 +48,9 @@ class JsonArrayRegexpListener
      */
     private $translator;
 
-    public function __construct(Str $strHelper, Config $config, TranslatorInterface $translator)
+    public function __construct(StringHelper $stringHelper, Config $config, TranslatorInterface $translator)
     {
-        $this->strHelper = $strHelper;
+        $this->stringHelper = $stringHelper;
         $this->config = $config;
         $this->translator = $translator;
     }
@@ -68,7 +68,7 @@ class JsonArrayRegexpListener
                 $widget->addError(
                     $this->translator->trans('ERR.exportTblInvalidFilterExpression', [], 'contao_default')
                 );
-            } elseif ('' !== $input && $this->strHelper->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
+            } elseif ('' !== $input && $this->stringHelper->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
                 $widget->addError(
                     $this->translator->trans('ERR.exportTblNotAllowedFilterExpression', [strtoupper(implode(', ', $this->config->getNotAllowedFilterExpr()))], 'contao_default')
                 );

@@ -20,11 +20,10 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\System;
 use Markocupic\ExportTable\Config\Config;
-use Markocupic\ExportTable\Helper\Str;
+use Markocupic\ExportTable\Helper\DatabaseHelper;
+use Markocupic\ExportTable\Helper\StringHelper;
 use Markocupic\ExportTable\Writer\CsvWriter;
 use Markocupic\ExportTable\Writer\XmlWriter;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ExportTable.
@@ -35,11 +34,6 @@ class ExportTable extends Backend
      * @var ContaoFramework
      */
     private $framework;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
 
     /**
      * @var CsvWriter
@@ -54,17 +48,12 @@ class ExportTable extends Backend
     /**
      * @var Str
      */
-    private $strHelper;
+    private $stringHelper;
 
     /**
-     * @var TranslatorInterface
+     * @var DatabaseHelper
      */
-    private $translator;
-
-    /**
-     * @var string
-     */
-    private $projectDir;
+    private $databaseHelper;
 
     /**
      * @var string
@@ -76,15 +65,13 @@ class ExportTable extends Backend
      */
     private $arrData = [];
 
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, CsvWriter $csvWriter, XmlWriter $xmlWriter, Str $strHelper, TranslatorInterface $translator, string $projectDir)
+    public function __construct(ContaoFramework $framework, CsvWriter $csvWriter, XmlWriter $xmlWriter, StringHelper $stringHelper, DatabaseHelper $databaseHelper)
     {
         $this->framework = $framework;
-        $this->requestStack = $requestStack;
         $this->csvWriter = $csvWriter;
         $this->xmlWriter = $xmlWriter;
-        $this->strHelper = $strHelper;
-        $this->translator = $translator;
-        $this->projectDir = $projectDir;
+        $this->stringHelper = $stringHelper;
+        $this->databaseHelper = $databaseHelper;
     }
 
     /**
@@ -104,10 +91,13 @@ class ExportTable extends Backend
 
         // If no fields are chosen, then do list all the fields from the selected table.
         $arrSelectedFields = $objConfig->getFields();
+        $arrSelectedFields = $this->databaseHelper->listFields($this->strTable);
+        die(print_r($arrSelectedFields, true));
 
         if (empty($arrSelectedFields)) {
             $arrSelectedFields = $databaseAdapter->getInstance()->getFieldNames($this->strTable);
         }
+        $strFields = empty($arrSelectedFields) ? '*' : implode(',', $arrSelectedFields);
 
         // Load the language files for the headline fields.
         if (!empty($objConfig->getHeadlineLabelLang())) {
@@ -129,9 +119,6 @@ class ExportTable extends Backend
 
         // Generate the sorting expression.
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
-
-        // Selected fields
-        $strFields = empty($arrSelectedFields) ? '*' : implode(',',$arrSelectedFields);
 
         $objDb = $databaseAdapter->getInstance()
             ->prepare('SELECT '.$strFields.' FROM  '.$this->strTable.' WHERE '.$arrFilterStmt['stmt'].' ORDER BY '.$strSortingStmt)
@@ -203,8 +190,8 @@ class ExportTable extends Backend
         }
 
         // Check for invalid input.
-        if ($this->strHelper->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
-            $message = $this->translator->trans('XPT.exportTblNotAllowedFilterExpression', [implode(', ', $objConfig->getNotAllowedFilterExpr())], 'contao_default');
+        if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
+            $message = sprintf('Illegal filter expression! Do not use "%s" in your filter expression.', implode(', ', $objConfig->getNotAllowedFilterExpr()));
 
             throw new \Exception($message);
         }

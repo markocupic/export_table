@@ -13,6 +13,3 @@
 // Errors
 $GLOBALS['TL_LANG']['ERR']['exportTblInvalidFilterExpression'] = 'Ungültiger Filter-Ausdruck. Bitte geben Sie ein JSON array in dieser Form ein: [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]].';
 $GLOBALS['TL_LANG']['ERR']['exportTblNotAllowedFilterExpression'] = 'Der Filter enthält mind. einen unerlaubten Ausdruck! Verwenden Sie nicht "%s" in Ihrem Filter-Ausdruck.';
-
-// Exceptions
-$GLOBALS['TL_LANG']['XPT']['exportTblNotAllowedFilterExpression'] = 'Der Filter enthält mind. einen unerlaubten Ausdruck! Verwenden Sie nicht "%s" in Ihrem Filter-Ausdruck.';

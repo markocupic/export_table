@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Helper;
 
-class Str
+class StringHelper
 {
     public function testAgainstSet(string $strTest, $arrStrings): bool
     {

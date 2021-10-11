@@ -25,6 +25,7 @@ use Contao\Input;
 use Contao\System;
 use Markocupic\ExportTable\Config\GetConfigFromModel;
 use Markocupic\ExportTable\Export\ExportTable;
+use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Model\ExportTableModel;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,9 +37,15 @@ class TlExportTable extends Backend
      */
     private $requestStack;
 
-    public function __construct(RequestStack $requestStack)
+    /**
+     * @var DatabaseHelper
+     */
+    private $databaseHelper;
+
+    public function __construct(RequestStack $requestStack, DatabaseHelper $databaseHelper)
     {
         $this->requestStack = $requestStack;
+        $this->databaseHelper = $databaseHelper;
 
         parent::__construct();
     }
@@ -156,29 +163,14 @@ class TlExportTable extends Backend
 				';
     }
 
+    /**
+     * @param string $strTable
+     * @return array
+     */
     private function getFieldsFromTable(string $strTable = ''): array
     {
-        if ('' === $strTable) {
-            return [];
-        }
 
-        $objFields = Database::getInstance()
-            ->listFields($strTable, 1)
-        ;
+        return $this->databaseHelper->listFields($strTable, true);
 
-        $arrOptions = [];
-
-        foreach ($objFields as $field) {
-            if (\in_array($field['name'], $arrOptions, true)) {
-                continue;
-            }
-
-            if ('PRIMARY' === $field['name']) {
-                continue;
-            }
-            $arrOptions[$field['name']] = $field['name'].' ['.$field['type'].']';
-        }
-
-        return $arrOptions;
     }
 }
