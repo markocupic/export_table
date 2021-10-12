@@ -14,40 +14,42 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Writer;
 
-use Contao\CoreBundle\Exception\ResponseException;
 use Contao\File;
 use Haste\IO\Reader\ArrayReader;
 use Haste\IO\Writer\CsvFileWriter;
 use Markocupic\ExportTable\Config\Config;
-use Symfony\Component\HttpFoundation\Response;
 
-class CsvWriter implements WriterInterface
+class CsvWriter extends AbstractWriter implements WriterInterface
 {
+    public const FILE_ENDING = 'csv';
+
     /**
      * @throws \Exception
      */
-    public function write(array $arrData, Config $config)
+    public function write(array $arrData, Config $objConfig): void
     {
-        $targetFolder = $config->getTargetFolder() ?? $config->getTempFolder();
-
         // Use codefog haste and its ArrayReader- and CsvFileWriter-class
         $objReader = new ArrayReader($arrData);
 
-        $strFilename = $config->getFilename() ?? $config->getTable().'.csv';
-        $targetFolder = $config->getTargetFolder() ?? $config->getTempFolder();
-
-        $objWriter = new CsvFileWriter($targetFolder.'/'.$strFilename);
-        $objWriter->setDelimiter($config->getDelimiter());
-        $objWriter->setEnclosure($config->getEnclosure());
-
         // Write content into a file
+        $targetPath = $this->getTargetPath($objConfig, self::FILE_ENDING);
+        $objWriter = new CsvFileWriter($targetPath);
+        $objWriter->setDelimiter($objConfig->getDelimiter());
+        $objWriter->setEnclosure($objConfig->getEnclosure());
         $objWriter->writeFrom($objReader);
 
         // Send the created file to the browser
         $objFile = new File($objWriter->getFilename());
 
-        $response = new Response($objFile->sendToBrowser());
+        // E.g send notifications, etc.
+        $objFile = $this->runPostWriteHook($objFile, $objConfig);
 
-        return new ResponseException($response);
+        $this->log($objFile, $objConfig);
+
+        if ($objConfig->getSendFileToTheBrowser()) {
+            $this->sendFileToTheBrowser($objFile, false);
+        }
+
+        $this->sendBackendMessage($objFile);
     }
 }

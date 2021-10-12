@@ -84,6 +84,25 @@ class TlExportTable extends Backend
     /**
      * @Callback(table="tl_export_table", target="config.onload")
      */
+    public function setPalettes(DataContainer $dc): void
+    {
+
+        $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
+
+        if(null !== ($model = $exportTableModelAdapter->findByPk($dc->id)))
+        {
+            $arrPalette = &$GLOBALS['TL_DCA']['tl_export_table']['palettes'];
+            if ($arrPalette[$model->exportType]) {
+                $arrPalette['default'] = $arrPalette[$model->exportType];
+            }
+        }
+
+
+    }
+
+    /**
+     * @Callback(table="tl_export_table", target="config.onload")
+     */
     public function setPost(): void
     {
         $request = $this->requestStack->getCurrentRequest();

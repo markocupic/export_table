@@ -17,9 +17,11 @@ namespace Markocupic\ExportTable\Writer;
 use Contao\File;
 use Markocupic\ExportTable\Config\Config;
 
-class XmlWriter implements WriterInterface
+class XmlWriter extends AbstractWriter implements WriterInterface
 {
-    public function write(array $arrData, Config $config)
+    public const FILE_ENDING = 'xml';
+
+    public function write(array $arrData, Config $objConfig): void
     {
         $objXml = new \XMLWriter();
         $objXml->openMemory();
@@ -27,7 +29,7 @@ class XmlWriter implements WriterInterface
         $objXml->setIndentString("\t");
         $objXml->startDocument('1.0', 'UTF-8');
 
-        $objXml->startElement($config->getTable());
+        $objXml->startElement($objConfig->getTable());
 
         foreach ($arrData as $row => $arrRow) {
             // Skip the headline
@@ -62,13 +64,21 @@ class XmlWriter implements WriterInterface
         $objXml->endDocument();
 
         // Write output to the file system
-        $strFilename = $config->getFilename() ?? $config->getTable().'.xml';
-        $targetFolder = $config->getTargetFolder() ?? $config->getTempFolder();
+        $targetPath = $this->getTargetPath($objConfig, self::FILE_ENDING);
 
-        $objFile = new File($targetFolder.'/'.$strFilename);
+        $objFile = new File($targetPath);
         $objFile->write($objXml->outputMemory());
         $objFile->close();
 
-        return $objFile->sendToBrowser();
+        // E.g send notifications, etc.
+        $objFile = $this->runPostWriteHook($objFile, $objConfig);
+
+        $this->log($objFile, $objConfig);
+
+        if ($objConfig->getSendFileToTheBrowser()) {
+            $this->sendFileToTheBrowser($objFile, false);
+        }
+
+        $this->sendBackendMessage($objFile);
     }
 }

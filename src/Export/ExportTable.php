@@ -143,6 +143,14 @@ class ExportTable extends Backend
             $this->arrData[] = array_values($arrRow);
         }
 
+        // HOOK: Run pre write Hooks.
+        if (isset($GLOBALS['TL_HOOKS']['exportTablePreWrite']) && \is_array($GLOBALS['TL_HOOKS']['exportTablePreWrite'])) {
+            foreach ($GLOBALS['TL_HOOKS']['exportTablePreWrite'] as $callback) {
+                $objCallback = $systemAdapter->importStatic($callback[0]);
+                $this->arrData = $objCallback->{$callback[1]}($this->arrData, $objConfig);
+            }
+        }
+
         // XML
         if ('xml' === $objConfig->getExportType()) {
             $this->xmlWriter->write($this->arrData, $objConfig);

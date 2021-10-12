@@ -14,11 +14,22 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Config;
 
+use Contao\FilesModel;
 use Contao\StringUtil;
 use Markocupic\ExportTable\Model\ExportTableModel;
 
 class GetConfigFromModel
 {
+    /**
+     * @var string
+     */
+    private $projectDir;
+
+    public function __construct(string $projectDir)
+    {
+        $this->projectDir = $projectDir;
+    }
+
     public function get(ExportTableModel $model): Config
     {
         $config = (new Config($model->table))
@@ -34,6 +45,7 @@ class GetConfigFromModel
             ->setArrayDelimiter($model->arrayDelimiter)
             ->setActivateDeepLinkExport((bool) $model->activateDeepLinkExport)
             ->setToken($model->token)
+            ->setSendFileToTheBrowser((bool)$model->sendFileToTheBrowser)
         ;
 
         if ('' !== $model->filter) {
@@ -45,6 +57,17 @@ class GetConfigFromModel
 
             $config->setFilter(json_decode($model->filter));
         }
+
+        if ($model->saveExport && null !== ($objTargetDir = FilesModel::findOneByUuid($model->saveExportDirectory))) {
+            $config->setSaveExport(true);
+            $config->setSaveExportDirectory($objTargetDir->uuid);
+        }
+
+        if (\strlen((string) $model->filename)) {
+            $config->setFilename((string) $model->filename);
+        }
+
+        $config->setOverrideFile((bool) $model->overrideFile);
 
         return $config;
     }

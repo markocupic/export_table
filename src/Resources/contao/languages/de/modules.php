@@ -10,4 +10,4 @@
  * @link https://github.com/markocupic/export_table
  */
 
-$GLOBALS['TL_LANG']['MOD']['export_table']['0'] = "csv/xml Datenbankexport";
+$GLOBALS['TL_LANG']['MOD']['export_table']['0'] = "CSV/XML Datenbankexport";

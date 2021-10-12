@@ -16,7 +16,8 @@ $GLOBALS['TL_LANG']['tl_export_table']['new'] = ["Neuen Exportdatensatz anlegen"
 // Legends
 $GLOBALS['TL_LANG']['tl_export_table']['title_legend'] = "Titel-Einstellungen";
 $GLOBALS['TL_LANG']['tl_export_table']['settings'] = "Einstellungen";
-$GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = "Deep-Link Einstellungen";
+$GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = "Deep-Link-Einstellungen";
+$GLOBALS['TL_LANG']['tl_export_table']['save_legend'] = "Speicher-Einstellungen";
 
 // Fields
 $GLOBALS['TL_LANG']['tl_export_table']['title'] = ["Namen", "Geben Sie einen Namen ein."];
@@ -29,9 +30,14 @@ $GLOBALS['TL_LANG']['tl_export_table']['sortDirection'] = ['Sortierrichtung', 'G
 $GLOBALS['TL_LANG']['tl_export_table']['enclosure'] = ['Enclosure', 'Geben Sie die Enclosure an (im Normalfall \'"\').'];
 $GLOBALS['TL_LANG']['tl_export_table']['delimiter'] = ['Delimiter', 'Geben Sie den Delimitter an (im Normalfall ";").'];
 $GLOBALS['TL_LANG']['tl_export_table']['arrayDelimiter'] = ['Array Trennzeichen', 'Geben Sie ein Trennzeichen ein, mit dem Arrays getrennt werden. Im Normalfall "||".'];
+$GLOBALS['TL_LANG']['tl_export_table']['sendFileToTheBrowser'] = ['Datei im Browser herunterladen', 'Geben Sie ein an, ob die Datei im Browser heruntergeladen werden soll oder nicht.'];
 $GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'] = ['Deep-Link Export aktivieren.', 'Deep-Link Export-Funktion aktivieren.'];
 $GLOBALS['TL_LANG']['tl_export_table']['token'] = ['Deep-Link Schlüssel', 'Geben Sie einen Schlüssel ein, um den Download zu schützen.'];
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfo'] = ['Link-Info'];
+$GLOBALS['TL_LANG']['tl_export_table']['saveExport'] = ['Export im Contao Dateisystem abspeichern'];
+$GLOBALS['TL_LANG']['tl_export_table']['overrideFile'] = ['Gleichnamige Datei überschreiben', 'Bitte wählen Sie aus, ob gleichnamige Dateien überschrieben werden sollen.'];
+$GLOBALS['TL_LANG']['tl_export_table']['saveExportDirectory'] = ['Export-Verzeichnis', 'Bitte wählen Sie ein Export-Verzeichnis aus.'];
+$GLOBALS['TL_LANG']['tl_export_table']['filename'] = ['Dateiname (ohne Dateiendung)', 'Bitte wählen Sie für den Export einen Dateinamen aus. Wird das Feld leer gelassen, wird für den Dateinamen der Tabellenname gewählt.'];
 
 // Buttons
 $GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] = "Exportvorgang starten";

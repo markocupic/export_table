@@ -30,10 +30,13 @@ class Config
         'enclosure' => '"',
         'filter' => [],
         'arrayDelimiter' => '||',
-        'targetFolder' => null,
+        'sendFileToTheBrowser' => true,
         'tempFolder' => 'system/tmp',
         'fields' => [],
         'headlineLabelLang' => null,
+        'saveExport' => false,
+        'saveExportDirectory' => null,
+        'overrideFile' => false,
         'filename' => null,
         'activateDeepLinkExport' => false,
         'token' => null,
@@ -201,6 +204,22 @@ class Config
         return $this;
     }
 
+    public function getSendFileToTheBrowser(): bool
+    {
+        return $this->arrData['sendFileToTheBrowser'];
+    }
+
+    /**
+     * @param bool $blnSend
+     * @return $this
+     */
+    public function setSendFileToTheBrowser(bool $blnSend): self
+    {
+        $this->arrData['sendFileToTheBrowser'] = $blnSend;
+
+        return $this;
+    }
+
     public function getFilter(): array
     {
         return $this->arrData['filter'];
@@ -231,24 +250,54 @@ class Config
         return $this;
     }
 
-    public function getTargetFolder(): ?string
+    public function getFilename(): ?string
     {
-        return $this->arrData['targetFolder'];
+        return $this->arrData['filename'];
+    }
+
+    public function getSaveExport(): bool
+    {
+        return $this->arrData['saveExport'];
     }
 
     /**
      * @return $this
      */
-    public function setTargetFolder(string $strTargetFolder): self
+    public function setSaveExport(bool $saveExport): self
     {
-        $this->arrData['targetFolder'] = $strTargetFolder;
+        $this->arrData['saveExport'] = $saveExport;
 
         return $this;
     }
 
-    public function getFilename(): ?string
+    public function getOverrideFile(): bool
     {
-        return $this->arrData['filename'];
+        return $this->arrData['overrideFile'];
+    }
+
+    /**
+     * @return $this
+     */
+    public function setOverrideFile(bool $overrideFile): self
+    {
+        $this->arrData['overrideFile'] = $overrideFile;
+
+        return $this;
+    }
+
+    public function getSaveExportDirectory(): string
+    {
+        return $this->arrData['saveExportDirectory'];
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSaveExportDirectory(?string $stringUuid): self
+    {
+        $this->arrData['saveExportDirectory'] = $stringUuid;
+
+        return $this;
     }
 
     /**
