@@ -13,6 +13,9 @@
 // Global operations
 $GLOBALS['TL_LANG']['tl_export_table']['new'] = ["Neuen Exportdatensatz anlegen", "Einen neuen Exportdatensatz anlegen"];
 
+// Operations
+$GLOBALS['TL_LANG']['tl_export_table']['export'] = ['Export mit ID %s starten.', 'Export mit ID %s starten.'];
+
 // Legends
 $GLOBALS['TL_LANG']['tl_export_table']['title_legend'] = "Titel-Einstellungen";
 $GLOBALS['TL_LANG']['tl_export_table']['settings'] = "Einstellungen";
@@ -39,8 +42,6 @@ $GLOBALS['TL_LANG']['tl_export_table']['overrideFile'] = ['Gleichnamige Datei ü
 $GLOBALS['TL_LANG']['tl_export_table']['saveExportDirectory'] = ['Export-Verzeichnis', 'Bitte wählen Sie ein Export-Verzeichnis aus.'];
 $GLOBALS['TL_LANG']['tl_export_table']['filename'] = ['Dateiname (ohne Dateiendung)', 'Bitte wählen Sie für den Export einen Dateinamen aus. Wird das Feld leer gelassen, wird für den Dateinamen der Tabellenname gewählt.'];
 
-// Buttons
-$GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] = "Exportvorgang starten";
-
 // Info text
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] = 'Benutzen Sie diesen Link, um die Tabellen-Exportfunktion in Ihrem Browser zu nutzen:';
+

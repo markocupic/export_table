@@ -35,6 +35,9 @@ class GetConfigFromToken
         $this->getConfigFromModel = $getConfigFromModel;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function get(string $strToken): Config
     {
         if (!$this->isValidKey($strToken)) {

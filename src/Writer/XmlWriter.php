@@ -21,6 +21,9 @@ class XmlWriter extends AbstractWriter implements WriterInterface
 {
     public const FILE_ENDING = 'xml';
 
+    /**
+     * @throws \Exception
+     */
     public function write(array $arrData, Config $objConfig): void
     {
         $objXml = new \XMLWriter();
@@ -43,6 +46,8 @@ class XmlWriter extends AbstractWriter implements WriterInterface
             foreach ($arrRow as $i => $fieldvalue) {
                 // Add a field
                 $objXml->startElement($arrData[0][$i]);
+
+                $fieldvalue = (string) $fieldvalue;
 
                 if (is_numeric($fieldvalue) || null === $fieldvalue || '' === $fieldvalue) {
                     $objXml->text($fieldvalue);
@@ -76,6 +81,7 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         $this->log($objFile, $objConfig);
 
         if ($objConfig->getSendFileToTheBrowser()) {
+            // Show the download dialogue
             $this->sendFileToTheBrowser($objFile, false);
         }
 

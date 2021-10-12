@@ -49,6 +49,9 @@ abstract class AbstractWriter
         $this->logger = $logger;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function getTargetPath(Config $objConfig, string $strFileEnding): string
     {
         $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
@@ -59,7 +62,7 @@ abstract class AbstractWriter
             $fn = $objConfig->getTable();
         }
 
-        $appendDateString = $objConfig->getOverrideFile() ? date('_Ymd_His', time()) : '';
+        $appendDateString = $objConfig->getOverrideFile() ? '' : date('_Ymd_His', time());
 
         $filename = sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
 

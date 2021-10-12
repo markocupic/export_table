@@ -17,6 +17,7 @@ namespace Markocupic\ExportTable\Migration;
 use Contao\CoreBundle\Migration\AbstractMigration;
 use Contao\CoreBundle\Migration\MigrationResult;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 
 class Migration extends AbstractMigration
 {
@@ -64,6 +65,9 @@ class Migration extends AbstractMigration
         return $doMigration;
     }
 
+    /**
+     * @throws Exception
+     */
     public function run(): MigrationResult
     {
         $arrMessage = [];

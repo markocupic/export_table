@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Export;
 
-use Contao\Backend;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
@@ -28,7 +27,7 @@ use Markocupic\ExportTable\Writer\XmlWriter;
 /**
  * Class ExportTable.
  */
-class ExportTable extends Backend
+class ExportTable
 {
     /**
      * @var ContaoFramework
@@ -143,7 +142,7 @@ class ExportTable extends Backend
             $this->arrData[] = array_values($arrRow);
         }
 
-        // HOOK: Run pre write Hooks.
+        // HOOK: Run pre-write Hooks.
         if (isset($GLOBALS['TL_HOOKS']['exportTablePreWrite']) && \is_array($GLOBALS['TL_HOOKS']['exportTablePreWrite'])) {
             foreach ($GLOBALS['TL_HOOKS']['exportTablePreWrite'] as $callback) {
                 $objCallback = $systemAdapter->importStatic($callback[0]);
@@ -162,6 +161,9 @@ class ExportTable extends Backend
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private function generateFilterStmt(array $arrFilter, Config $objConfig): array
     {
         $strFilter = json_encode($arrFilter);

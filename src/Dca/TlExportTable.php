@@ -15,21 +15,23 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\Dca;
 
 use Contao\Backend;
-use Contao\CoreBundle\Exception\ResponseException;
+use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Database;
 use Contao\DataContainer;
-use Contao\DC_Table;
 use Contao\Environment;
+use Haste\Util\Url;
 use Markocupic\ExportTable\Config\GetConfigFromModel;
 use Markocupic\ExportTable\Export\ExportTable;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Model\ExportTableModel;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as Twig;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class TlExportTable extends Backend
 {
@@ -86,55 +88,38 @@ class TlExportTable extends Backend
      */
     public function setPalettes(DataContainer $dc): void
     {
-
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
 
-        if(null !== ($model = $exportTableModelAdapter->findByPk($dc->id)))
-        {
+        if (null !== ($model = $exportTableModelAdapter->findByPk($dc->id))) {
             $arrPalette = &$GLOBALS['TL_DCA']['tl_export_table']['palettes'];
+
             if ($arrPalette[$model->exportType]) {
                 $arrPalette['default'] = $arrPalette[$model->exportType];
             }
         }
-
-
     }
 
     /**
+     * Run export.
+     *
      * @Callback(table="tl_export_table", target="config.onload")
      */
-    public function setPost(): void
+    public function runExport(): void
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        if ($request->request->has('exportTableBtn') && 'tl_export_table' === $request->request->get('FORM_SUBMIT')) {
-            $request->request->set('save', true);
-        }
-    }
-
-    /**
-     * @Callback(table="tl_export_table", target="config.onsubmit")
-     */
-    public function runExport(DataContainer $dc)
-    {
-        if (!$dc->activeRecord->id || '' === $dc->activeRecord->id) {
-            return;
-        }
-
-        $pk = $dc->activeRecord->id;
+        $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
+        $urlAdapter = $this->framework->getAdapter(Url::class);
+        $controllerAdapter = $this->framework->getAdapter(Controller::class);
 
         $request = $this->requestStack->getCurrentRequest();
+        $pk = $request->query->get('id');
 
-        if ($request->request->has('exportTableBtn') && 'tl_export_table' === $request->request->get('FORM_SUBMIT')) {
-            $request->request->remove('exportTableBtn');
-
-            $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
-
+        if ('export' === $request->query->get('action') && $pk) {
             if (null !== ($model = $exportTableModelAdapter->findByPk($pk))) {
-                $response = new Response($this->exportTable->run($this->getConfigFromModel->get($model)));
-
-                return new ResponseException($response);
+                $this->exportTable->run($this->getConfigFromModel->get($model));
             }
+            $url = $urlAdapter->removeQueryString(['id', 'action']);
+
+            $controllerAdapter->redirect($url);
         }
     }
 
@@ -150,41 +135,16 @@ class TlExportTable extends Backend
     }
 
     /**
-     * @Callback(table="tl_export_table", target="edit.buttons")
-     */
-    public function insertExportButton($arrButtons, DC_Table $dc): array
-    {
-        $request = $this->requestStack->getCurrentRequest();
-
-        if ('edit' === $request->query->get('act')) {
-            $save = $arrButtons['save'];
-            $exportTable = sprintf(
-                '<button type="submit" name="exportTableBtn" id="exportTableBtn" class="tl_submit" accesskey="n">%s</button>',
-                $this->translator->trans('tl_export_table.launchExportButton', [], 'contao_default')
-            );
-
-            $saveNclose = $arrButtons['saveNclose'];
-
-            unset($arrButtons);
-
-            // Set correct order
-            $arrButtons = [
-                'save' => $save,
-                'exportTable' => $exportTable,
-                'saveNclose' => $saveNclose,
-            ];
-        }
-
-        return $arrButtons;
-    }
-
-    /**
      * @Callback(table="tl_export_table", target="fields.fields.options")
      * @Callback(table="tl_export_table", target="fields.sortBy.options")
      */
     public function listFields(DataContainer $dc): array
     {
-        if ($dc->activeRecord->table && '' === ($strTable = $dc->activeRecord->table)) {
+        $strTable = $dc->activeRecord->table;
+
+        $databaseAdapter = $this->framework->getAdapter(Database::class);
+
+        if (!$strTable || !$databaseAdapter->getInstance()->tableExists($strTable)) {
             return [];
         }
 
@@ -192,6 +152,9 @@ class TlExportTable extends Backend
     }
 
     /**
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      * @Callback(table="tl_export_table", target="fields.deepLinkInfo.input_field")
      */
     public function generateDeepLinkInfo(DataContainer $dc): string
@@ -204,7 +167,7 @@ class TlExportTable extends Backend
         }
 
         $link = sprintf(
-            '%s/_export_table_download_table?action=exportTable&amp;key=%s',
+            '%s/_export_table_download_table?action=exportTable&key=%s',
             $environmentAdapter->get('url'),
             $objModel->token
         );

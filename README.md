@@ -31,89 +31,15 @@ Oder Parameterübergabe aus der URL:\
 
 ## Für Entwickler: Die Ausgabe über den "exportTable" HOOK steuern
 
-Via Hook kann die Ausgabe angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden, dass der neue Hook vor dem bestehenden aufgerufen wird.\
-Siehe dieses Beispiel:
-
-```php
-// App/eventListener/ExportTable/FormatDateListener.php
-
-declare(strict_types=1);
-
-namespace App\EventListener\ExportTable;
-
-use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Contao\Date;
-use Markocupic\ExportTable\Config\Config;
-use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
-use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
-
-/**
- * @Hook(MyCustomFormatDateListener::HOOK, priority=MyCustomFormatDateListener::PRIORITY)
- */
-class MyCustomFormatDateListener implements ExportTableListenerInterface
-{
-    public const HOOK = 'exportTable';
-    public const PRIORITY = 100;
-
-    /**
-     * @var bool
-     */
-    private static $disableHook = false;
-
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-
-    public function __construct(ContaoFramework $framework)
-    {
-        $this->framework = $framework;
-    }
-
-    /**
-     * @param $varValue
-     *
-     * @return mixed
-     */
-    public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
-    {
-        if (static::$disableHook) {
-            return false;
-        }
-
-        // Disable original Hook that is shipped with the export table extension.
-        ExportTableFormatDateListener::disableHook();
-
-        $dateAdapter = $this->framework->getAdapter(Date::class);
-
-        $dca = $arrDca['fields'][$strFieldname] ?? null;
-
-        if ($dca) {
-            $strRgxp = $dca['eval']['rgxp'];
-
-            if ('' !== $varValue && $strRgxp && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
-                $dateFormat = $dateAdapter->getFormatFromRgxp($strRgxp);
-                $varValue = $dateAdapter->parse($dateFormat, $varValue);
-            }
-        }
-
-        return $varValue;
-    }
-
-    public static function disableHook(): void
-    {
-        self::$disableHook = true;
-    }
-
-    public static function enableHook(): void
-    {
-        self::$disableHook = false;
-    }
-}
+Via Hook kann die Ausgabe angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps vie [exportTable Hook](docs/wiki/hooks/exportTable.md) zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden, dass der neue Hook vor dem bestehenden aufgerufen wird.\
+Siehe [siehe dieses Beispiel](docs/wiki/hooks/exportTable.md):
 
 
-```
+| HOOK                                                            |
+| :---                                                            |
+| [exportTable](docs/wiki/hooks/exportTable.md)                   |
+| [exportTablePreWrite](docs/wiki/hooks/exportTablePreWrite.md)   |
+| [exportTablePostWrite](docs/wiki/hooks/exportTablePostWrite.md) |
 
 
 ## ExportTable aus eigenem Controller heraus nutzen
@@ -142,6 +68,7 @@ namespace App\Controller;
 
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\FilesModel;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Export\ExportTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -184,8 +111,10 @@ class CustomController extends AbstractController
             ->setEnclosure('"')
             // Select * FROM tl_member WHERE tl_member.city = 'Oberkirch'
             ->setFilter([["city=?"],["Oberkirch"]])
-            // Define a target path, otherwise the file will be stored in system/tmp
-            ->setTargetFolder('files')
+            // Save the file to the Contao filesystem
+            ->setSaveExport(true)
+            // Define a target path, otherwise the file will be temporarily stored in system/tmp
+            ->setSaveExportDirectory(FilesModel::findByPath('files')->uuid)
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
             // Use a row callback to convert from utf-8 to ISO-8859-1

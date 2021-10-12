@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @Hook(JsonArrayRegexpListener::HOOK,  priority=JsonArrayRegexpListener::PRIORITY)
  */
-class JsonArrayRegexpListener
+class JsonArrayRegexpListener implements ListenerInterface
 {
     public const HOOK = 'addCustomRegexp';
     public const PRIORITY = 10;
@@ -78,5 +78,20 @@ class JsonArrayRegexpListener
         }
 
         return false;
+    }
+
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
+    }
+
+    public static function isEnabled(): bool
+    {
+        return self::$disableHook;
     }
 }

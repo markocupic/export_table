@@ -11,7 +11,10 @@
  */
 
 // Global operations
-$GLOBALS['TL_LANG']['tl_export_table']['new'][0] = 'Add new export';
+$GLOBALS['TL_LANG']['tl_export_table']['new'] = ['Add new export.', 'Add new export.'];
+
+// Operations
+$GLOBALS['TL_LANG']['tl_export_table']['export'] = ['Run export with ID %s.', 'Run export with ID %s.'];
 
 // Legends
 $GLOBALS['TL_LANG']['tl_export_table']['title_legend'] = 'Title settings';
@@ -37,9 +40,6 @@ $GLOBALS['TL_LANG']['tl_export_table']['saveExport'] = ['Save export to Contao f
 $GLOBALS['TL_LANG']['tl_export_table']['overrideFile'] = ['Override file with same filename', 'Please select whether files with the same name should be overwritten.'];
 $GLOBALS['TL_LANG']['tl_export_table']['saveExportDirectory'] = ['Export directory', 'Please choose the save destination.'];
 $GLOBALS['TL_LANG']['tl_export_table']['filename'] = ['File name', 'Please select a file name for the export. If the field is left empty, the table name is selected for the file name.'];
-
-// Buttons
-$GLOBALS['TL_LANG']['tl_export_table']['launchExportButton'] = 'Launch export process';
 
 // Info text
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] = 'Use this deep link to activate the table-export in your browser:';

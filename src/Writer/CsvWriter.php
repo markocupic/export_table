@@ -47,6 +47,7 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         $this->log($objFile, $objConfig);
 
         if ($objConfig->getSendFileToTheBrowser()) {
+            // Show the download dialogue
             $this->sendFileToTheBrowser($objFile, false);
         }
 

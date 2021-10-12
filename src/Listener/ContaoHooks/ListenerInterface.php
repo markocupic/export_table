@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-interface ExportTableListenerInterface
+interface ListenerInterface
 {
     public static function disableHook(): void;
 
     public static function enableHook(): void;
+
+    public static function isEnabled(): bool;
 }

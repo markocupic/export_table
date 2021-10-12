@@ -19,7 +19,6 @@ use Markocupic\ExportTable\Config\GetConfigFromToken;
 use Markocupic\ExportTable\Export\ExportTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -38,9 +37,9 @@ class DownloadController extends AbstractController
     private $requestStack;
 
     /**
-     * @var GetConfigFromUrl
+     * @var GetConfigFromToken
      */
-    private $setConfigFromUrl;
+    private $getConfigFromToken;
 
     /**
      * @var ExportTable
@@ -55,14 +54,16 @@ class DownloadController extends AbstractController
         $this->exportTable = $exportTable;
     }
 
-    public function __invoke(): Response
+    /**
+     * @throws \Exception
+     */
+    public function __invoke(): void
     {
         $this->framework->initialize();
         $request = $this->requestStack->getCurrentRequest();
         $strToken = $request->query->get('key');
-
         $objConfig = $this->getConfigFromToken->get($strToken);
 
-        return $this->exportTable->run($objConfig);
+        $this->exportTable->run($objConfig);
     }
 }

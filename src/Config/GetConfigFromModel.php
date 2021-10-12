@@ -21,15 +21,8 @@ use Markocupic\ExportTable\Model\ExportTableModel;
 class GetConfigFromModel
 {
     /**
-     * @var string
+     * @throws \Exception
      */
-    private $projectDir;
-
-    public function __construct(string $projectDir)
-    {
-        $this->projectDir = $projectDir;
-    }
-
     public function get(ExportTableModel $model): Config
     {
         $config = (new Config($model->table))
@@ -45,7 +38,7 @@ class GetConfigFromModel
             ->setArrayDelimiter($model->arrayDelimiter)
             ->setActivateDeepLinkExport((bool) $model->activateDeepLinkExport)
             ->setToken($model->token)
-            ->setSendFileToTheBrowser((bool)$model->sendFileToTheBrowser)
+            ->setSendFileToTheBrowser((bool) $model->sendFileToTheBrowser)
         ;
 
         if ('' !== $model->filter) {

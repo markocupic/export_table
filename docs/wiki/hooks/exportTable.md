@@ -1,31 +1,28 @@
-<?php
+# exportTable Hook
+Der **exportTable** Hook wird beim Schreiben des Feldinhalts in das Datenarray getriggert. Er kann benutzt werden, um den Feldwert zu verändern.\
+Die [Export Table](https://github.com/markocupic/export_table) Erweiterung nutzt den Hook um timestamps in formatierte Daten umzuwandeln.
+
+```php
+// App/eventListener/ExportTable/FormatDateListener.php
 
 declare(strict_types=1);
 
-/*
- * This file is part of Export Table for Contao CMS.
- *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
- * @license GPL-3.0-or-later
- * For the full copyright and license information,
- * please view the LICENSE file that was distributed with this source code.
- * @link https://github.com/markocupic/export_table
- */
-
-namespace Markocupic\ExportTable\Listener\ContaoHooks;
+namespace App\EventListener\ExportTable;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Date;
 use Markocupic\ExportTable\Config\Config;
+use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
+use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
 /**
- * @Hook(ExportTableFormatDateListener::HOOK, priority=ExportTableFormatDateListener::PRIORITY)
+ * @Hook(MyCustomFormatDateListener::HOOK, priority=MyCustomFormatDateListener::PRIORITY)
  */
-class ExportTableFormatDateListener implements ListenerInterface
+class MyCustomFormatDateListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
-    public const PRIORITY = 10;
+    public const PRIORITY = 100;
 
     /**
      * @var bool
@@ -50,8 +47,11 @@ class ExportTableFormatDateListener implements ListenerInterface
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
         if (static::$disableHook) {
-            return $varValue;
+            return false;
         }
+
+        // Disable original Hook that is shipped with the export table extension.
+        ExportTableFormatDateListener::disableHook();
 
         $dateAdapter = $this->framework->getAdapter(Date::class);
 
@@ -60,7 +60,7 @@ class ExportTableFormatDateListener implements ListenerInterface
         if ($dca) {
             $strRgxp = $dca['eval']['rgxp'];
 
-            if ($varValue && '' !== $varValue && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
+            if ('' !== $varValue && $strRgxp && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
                 $dateFormat = $dateAdapter->getFormatFromRgxp($strRgxp);
                 $varValue = $dateAdapter->parse($dateFormat, $varValue);
             }
@@ -84,3 +84,4 @@ class ExportTableFormatDateListener implements ListenerInterface
         return self::$disableHook;
     }
 }
+```

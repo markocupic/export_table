@@ -22,7 +22,7 @@ use Markocupic\ExportTable\Config\Config;
 /**
  * @Hook(ExportTableHandleArraysListener::HOOK, priority=ExportTableHandleArraysListener::PRIORITY)
  */
-class ExportTableHandleArraysListener implements ExportTableListenerInterface
+class ExportTableHandleArraysListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 30;
@@ -77,5 +77,10 @@ class ExportTableHandleArraysListener implements ExportTableListenerInterface
     public static function enableHook(): void
     {
         self::$disableHook = false;
+    }
+
+    public static function isEnabled(): bool
+    {
+        return self::$disableHook;
     }
 }

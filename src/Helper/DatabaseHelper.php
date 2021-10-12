@@ -29,13 +29,13 @@ class DatabaseHelper
         $this->framework = $framework;
     }
 
-    public function listFields($strTable, $blnAssociative = false, $blnAddType = false): array
+    public function listFields(string $strTable = '', $blnAssociative = false, $blnAddType = false): array
     {
         $databaseAdapter = $this->framework->getAdapter(Database::class);
 
         $arrFields = [];
 
-        if ('' === $strTable) {
+        if (!$strTable || !$databaseAdapter->getInstance()->tableExists($strTable)) {
             return $arrFields;
         }
 

@@ -75,7 +75,7 @@ class Config
 
     public function getTitle(): string
     {
-        $this->arrData['title'];
+        return $this->arrData['title'];
     }
 
     /**
@@ -83,12 +83,12 @@ class Config
      */
     public function setTitle(string $strTitle = ''): self
     {
-        $this->arrData['title'] = $strTable;
+        $this->arrData['title'] = $strTitle;
 
         return $this;
     }
 
-    public function getTable(): ?string
+    public function getTable(): string
     {
         return $this->arrData['table'];
     }
@@ -126,13 +126,13 @@ class Config
 
     public function getSortBy(): string
     {
-        return $this->arrData['sortBy'];
+        return empty($this->arrData['sortBy']) ? 'id' : $this->arrData['sortBy'];
     }
 
     /**
      * @return $this
      */
-    public function setSortBy(string $strSortBy): self
+    public function setSortBy(string $strSortBy = 'id'): self
     {
         $this->arrData['sortBy'] = $strSortBy;
 
@@ -141,10 +141,12 @@ class Config
 
     public function getSortDirection(): string
     {
-        return $this->arrData['sortDirection'];
+        return empty($this->arrData['sortDirection']) ? 'ASC' : $this->arrData['sortDirection'];
     }
 
     /**
+     * @throws \Exception
+     *
      * @return $this
      */
     public function setSortDirection(string $strSortDirection = 'ASC'): self
@@ -210,7 +212,6 @@ class Config
     }
 
     /**
-     * @param bool $blnSend
      * @return $this
      */
     public function setSendFileToTheBrowser(bool $blnSend): self

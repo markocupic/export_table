@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class MarkocupicExportTableExtension extends Extension
 {
     /**
-     * {@inheritdoc}
+     * @throws \Exception
      */
     public function load(array $mergedConfig, ContainerBuilder $container): void
     {

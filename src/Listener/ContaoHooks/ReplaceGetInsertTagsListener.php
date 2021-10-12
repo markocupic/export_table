@@ -21,7 +21,7 @@ use Contao\Input;
 /**
  * @Hook(ReplaceGetInsertTagsListener::HOOK,  priority=ReplaceGetInsertTagsListener::PRIORITY)
  */
-class ReplaceGetInsertTagsListener
+class ReplaceGetInsertTagsListener implements ListenerInterface
 {
     public const HOOK = 'replaceInsertTags';
     public const PRIORITY = 10;
@@ -61,5 +61,20 @@ class ReplaceGetInsertTagsListener
         }
 
         return false;
+    }
+
+    public static function disableHook(): void
+    {
+        self::$disableHook = true;
+    }
+
+    public static function enableHook(): void
+    {
+        self::$disableHook = false;
+    }
+
+    public static function isEnabled(): bool
+    {
+        return self::$disableHook;
     }
 }

@@ -16,3 +16,4 @@ $GLOBALS['TL_LANG']['ERR']['exportTblNotAllowedFilterExpression'] = 'Der Filter 
 
 // Misc
 $GLOBALS['TL_LANG']['MSC']['savedExportFile'] = 'Die Export Datei wurde in "%s" gespeichert.';
+$GLOBALS['TL_LANG']['MSC']['confirmExport'] = 'Möchten Sie den Export mit ID %s wirklich starten?';
