@@ -30,7 +30,7 @@ class ExportTablePostWriteListener implements ExportTableListenerInterface
     public function __invoke(File $objFile, Config $objConfig): File
     {
         if (static::$disableHook) {
-            return $arrData;
+            return $objFile;
         }
 
         // Do something
