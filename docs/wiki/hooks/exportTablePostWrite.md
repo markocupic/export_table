@@ -10,7 +10,8 @@ declare(strict_types=1);
 namespace App\EventListener\ExportTable;
 
 use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Contao\File;use Markocupic\ExportTable\Config\Config;
+use Contao\File;
+use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
 /**
@@ -26,7 +27,7 @@ class ExportTablePostWriteListener implements ExportTableListenerInterface
      */
     private static $disableHook = false;
 
-    public function __invoke(File $objFile, Config $objConfig): array
+    public function __invoke(File $objFile, Config $objConfig): File
     {
         if (static::$disableHook) {
             return $arrData;
@@ -34,7 +35,7 @@ class ExportTablePostWriteListener implements ExportTableListenerInterface
 
         // Do something
 
-        return $varValue;
+        return $objFile;
     }
 
     public static function disableHook(): void
