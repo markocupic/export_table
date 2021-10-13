@@ -118,8 +118,9 @@ class TlExportTable extends Backend
                 $this->exportTable->run($this->getConfigFromModel->get($model));
             }
             $url = $urlAdapter->removeQueryString(['id', 'action']);
-
-            $controllerAdapter->redirect($url);
+            if(TL_MODE === 'BE'){
+                $controllerAdapter->redirect($url);
+            }
         }
     }
 
