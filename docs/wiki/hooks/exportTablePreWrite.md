@@ -34,7 +34,7 @@ class ExportTablePreWriteListener implements ExportTableListenerInterface
 
         // Do something
 
-        return $varValue;
+        return $arrData;
     }
 
     public static function disableHook(): void
