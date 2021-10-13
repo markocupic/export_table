@@ -47,7 +47,7 @@ class MyCustomFormatDateListener implements ExportTableListenerInterface
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
         if (static::$disableHook) {
-            return false;
+            return $varValue;
         }
 
         // Disable original Hook that is shipped with the export table extension.
