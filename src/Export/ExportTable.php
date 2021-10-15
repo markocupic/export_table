@@ -143,8 +143,7 @@ class ExportTable
             $this->arrData[] = array_values($arrRow);
         }
 
-
-        // Write export to a file
+        // Write export data to a file.
         $writer = $this->getWriter($objConfig->getModel()->exportType);
         $writer->write($this->arrData, $objConfig);
     }
