@@ -46,8 +46,6 @@ class DownloadController extends AbstractController
      */
     private $exportTable;
 
-
-
     public function __construct(ContaoFramework $framework, RequestStack $requestStack, GetConfigFromToken $getConfigFromToken, ExportTable $exportTable)
     {
         $this->framework = $framework;
@@ -55,8 +53,6 @@ class DownloadController extends AbstractController
         $this->getConfigFromToken = $getConfigFromToken;
         $this->exportTable = $exportTable;
     }
-
-
 
     /**
      * @throws \Exception
@@ -71,3 +67,4 @@ class DownloadController extends AbstractController
         $this->exportTable->run($objConfig);
     }
 }
+
