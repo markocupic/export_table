@@ -3,6 +3,7 @@
 # Export Table für Contao CMS
 
 Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabellen ins CSV- oder XML-Format exportieren. Dabei kann der Export konfiguriert werden.
+- Export-Typ auswählen (CSV/XML)
 - Tabelle auswählbar
 - Felder auswählbar
 - Über die Eingabe eines json-Arrays Datensätze filtern
@@ -11,6 +12,9 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Enclosure einstellbar (Default: ")
 - Trennzeichen für Arrays einstellbar
 - Deeplink Support
+- Speicher-Verzeichnis wählbar
+- Dateiname wählbar
+- Extension mit HOOKS und weiteren writern erweiterbar
 
 ![Alt text](docs/backend.png?raw=true "Backend")
 
@@ -138,7 +142,7 @@ class CustomController extends AbstractController
 
 Falls die beiden Standard-Writer (CSV und XML) nicht genügen sollten, ist es ohne weiteres möglich einen
 weiteren Writer hinzuzufügen. Dazu muss eine Writer Klasse geschrieben werden, die das `Markocupic\ExportTable\Writer\WriterInterface` implementiert.
-In `services.yml` muss die Klasse mit `name: markocupic_export_table.writer` getaggt werden. Der Alias sollte eindeutig sein und nicht bereits verwendet werden. Z.B. `alias: my_custom_csv`
+In `services.yml` muss die Klasse mit `name: markocupic_export_table.writer` getaggt werden. Der Alias sollte eindeutig sein und nicht bereits verwendet worden sein. Z.B. `alias: my_custom_csv`
 
 ```yaml
 

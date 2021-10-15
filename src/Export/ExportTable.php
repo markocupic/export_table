@@ -67,8 +67,6 @@ class ExportTable
 
     /**
      * Add a writer service for a given alias.
-     * @param WriterInterface $resource
-     * @param string $alias
      */
     public function addWriter(WriterInterface $resource, string $alias): void
     {
@@ -149,7 +147,7 @@ class ExportTable
         $writer->write($this->arrData, $objConfig);
     }
 
-    private function getWriter($alias)
+    private function getWriter($alias): WriterInterface
     {
         return $this->writers[$alias];
     }
