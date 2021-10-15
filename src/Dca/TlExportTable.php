@@ -72,9 +72,9 @@ class TlExportTable
     private $translator;
 
     /**
-     * @var
+     * @var array
      */
-    private $writer = [];
+    private $writerAliases = [];
 
     public function __construct(ContaoFramework $framework, RequestStack $requestStack, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTable $exportTable, Twig $twig, TranslatorInterface $translator)
     {
@@ -87,9 +87,9 @@ class TlExportTable
         $this->translator = $translator;
     }
 
-    public function addWriter(string $alias): void
+    public function addWriterAlias(string $alias): void
     {
-        $this->writer[$alias] = $alias;
+        $this->writerAliases[$alias] = $alias;
     }
 
     /**
@@ -150,7 +150,7 @@ class TlExportTable
      */
     public function listWriters(): array
     {
-        return $this->writer;
+        return $this->writerAliases;
     }
 
     /**

@@ -21,6 +21,7 @@ use Contao\System;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Helper\StringHelper;
+use Markocupic\ExportTable\Writer\WriterInterface;
 
 /**
  * Class ExportTable.
@@ -65,11 +66,11 @@ class ExportTable
     }
 
     /**
-     * Add a resource for given alias.
-     *
-     * @param ResourceInterface $resource
+     * Add a writer service for a given alias.
+     * @param WriterInterface $resource
+     * @param string $alias
      */
-    public function addWriter($resource, string $alias): void
+    public function addWriter(WriterInterface $resource, string $alias): void
     {
         $this->writers[$alias] = $resource;
     }

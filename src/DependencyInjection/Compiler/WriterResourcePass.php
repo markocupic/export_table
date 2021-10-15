@@ -50,7 +50,7 @@ class WriterResourcePass implements CompilerPassInterface
 
                 // Inject export types (csv, xml, etc.)
                 $definition2->addMethodCall(
-                    'addWriter',
+                    'addWriterAlias',
                     [
                         $attributes['alias'],
                     ]
