@@ -113,11 +113,6 @@ class Config
      */
     public function setExportType(string $strExportType): self
     {
-        $strExportType = strtolower($strExportType);
-
-        if (!\in_array($strExportType, ['csv', 'xml'], true)) {
-            throw new Exception(sprintf('Export type should be "csv" or "xml", "%s" given.', $strExportType));
-        }
 
         $this->arrData['exportType'] = $strExportType;
 
