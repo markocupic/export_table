@@ -1,11 +1,21 @@
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-    public: true
-    bind:
-      #$projectDir: '%kernel.project_dir%'
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+        bind:
+            #$projectDir: '%kernel.project_dir%'
 
-  Markocupic\ExportTable\:
-    resource: ../../
-    exclude: ../../{Model,DependencyInjection,Resources}
+    Markocupic\ExportTable\:
+        resource: ../../
+        exclude: ../../{Model,DependencyInjection,Resources}
+
+    # Inject the default CSV writer into Markocupic\ExportTable\Export\ExportTable and Markocupic\ExportTable\Dca\TlExportTable during compilation
+    Markocupic\ExportTable\Writer\CsvWriter:
+        tags:
+            - { name: markocupic_export_table.writer, alias: csv, verbose_name: Default csv exporter class }
+
+    # Inject the default XML writer into Markocupic\ExportTable\Export\ExportTable and Markocupic\ExportTable\Dca\TlExportTable during compilation
+    Markocupic\ExportTable\Writer\XmlWriter:
+        tags:
+            - { name: markocupic_export_table.writer, alias: xml, verbose_name: Default xml exporter class }

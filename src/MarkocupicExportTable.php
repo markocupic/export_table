@@ -14,8 +14,23 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable;
 
+use Markocupic\ExportTable\DependencyInjection\Compiler\WriterResourcePass;
+use Markocupic\ExportTable\DependencyInjection\MarkocupicExportTableExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class MarkocupicExportTable extends Bundle
 {
+    public function getContainerExtension(): MarkocupicExportTableExtension
+    {
+        return new MarkocupicExportTableExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(new WriterResourcePass());
+    }
 }

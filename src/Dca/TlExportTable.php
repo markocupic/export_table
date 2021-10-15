@@ -26,6 +26,7 @@ use Markocupic\ExportTable\Config\GetConfigFromModel;
 use Markocupic\ExportTable\Export\ExportTable;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Model\ExportTableModel;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as Twig;
@@ -33,7 +34,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class TlExportTable extends Backend
+class TlExportTable
 {
     /**
      * @var ContaoFramework
@@ -70,6 +71,11 @@ class TlExportTable extends Backend
      */
     private $translator;
 
+    /**
+     * @var
+     */
+    private $writer = [];
+
     public function __construct(ContaoFramework $framework, RequestStack $requestStack, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTable $exportTable, Twig $twig, TranslatorInterface $translator)
     {
         $this->framework = $framework;
@@ -79,8 +85,11 @@ class TlExportTable extends Backend
         $this->exportTable = $exportTable;
         $this->twig = $twig;
         $this->translator = $translator;
+    }
 
-        parent::__construct();
+    public function addWriter(string $alias): void
+    {
+        $this->writer[$alias] = $alias;
     }
 
     /**
@@ -118,7 +127,8 @@ class TlExportTable extends Backend
                 $this->exportTable->run($this->getConfigFromModel->get($model));
             }
             $url = $urlAdapter->removeQueryString(['id', 'action']);
-            if(TL_MODE === 'BE'){
+
+            if (TL_MODE === 'BE') {
                 $controllerAdapter->redirect($url);
             }
         }
@@ -133,6 +143,14 @@ class TlExportTable extends Backend
         $arrTableNames = $databaseAdapter->getInstance()->listTables();
 
         return \is_array($arrTableNames) ? $arrTableNames : [];
+    }
+
+    /**
+     * @Callback(table="tl_export_table", target="fields.exportType.options")
+     */
+    public function listWriters(): array
+    {
+        return $this->writer;
     }
 
     /**

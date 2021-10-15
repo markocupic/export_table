@@ -28,6 +28,9 @@ class CsvWriter extends AbstractWriter implements WriterInterface
      */
     public function write(array $arrData, Config $objConfig): void
     {
+        // Run pre-write HOOK: e.g. modify the data array
+        $arrData = $this->runPreWriteHook($arrData, $objConfig);
+
         // Use codefog haste and its ArrayReader- and CsvFileWriter-class
         $objReader = new ArrayReader($arrData);
 
@@ -41,7 +44,7 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         // Send the created file to the browser
         $objFile = new File($objWriter->getFilename());
 
-        // E.g send notifications, etc.
+        // Run post-write HOOK: e.g. send notifications, etc.
         $objFile = $this->runPostWriteHook($objFile, $objConfig);
 
         $this->log($objFile, $objConfig);

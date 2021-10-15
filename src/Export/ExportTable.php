@@ -21,8 +21,6 @@ use Contao\System;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Helper\StringHelper;
-use Markocupic\ExportTable\Writer\CsvWriter;
-use Markocupic\ExportTable\Writer\XmlWriter;
 
 /**
  * Class ExportTable.
@@ -33,16 +31,6 @@ class ExportTable
      * @var ContaoFramework
      */
     private $framework;
-
-    /**
-     * @var CsvWriter
-     */
-    private $csvWriter;
-
-    /**
-     * @var XmlWriter
-     */
-    private $xmlWriter;
 
     /**
      * @var Str
@@ -64,13 +52,26 @@ class ExportTable
      */
     private $arrData = [];
 
-    public function __construct(ContaoFramework $framework, CsvWriter $csvWriter, XmlWriter $xmlWriter, StringHelper $stringHelper, DatabaseHelper $databaseHelper)
+    /**
+     * @var array
+     */
+    private $writers = [];
+
+    public function __construct(ContaoFramework $framework, StringHelper $stringHelper, DatabaseHelper $databaseHelper)
     {
         $this->framework = $framework;
-        $this->csvWriter = $csvWriter;
-        $this->xmlWriter = $xmlWriter;
         $this->stringHelper = $stringHelper;
         $this->databaseHelper = $databaseHelper;
+    }
+
+    /**
+     * Add a resource for given alias.
+     *
+     * @param ResourceInterface $resource
+     */
+    public function addWriter($resource, string $alias): void
+    {
+        $this->writers[$alias] = $resource;
     }
 
     /**
@@ -142,23 +143,15 @@ class ExportTable
             $this->arrData[] = array_values($arrRow);
         }
 
-        // HOOK: Run pre-write Hooks.
-        if (isset($GLOBALS['TL_HOOKS']['exportTablePreWrite']) && \is_array($GLOBALS['TL_HOOKS']['exportTablePreWrite'])) {
-            foreach ($GLOBALS['TL_HOOKS']['exportTablePreWrite'] as $callback) {
-                $objCallback = $systemAdapter->importStatic($callback[0]);
-                $this->arrData = $objCallback->{$callback[1]}($this->arrData, $objConfig);
-            }
-        }
 
-        // XML
-        if ('xml' === $objConfig->getExportType()) {
-            $this->xmlWriter->write($this->arrData, $objConfig);
-        }
+        // Write export to a file
+        $writer = $this->getWriter($objConfig->getModel()->exportType);
+        $writer->write($this->arrData, $objConfig);
+    }
 
-        // CSV
-        elseif ('csv' === $objConfig->getExportType()) {
-            $this->csvWriter->write($this->arrData, $objConfig);
-        }
+    private function getWriter($alias)
+    {
+        return $this->writers[$alias];
     }
 
     /**

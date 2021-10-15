@@ -81,6 +81,21 @@ abstract class AbstractWriter
         $objFile->sendToBrowser($objFile->basename, $blnInline);
     }
 
+    protected function runPreWriteHook(array $arrData, Config $objConfig): array
+    {
+        $systemAdapter = $this->framework->getAdapter(System::class);
+
+        // HOOK: Insert your custom code.
+        if (isset($GLOBALS['TL_HOOKS']['exportTablePreWrite']) && \is_array($GLOBALS['TL_HOOKS']['exportTablePreWrite'])) {
+            foreach ($GLOBALS['TL_HOOKS']['exportTablePreWrite'] as $callback) {
+                $objCallback = $systemAdapter->importStatic($callback[0]);
+                $arrData = $objCallback->{$callback[1]}($arrData, $objConfig);
+            }
+        }
+
+        return $arrData;
+    }
+
     protected function runPostWriteHook(File $objFile, Config $objConfig): File
     {
         $systemAdapter = $this->framework->getAdapter(System::class);
@@ -92,6 +107,9 @@ abstract class AbstractWriter
                 $objFile = $objCallback->{$callback[1]}($objFile, $objConfig);
             }
         }
+
+
+
 
         return $objFile;
     }

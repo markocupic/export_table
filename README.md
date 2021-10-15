@@ -134,5 +134,17 @@ class CustomController extends AbstractController
 
 ```
 
+## Erstellen eines Custom-Exporter-Services
 
+Falls die beiden Standard-Writer (CSV und XML) nicht genügen sollten, ist es ohne weiteres möglich einen
+weiteren Writer hinzuzufügen. Dazu muss eine Writer Klasse geschrieben werden, die das `Markocupic\ExportTable\Writer\WriterInterface` implementiert.
+In `services.yml` muss die Klasse mit `name: markocupic_export_table.writer` getaggt werden. Der Alias sollte eindeutig sein und nicht bereits verwendet werden. Z.B. `alias: my_custom_csv`
+
+```yaml
+
+    # Inject Custom CSV writer into Markocupic\ExportTable\Export\ExportTable and Markocupic\ExportTable\Dca\TlExportTable during compilation
+    App\ExportTable\Writer\CustomXmlWriter:
+        tags:
+            - { name: markocupic_export_table.writer, alias: xml, verbose_name: Custom xml exporter class }
+```
 Viel Spass mit Export Table!

@@ -22,6 +22,14 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class MarkocupicExportTableExtension extends Extension
 {
     /**
+     * {@inheritdoc}
+     */
+    public function getAlias()
+    {
+        return 'markocupic_export_table';
+    }
+
+    /**
      * @throws \Exception
      */
     public function load(array $mergedConfig, ContainerBuilder $container): void

@@ -88,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 		),
 		'exportType'             => array(
 			'inputType' => 'select',
-			'options'   => array('csv', 'xml'),
+			'reference' => &$GLOBALS['TL_LANG']['tl_export_table'],
 			'eval'      => array('multiple' => false, 'mandatory' => true, 'submitOnChange' => true, 'tl_class' => 'w50'),
 			'sql'       => "varchar(12) NOT NULL default 'csv'",
 		),

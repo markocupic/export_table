@@ -41,5 +41,9 @@ $GLOBALS['TL_LANG']['tl_export_table']['overrideFile'] = ['Override file with sa
 $GLOBALS['TL_LANG']['tl_export_table']['saveExportDirectory'] = ['Export directory', 'Please choose the save destination.'];
 $GLOBALS['TL_LANG']['tl_export_table']['filename'] = ['File name', 'Please select a file name for the export. If the field is left empty, the table name is selected for the file name.'];
 
+// Reference
+$GLOBALS['TL_LANG']['tl_export_table']['csv'] = 'CSV default export';
+$GLOBALS['TL_LANG']['tl_export_table']['xml'] = 'XML default export';
+
 // Info text
 $GLOBALS['TL_LANG']['tl_export_table']['deepLinkInfoText'] = 'Use this deep link to activate the table-export in your browser:';

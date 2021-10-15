@@ -26,6 +26,9 @@ class XmlWriter extends AbstractWriter implements WriterInterface
      */
     public function write(array $arrData, Config $objConfig): void
     {
+        // Run pre-write HOOK: e.g. modify the data array
+        $arrData = $this->runPreWriteHook($arrData, $objConfig);
+
         $objXml = new \XMLWriter();
         $objXml->openMemory();
         $objXml->setIndent(true);
@@ -75,7 +78,7 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         $objFile->write($objXml->outputMemory());
         $objFile->close();
 
-        // E.g send notifications, etc.
+        // Run post-write HOOK: e.g. send notifications, etc.
         $objFile = $this->runPostWriteHook($objFile, $objConfig);
 
         $this->log($objFile, $objConfig);
