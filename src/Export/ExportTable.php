@@ -167,7 +167,7 @@ class ExportTable
     {
         $strFilter = json_encode($arrFilter);
 
-        // Replace insert tags: Replace {{GET::key}} with a given value of certain $_GET parameter.
+        // Replace insert tags: Replace {{GET::key}} with a given value of a corresponding $_GET parameter.
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
         $strFilter = $controllerAdapter->replaceInsertTags($strFilter);
 
