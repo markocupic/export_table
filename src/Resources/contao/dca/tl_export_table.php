@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 			'{save_legend},saveExport;' .
 			'{deep_link_legend},activateDeepLinkExport',
 		'xml'      => '{title_legend},title;' .
-			'{settings},exportType,table,fields,addHeadline,sortBy,sortDirection,filter,arrayDelimiter,sendFileToTheBrowser;' .
+			'{settings},exportType,table,fields,sortBy,sortDirection,filter,arrayDelimiter,sendFileToTheBrowser;' .
 			'{save_legend},saveExport;' .
 			'{deep_link_legend},activateDeepLinkExport',
 	),
@@ -102,12 +102,12 @@ $GLOBALS['TL_DCA']['tl_export_table'] = array(
 			'eval'      => array('multiple' => true, 'mandatory' => true, 'orderField' => 'orderFields', 'tl_class' => 'clr'),
 			'sql'       => "blob NULL",
 		),
-        'addHeadline' => array(
-            'exclude'   => true,
-            'inputType' => 'checkbox',
-            'eval'      => array('tl_class' => 'clr'),
-            'sql'       => "char(1) NOT NULL default '1'",
-        ),
+		'addHeadline' => array(
+			'exclude'   => true,
+			'inputType' => 'checkbox',
+			'eval'      => array('tl_class' => 'clr'),
+			'sql'       => "char(1) NOT NULL default '1'",
+		),
 		'orderFields'            => array(
 			'sql' => "blob NULL",
 		),
