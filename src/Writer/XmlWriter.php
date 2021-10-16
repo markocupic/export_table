@@ -39,7 +39,6 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         foreach ($arrData as $arrRow) {
             // Add a new row
             $objXml->startElement('datarecord');
-
             foreach ($arrRow as $fieldName => $fieldValue) {
                 // Add a field
                 $objXml->startElement($fieldName);

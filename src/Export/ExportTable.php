@@ -102,17 +102,6 @@ class ExportTable
             $controllerAdapter->loadLanguageFile($this->strTable, $objConfig->getHeadlineLabelLang());
         }
 
-        if ($objConfig->getAddHeadline()) {
-            $arrHeadline = [];
-
-            foreach ($arrSelectedFields as $strFieldname) {
-                $arrHeadline[] = $arrDca[$strFieldname][0] ?? $strFieldname;
-            }
-
-            // First add the headline to the data array.
-            $this->arrData[] = $arrHeadline;
-        }
-
         // The filter expression as to be entered as a JSON encoded array
         // -> [["tableName.field=? OR tableName.field=?"],["valueA","valueB"]] or
         // -> [["tableName.field=?", "tableName.field=?"],["valueA","valueB"]]
@@ -142,7 +131,7 @@ class ExportTable
                 }
             }
 
-            // Handle row callback.
+            // Handle the row callback.
             if (null !== ($callback = $objConfig->getRowCallback())) {
                 $arrRow = $callback($arrRow);
             }

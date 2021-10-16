@@ -122,12 +122,14 @@ class CustomController extends AbstractController
             ->setSaveExportDirectory(FilesModel::findByPath('files')->uuid)
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
-            // Use a row callback to convert from utf-8 to ISO-8859-1
+            // Use the row callback to convert from utf-8 to ISO-8859-1
             ->setRowCallback(
                 static function ($arrRow) {
-                    return array_map(function($varValue){
-                        return is_string($varValue) ? iconv("UTF-8", "ISO-8859-1", $varValue) : $varValue;
-                    }, $arrRow);
+                    foreach($arrRow as $fieldName => $varValue)
+                    {
+                        $arrRow[$fieldName] = is_string($varValue) ? iconv("UTF-8", "ISO-8859-1", $varValue) : $varValue;
+                    }
+                    return $arrRow;
                 }
             )
         ;
