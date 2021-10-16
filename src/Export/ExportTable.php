@@ -102,34 +102,39 @@ class ExportTable
             $controllerAdapter->loadLanguageFile($this->strTable, $objConfig->getHeadlineLabelLang());
         }
 
-        $arrHeadline = [];
+        if ($objConfig->getAddHeadline()) {
+            $arrHeadline = [];
 
-        foreach ($arrSelectedFields as $strFieldname) {
-            $arrHeadline[] = $arrDca[$strFieldname][0] ?? $strFieldname;
+            foreach ($arrSelectedFields as $strFieldname) {
+                $arrHeadline[] = $arrDca[$strFieldname][0] ?? $strFieldname;
+            }
+
+            // First add the headline to the data array.
+            $this->arrData[] = $arrHeadline;
         }
 
-        // First add the headline to the data array.
-        $this->arrData[] = $arrHeadline;
-
         // Generate filter expression.
-        // Enter the filter expression as a JSON encoded array -> [["tablename.field=? OR tablename.field=?"],["valueA","valueB"]].
-        $arrFilterStmt = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
+        // Enter the filter expression as a JSON encoded array -> [["tableName.field=? OR tableName.field=?"],["valueA","valueB"]].
+        $arrFilter = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
+        $strFilterExpr = $arrFilter['stmt'];
+        $arrFilterValues = $arrFilter['values'];
 
         // Generate the sorting expression.
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
+        $strQuery = sprintf('SELECT %s FROM %s%s%s', $strFields, $this->strTable, $strFilterExpr, $strSortingStmt);
         $objDb = $databaseAdapter->getInstance()
-            ->prepare('SELECT '.$strFields.' FROM  '.$this->strTable.' WHERE '.$arrFilterStmt['stmt'].' ORDER BY '.$strSortingStmt)
-            ->execute(...$arrFilterStmt['values'])
+            ->prepare($strQuery)
+            ->execute(...$arrFilterValues)
         ;
 
         while ($arrRow = $objDb->fetchAssoc()) {
-            foreach ($arrSelectedFields as $strFieldname) {
+            foreach ($arrSelectedFields as $strFieldName) {
                 // HOOK: Process data with your custom hooks.
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = $systemAdapter->importStatic($callback[0]);
-                        $arrRow[$strFieldname] = $objCallback->{$callback[1]}($strFieldname, $arrRow[$strFieldname], $this->strTable, $arrRow, $arrDca, $objConfig);
+                        $arrRow[$strFieldName] = $objCallback->{$callback[1]}($strFieldName, $arrRow[$strFieldName], $this->strTable, $arrRow, $arrDca, $objConfig);
                     }
                 }
             }
@@ -139,7 +144,7 @@ class ExportTable
                 $arrRow = $callback($arrRow);
             }
 
-            $this->arrData[] = array_values($arrRow);
+            $this->arrData[] = $arrRow;
         }
 
         // Write export data to a file.
@@ -166,16 +171,18 @@ class ExportTable
         $arrFilter = json_decode($strFilter);
 
         // Default filter statement
-        $filterStmt = $this->strTable.'.id>?';
-        $arrValues = [0];
+        $filterStmt = '';
+        $arrValues = [];
 
         if (!empty($arrFilter)) {
             if (2 === \count($arrFilter)) {
                 // Statement
                 if (\is_array($arrFilter[0])) {
-                    $filterStmt .= ' AND '.implode(' AND ', $arrFilter[0]);
+                    // [["tl_member.firstname=?","tl_member.lastname=?"],["Hans","Muster"]]
+                    $filterStmt .= implode(' AND ', $arrFilter[0]);
                 } else {
-                    $filterStmt .= ' AND '.$arrFilter[0];
+                    // [["tl_member.firstname=? AND tl_member.lastname=?"],["Hans","Muster"]]
+                    $filterStmt .= $arrFilter[0];
                 }
 
                 // Values
@@ -189,6 +196,9 @@ class ExportTable
             }
         }
 
+        $filterStmt = trim($filterStmt);
+        $filterStmt = $filterStmt ? ' WHERE '.$filterStmt : '';
+
         // Check for invalid input.
         if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
             $message = sprintf('Illegal filter expression! Do not use "%s" in your filter expression.', implode(', ', $objConfig->getNotAllowedFilterExpr()));
@@ -199,10 +209,10 @@ class ExportTable
         return ['stmt' => $filterStmt, 'values' => $arrValues];
     }
 
-    private function getSortingStmt(string $strFieldname = 'id', string $direction = 'desc'): string
+    private function getSortingStmt(string $strFieldName = 'id', string $direction = 'desc'): string
     {
-        $arrSorting = [$strFieldname, $direction];
+        $arrSorting = [$strFieldName, $direction];
 
-        return implode(' ', $arrSorting);
+        return ' ORDER BY '.implode(' ', $arrSorting);
     }
 }

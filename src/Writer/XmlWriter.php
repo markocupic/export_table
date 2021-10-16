@@ -34,29 +34,23 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         $objXml->setIndent(true);
         $objXml->setIndentString("\t");
         $objXml->startDocument('1.0', 'UTF-8');
-
         $objXml->startElement($objConfig->getTable());
 
-        foreach ($arrData as $row => $arrRow) {
-            // Skip the headline
-            if (0 === $row) {
-                continue;
-            }
-
+        foreach ($arrData as $arrRow) {
             // Add a new row
             $objXml->startElement('datarecord');
 
-            foreach ($arrRow as $i => $fieldvalue) {
+            foreach ($arrRow as $fieldName => $fieldValue) {
                 // Add a field
-                $objXml->startElement($arrData[0][$i]);
+                $objXml->startElement($fieldName);
 
-                $fieldvalue = (string) $fieldvalue;
+                $fieldValue = (string) $fieldValue;
 
-                if (is_numeric($fieldvalue) || null === $fieldvalue || '' === $fieldvalue) {
-                    $objXml->text($fieldvalue);
+                if (is_numeric($fieldValue) || null === $fieldValue || '' === $fieldValue) {
+                    $objXml->text($fieldValue);
                 } else {
                     // Write CDATA
-                    $objXml->writeCdata($fieldvalue);
+                    $objXml->writeCdata($fieldValue);
                 }
 
                 // Add the closing field tag

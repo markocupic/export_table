@@ -6,6 +6,7 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Export-Typ auswählen (CSV/XML)
 - Tabelle auswählbar
 - Felder auswählbar
+- Kopfzeile ja/nein
 - Über die Eingabe eines json-Arrays Datensätze filtern
 - Ausgabe sortierbar (Feldname und Richtung)
 - Delimiter einstellbar (Default: ;)

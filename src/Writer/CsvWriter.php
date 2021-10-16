@@ -40,6 +40,9 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         $objWriter->setDelimiter($objConfig->getDelimiter());
         $objWriter->setEnclosure($objConfig->getEnclosure());
         $objWriter->writeFrom($objReader);
+        if($objConfig->getAddHeadline()){
+            $objWriter->enableHeaderFields();
+        }
 
         // Send the created file to the browser
         $objFile = new File($objWriter->getFilename());

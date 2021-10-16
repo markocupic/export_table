@@ -23,9 +23,10 @@ $GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = "Deep-Link-Einstell
 $GLOBALS['TL_LANG']['tl_export_table']['save_legend'] = "Speicher-Einstellungen";
 
 // Fields
-$GLOBALS['TL_LANG']['tl_export_table']['title'] = ["Namen", "Geben Sie einen Namen ein."];
-$GLOBALS['TL_LANG']['tl_export_table']['table'] = ["Datentabelle für Export auswählen", "Wählen Sie eine Tabelle für den Exportvorgang aus."];
-$GLOBALS['TL_LANG']['tl_export_table']['fields'] = ["Felder für Exportvorgang auswählen.", "Wählen Sie die Felder für den Export aus."];
+$GLOBALS['TL_LANG']['tl_export_table']['title'] = ["Titel", "Geben Sie einen Namen ein."];
+$GLOBALS['TL_LANG']['tl_export_table']['table'] = ["Datentabelle", "Wählen Sie eine Tabelle für den Exportvorgang aus."];
+$GLOBALS['TL_LANG']['tl_export_table']['fields'] = ["Felder", "Wählen Sie die Felder für den Export aus."];
+$GLOBALS['TL_LANG']['tl_export_table']['addHeadline'] = ['Kopfzeile hinzufügen', 'Geben Sie an, ob die Kopfzeile mit den Feldnamen dem Export hinzugefügt werden soll.'];
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'] = ['Export-Typ', 'Bitte wählen Sie einen Export-Typ aus.'];
 $GLOBALS['TL_LANG']['tl_export_table']['filter'] = ['SQL-Filter', 'Definieren Sie einen Filter in der Form eines JSON-kodierten Arrays -> [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]] Auch Insert Tags sind möglich: -> [["tl_member.id=?"],[{{user::id}}]]'];
 $GLOBALS['TL_LANG']['tl_export_table']['sortBy'] = ['Sortierung', 'Geben Sie das Feld an, nachdem sortiert werden soll.'];

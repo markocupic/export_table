@@ -33,6 +33,7 @@ class Config
         'sendFileToTheBrowser' => true,
         'tempFolder' => 'system/tmp',
         'fields' => [],
+        'addHeadline' => true,
         'headlineLabelLang' => null,
         'saveExport' => false,
         'saveExportDirectory' => null,
@@ -332,6 +333,21 @@ class Config
     public function setFields(array $arrFields): self
     {
         $this->arrData['fields'] = $arrFields;
+
+        return $this;
+    }
+
+    public function getAddHeadline(): bool
+    {
+        return $this->arrData['addHeadline'];
+    }
+
+    /**
+     * @return $this
+     */
+    public function setAddHeadline(bool $blnAddHeadline): self
+    {
+        $this->arrData['addHeadline'] = $blnAddHeadline;
 
         return $this;
     }

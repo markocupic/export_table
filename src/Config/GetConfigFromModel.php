@@ -35,6 +35,7 @@ class GetConfigFromModel
             ->setEnclosure($model->enclosure)
             ->setDelimiter($model->delimiter)
             ->setFields(StringUtil::deserialize($model->fields, true))
+            ->setAddHeadline((bool) $model->addHeadline)
             ->setArrayDelimiter($model->arrayDelimiter)
             ->setActivateDeepLinkExport((bool) $model->activateDeepLinkExport)
             ->setToken($model->token)
