@@ -113,8 +113,9 @@ class ExportTable
             $this->arrData[] = $arrHeadline;
         }
 
-        // Generate filter expression.
-        // Enter the filter expression as a JSON encoded array -> [["tableName.field=? OR tableName.field=?"],["valueA","valueB"]].
+        // The filter expression as to be entered as a JSON encoded array
+        // -> [["tableName.field=? OR tableName.field=?"],["valueA","valueB"]] or
+        // -> [["tableName.field=?", "tableName.field=?"],["valueA","valueB"]]
         $arrFilter = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
         $strFilterExpr = $arrFilter['stmt'];
         $arrFilterValues = $arrFilter['values'];
@@ -123,19 +124,21 @@ class ExportTable
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
         $strQuery = sprintf('SELECT %s FROM %s%s%s', $strFields, $this->strTable, $strFilterExpr, $strSortingStmt);
-        $objDb = $databaseAdapter->getInstance()
+        $objDb = $databaseAdapter
+            ->getInstance()
             ->prepare($strQuery)
             ->execute(...$arrFilterValues)
         ;
 
         while ($arrRow = $objDb->fetchAssoc()) {
-            foreach ($arrSelectedFields as $strFieldName) {
+            foreach ($arrRow as $strFieldName => $varValue) {
                 // HOOK: Process data with your custom hooks.
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = $systemAdapter->importStatic($callback[0]);
-                        $arrRow[$strFieldName] = $objCallback->{$callback[1]}($strFieldName, $arrRow[$strFieldName], $this->strTable, $arrRow, $arrDca, $objConfig);
+                        $varValue = $objCallback->{$callback[1]}($strFieldName, $varValue, $this->strTable, $arrRow, $arrDca, $objConfig);
                     }
+                    $arrRow[$strFieldName] = $varValue;
                 }
             }
 
