@@ -15,7 +15,7 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Deeplink Support
 - Speicher-Verzeichnis wählbar
 - Dateiname wählbar
-- Extension mit HOOKS und weiteren writern erweiterbar
+- Extension mit HOOKS und weiteren Writern erweiterbar
 
 ![Alt text](docs/backend.png?raw=true "Backend")
 
@@ -155,3 +155,4 @@ In `services.yml` muss die Klasse mit `name: markocupic_export_table.writer` get
             - { name: markocupic_export_table.writer, alias: xml, verbose_name: Custom xml exporter class }
 ```
 Viel Spass mit Export Table!
+
