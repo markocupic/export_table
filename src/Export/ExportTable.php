@@ -140,7 +140,7 @@ class ExportTable
         }
 
         // Write export data to a file.
-        $writer = $this->getWriter($objConfig->getModel()->exportType);
+        $writer = $this->getWriter($objConfig->getExportType());
         $writer->write($this->arrData, $objConfig);
     }
 
