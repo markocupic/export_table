@@ -93,16 +93,17 @@ class ExportTable
 
         if (empty($arrSelectedFields)) {
             $arrSelectedFields = $this->databaseHelper->listFields($this->strTable, false, false);
+            $objConfig->setFields($arrSelectedFields);
+        }
+
+        // Use table field names as default for the header row
+        if ($objConfig->getAddHeadline() && empty($objConfig->getHeadlineFields())) {
+            $objConfig->setHeadlineFields($arrSelectedFields);
         }
 
         $strFields = empty($arrSelectedFields) ? '*' : implode(',', $arrSelectedFields);
 
-        // Load the language files for the headline fields.
-        if (!empty($objConfig->getHeadlineLabelLang())) {
-            $controllerAdapter->loadLanguageFile($this->strTable, $objConfig->getHeadlineLabelLang());
-        }
-
-        // The filter expression as to be entered as a JSON encoded array
+        // The filter expression has to be entered as a JSON encoded array
         // -> [["tableName.field=? OR tableName.field=?"],["valueA","valueB"]] or
         // -> [["tableName.field=?", "tableName.field=?"],["valueA","valueB"]]
         $arrFilter = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);

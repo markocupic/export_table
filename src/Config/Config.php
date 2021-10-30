@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\Config;
 
 use Markocupic\ExportTable\Model\ExportTableModel;
-use mysql_xdevapi\Exception;
 
 class Config
 {
@@ -34,7 +33,7 @@ class Config
         'tempFolder' => 'system/tmp',
         'fields' => [],
         'addHeadline' => true,
-        'headlineLabelLang' => null,
+        'headlineFields' => [],
         'saveExport' => false,
         'saveExportDirectory' => null,
         'overrideFile' => false,
@@ -114,7 +113,6 @@ class Config
      */
     public function setExportType(string $strExportType): self
     {
-
         $this->arrData['exportType'] = $strExportType;
 
         return $this;
@@ -352,17 +350,17 @@ class Config
         return $this;
     }
 
-    public function getHeadlineLabelLang(): ?string
+    public function getHeadlineFields(): array
     {
-        return $this->arrData['headlineLabelLang'];
+        return $this->arrData['headlineFields'];
     }
 
     /**
      * @return $this
      */
-    public function setHeadlineLabelLang(string $strHeadlineLabelLang): self
+    public function setHeadlineFields(array $arrHeadlineFields): self
     {
-        $this->arrData['headlineLabelLang'] = $strHeadlineLabelLang;
+        $this->arrData['headlineFields'] = $arrHeadlineFields;
 
         return $this;
     }

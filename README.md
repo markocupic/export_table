@@ -112,6 +112,8 @@ class CustomController extends AbstractController
         $config = (new Config('tl_member'))
             ->setExportType('csv')
             ->setFields(['firstname', 'lastname', 'dateOfBirth'])
+            ->setAddHeadline(true)
+            ->setHeadlineFields(['Vorname', 'Nachname', 'Geburtsdatum'])
             ->setDelimiter(',')
             ->setEnclosure('"')
             // Select * FROM tl_member WHERE tl_member.city = 'Oberkirch'
