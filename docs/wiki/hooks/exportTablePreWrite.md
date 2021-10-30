@@ -3,7 +3,7 @@ Der **exportTablePreWrite** Hook wird vor dem Befüllen der Export-Datei getrigg
 Es ist die letzte Möglichkeit das Daten-Array zu verändern, oder das Array andersweitig zu verarbeiten.
 
 ```php
-// App/eventListener/ExportTable/ExportTablePreWriteListener.php
+// App/EventListener/ExportTable/ExportTablePreWriteListener.php
 
 declare(strict_types=1);
 

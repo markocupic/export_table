@@ -3,7 +3,7 @@ Der **exportTable** Hook wird beim Schreiben des Feldinhalts in das Datenarray g
 Die [Export Table](https://github.com/markocupic/export_table) Erweiterung nutzt den Hook um timestamps in formatierte Daten umzuwandeln.
 
 ```php
-// App/eventListener/ExportTable/FormatDateListener.php
+// App/EventListener/ExportTable/FormatDateListener.php
 
 declare(strict_types=1);
 

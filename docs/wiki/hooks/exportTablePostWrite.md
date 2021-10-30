@@ -3,7 +3,7 @@ Der **exportTablePostWrite** Hook wird nach dem Befüllen der Export-Datei getri
 Er kann verwendet werden, um z.B. die Datei via Notification zu versenden.
 
 ```php
-// App/eventListener/ExportTable/ExportTablePostWriteListener.php
+// App/EventListener/ExportTable/ExportTablePostWriteListener.php
 
 declare(strict_types=1);
 
