@@ -56,6 +56,13 @@ class Config
     public function __construct(string $strTable = 'tl_member')
     {
         $this->arrData['table'] = $strTable;
+        $this->arrData['rowCallback'] = static function ($arrRow) {
+            foreach($arrRow as $fieldName => $varValue)
+            {
+                $arrRow[$fieldName] = is_string($varValue) ? utf8_decode(html_entity_decode($varValue)) : $varValue;
+            }
+            return $arrRow;
+        };
     }
 
     public function getModel(): ?ExportTableModel
