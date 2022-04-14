@@ -6,5 +6,5 @@ cd..
 cd..
 cd..
 cd..
-vendor\bin\ecs check vendor/markocupic/export_table/src --config vendor/markocupic/export_table/.ecs/config/default.php
-cd vendor/markocupic/export_table/.ecs./batch/check
+vendor\bin\ecs check vendor/markocupic/gallery-creator-bundle/src --config vendor/markocupic/gallery-creator-bundle/.ecs/config/default.php
+cd vendor/markocupic/gallery-creator-bundle/.ecs./batch/check
