@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -39,6 +39,7 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         foreach ($arrData as $arrRow) {
             // Add a new row
             $objXml->startElement('datarecord');
+
             foreach ($arrRow as $fieldName => $fieldValue) {
                 // Add a field
                 $objXml->startElement($fieldName);
@@ -58,6 +59,7 @@ class XmlWriter extends AbstractWriter implements WriterInterface
             // Add the closing row tag
             $objXml->endElement();
         }
+
         // Add the closing table tag
         $objXml->endElement();
 
@@ -77,8 +79,8 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         $this->log($objFile, $objConfig);
 
         if ($objConfig->getSendFileToTheBrowser()) {
-            // Show the download dialogue
-            $this->sendFileToTheBrowser($objFile, false);
+            // Show the download dialog
+            $this->sendFileToBrowser($objFile);
         }
 
         $this->sendBackendMessage($objFile);

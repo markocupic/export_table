@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -23,26 +23,11 @@ use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Helper\StringHelper;
 use Markocupic\ExportTable\Writer\WriterInterface;
 
-/**
- * Class ExportTable.
- */
 class ExportTable
 {
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-
-    /**
-     * @var Str
-     */
-    private $stringHelper;
-
-    /**
-     * @var DatabaseHelper
-     */
-    private $databaseHelper;
-
+    private ContaoFramework $framework;
+    private StringHelper $stringHelper;
+    private DatabaseHelper $databaseHelper;
     /**
      * @var string
      */
@@ -193,7 +178,7 @@ class ExportTable
         $filterStmt = $filterStmt ? ' WHERE '.$filterStmt : '';
 
         // Check for invalid input.
-        if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' '.$arrValues), $objConfig->getNotAllowedFilterExpr())) {
+        if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' ' . implode(' ', $arrValues)), $objConfig->getNotAllowedFilterExpr())) {
             $message = sprintf('Illegal filter expression! Do not use "%s" in your filter expression.', implode(', ', $objConfig->getNotAllowedFilterExpr()));
 
             throw new \Exception($message);

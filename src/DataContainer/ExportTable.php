@@ -3,18 +3,17 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable\Dca;
+namespace Markocupic\ExportTable\DataContainer;
 
-use Contao\Backend;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
@@ -23,10 +22,9 @@ use Contao\DataContainer;
 use Contao\Environment;
 use Haste\Util\Url;
 use Markocupic\ExportTable\Config\GetConfigFromModel;
-use Markocupic\ExportTable\Export\ExportTable;
+use Markocupic\ExportTable\Export\ExportTable as ExportTableService;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
 use Markocupic\ExportTable\Model\ExportTableModel;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as Twig;
@@ -34,49 +32,20 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class TlExportTable
+class ExportTable
 {
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private ContaoFramework $framework;
+    private RequestStack $requestStack;
+    private DatabaseHelper $databaseHelper;
+    private GetConfigFromModel $getConfigFromModel;
+    private ExportTableService $exportTable;
+    private Twig $twig;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var DatabaseHelper
-     */
-    private $databaseHelper;
+    private array $writerAliases = [];
 
-    /**
-     * @var GetConfigFromModel
-     */
-    private $getConfigFromModel;
-
-    /**
-     * @var Twig
-     */
-    private $twig;
-
-    /**
-     * @var ExportTable
-     */
-    private $exportTable;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var array
-     */
-    private $writerAliases = [];
-
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTable $exportTable, Twig $twig, TranslatorInterface $translator)
+    public function __construct(ContaoFramework $framework, RequestStack $requestStack, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTableService $exportTable, Twig $twig, TranslatorInterface $translator)
     {
         $this->framework = $framework;
         $this->requestStack = $requestStack;

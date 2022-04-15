@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -20,7 +22,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['export'] = ['Run export with ID %s.', 'R
 $GLOBALS['TL_LANG']['tl_export_table']['title_legend'] = 'Title settings';
 $GLOBALS['TL_LANG']['tl_export_table']['settings'] = 'Settings';
 $GLOBALS['TL_LANG']['tl_export_table']['deep_link_legend'] = 'Deep-Link settings';
-$GLOBALS['TL_LANG']['tl_export_table']['save_legend'] = "Save destination";
+$GLOBALS['TL_LANG']['tl_export_table']['save_legend'] = 'Save destination';
 
 // Fields
 $GLOBALS['TL_LANG']['tl_export_table']['title'] = ['Title', 'Enter the title please.'];
@@ -34,6 +36,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['sortDirection'] = ['Sort by direction', 
 $GLOBALS['TL_LANG']['tl_export_table']['enclosure'] = ['Enclosure', 'Please enter the enclosure tag (normally \'"\').'];
 $GLOBALS['TL_LANG']['tl_export_table']['delimiter'] = ['Delimiter', 'Please enter the delimiter tag (normally ";").'];
 $GLOBALS['TL_LANG']['tl_export_table']['arrayDelimiter'] = ['Array Delimiter', 'Please insert an array delimiter. Normally "||".'];
+$GLOBALS['TL_LANG']['tl_export_table']['bom'] = ['Add BOM', 'Add the BOM (Byte Order Mark) to the file (Correct display of UTF-8 encoded characters in MS-Excel).'];
 $GLOBALS['TL_LANG']['tl_export_table']['sendFileToTheBrowser'] = ['Download the file in the browser', 'Indicate whether or not to download the file in the browser.'];
 $GLOBALS['TL_LANG']['tl_export_table']['activateDeepLinkExport'] = ['Activate Deep-Link export functionality'];
 $GLOBALS['TL_LANG']['tl_export_table']['token'] = ['Deep-Link key', 'Add a key to protect the download from other users.'];

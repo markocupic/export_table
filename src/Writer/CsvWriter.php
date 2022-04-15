@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -47,19 +47,16 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         $objWriter->setEnclosure($objConfig->getEnclosure());
         $objWriter->writeFrom($objReader);
 
-        // Send the created file to the browser
+        // Send generated file to the browser
         $objFile = new File($objWriter->getFilename());
+
+        if ($objConfig->getBom()) {
+            $objFile = $this->addBom($objFile, $objConfig->getBom());
+        }
 
         // Run post-write HOOK: e.g. send notifications, etc.
         $objFile = $this->runPostWriteHook($objFile, $objConfig);
 
-        $this->log($objFile, $objConfig);
-
-        if ($objConfig->getSendFileToTheBrowser()) {
-            // Show the download dialogue
-            $this->sendFileToTheBrowser($objFile, false);
-        }
-
-        $this->sendBackendMessage($objFile);
+        $this->sendFileToBrowser($objFile, false);
     }
 }

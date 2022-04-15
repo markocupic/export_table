@@ -11,6 +11,7 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Ausgabe sortierbar (Feldname und Richtung)
 - Delimiter einstellbar (Default: ;)
 - Enclosure einstellbar (Default: ")
+- BOM (für Korrekete Darstellung von UTF-8 codierten Zeichen in MS Excel)
 - Trennzeichen für Arrays einstellbar
 - Deeplink Support
 - Speicher-Verzeichnis wählbar
@@ -151,7 +152,7 @@ In `services.yml` muss die Klasse mit `name: markocupic_export_table.writer` get
 
 ```yaml
 
-    # Inject Custom CSV writer into Markocupic\ExportTable\Export\ExportTable and Markocupic\ExportTable\Dca\TlExportTable during compilation
+    # Inject Custom CSV writer into Markocupic\ExportTable\Export\ExportTable and Markocupic\ExportTable\DataContainer\ExportTable during compilation
     App\ExportTable\Writer\CustomXmlWriter:
         tags:
             - { name: markocupic_export_table.writer, alias: xml, verbose_name: Custom xml exporter class }

@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Markocupic\ExportTable\Config\Config;
 
@@ -23,17 +24,18 @@ use Markocupic\ExportTable\Config\Config;
 class ExportTableTrimValuesListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
-    public const PRIORITY = 40;
+    public const PRIORITY = 400;
+
+    private static bool $disableHook = false;
 
     /**
-     * @var bool
-     */
-    private static $disableHook;
-
-    /**
+     * @param string $strFieldname
      * @param $varValue
-     *
-     * @return mixed
+     * @param string $strTablename
+     * @param array $arrDataRecord
+     * @param array $arrDca
+     * @param Config $objConfig
+     * @return string
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {

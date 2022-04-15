@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Export Table for Contao CMS.
+ * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2021 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Writer;
 
+use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\File;
@@ -23,30 +24,25 @@ use Contao\System;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Logger\Logger;
 use Psr\Log\LogLevel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Mime\MimeTypes;
+use Symfony\Component\String\UnicodeString;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractWriter
 {
-    /**
-     * @var ContaoFramework
-     */
-    protected $framework;
+    protected ContaoFramework $framework;
+    protected TranslatorInterface $translator;
+    protected Logger $logger;
+    protected string $projectDir;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var Logger
-     */
-    protected $logger;
-
-    public function __construct(ContaoFramework $framework, TranslatorInterface $translator, Logger $logger)
+    public function __construct(ContaoFramework $framework, TranslatorInterface $translator, Logger $logger, string $projectDir)
     {
         $this->framework = $framework;
         $this->translator = $translator;
         $this->logger = $logger;
+        $this->projectDir = $projectDir;
     }
 
     /**
@@ -76,9 +72,28 @@ abstract class AbstractWriter
         return $objFile->path;
     }
 
-    protected function sendFileToTheBrowser(File $objFile, bool $blnInline = false): void
+    protected function sendFileToBrowser(File $objFile, bool $blnInline = false): void
     {
-        $objFile->sendToBrowser($objFile->basename, $blnInline);
+        $filePath = $this->projectDir.'/'.$objFile->path;
+
+        $response = new BinaryFileResponse($filePath);
+        $response->setPrivate(); // public by default
+        $response->setAutoEtag();
+
+        $response->setContentDisposition(
+            $blnInline ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $objFile->basename,
+            (new UnicodeString(basename($filePath)))->ascii()->toString()
+        );
+
+        $mimeTypes = new MimeTypes();
+        $mimeType = $mimeTypes->guessMimeType($filePath);
+
+        $response->headers->addCacheControlDirective('must-revalidate');
+        $response->headers->set('Connection', 'close');
+        $response->headers->set('Content-Type', $mimeType);
+
+        throw new ResponseException($response);
     }
 
     protected function runPreWriteHook(array $arrData, Config $objConfig): array
@@ -108,9 +123,6 @@ abstract class AbstractWriter
             }
         }
 
-
-
-
         return $objFile;
     }
 
@@ -132,5 +144,30 @@ abstract class AbstractWriter
     {
         $strText = sprintf('Run ExportTable for "%s" and stored file to "%s".', $objConfig->getTable(), $objFile->path);
         $this->logger->log($strText, LogLevel::INFO, ContaoContext::GENERAL, __METHOD__);
+    }
+
+    protected function addBom(File $objFile, string $bomType = ''): File
+    {
+        switch ($bomType) {
+            case 'UTF-8':
+                $bom = $this->getUtf8Bom();
+                break;
+
+            default:
+                $bom = '';
+        }
+
+        if ($bom) {
+            $strContentWithBom = $bom.$objFile->getContent();
+            $objFile->write($strContentWithBom);
+            $objFile->close();
+        }
+
+        return $objFile;
+    }
+
+    private function getUtf8Bom(): string
+    {
+        return \chr(hexdec('EF')).\chr(hexdec('BB')).\chr(hexdec('BF'));
     }
 }
