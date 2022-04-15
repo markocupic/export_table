@@ -11,7 +11,7 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Ausgabe sortierbar (Feldname und Richtung)
 - Delimiter einstellbar (Default: ;)
 - Enclosure einstellbar (Default: ")
-- BOM (für korrekete Darstellung von UTF-8 codierten Zeichen in MS Excel)
+- BOM (für korrekte Darstellung von UTF-8 codierten Zeichen in MS Excel)
 - Trennzeichen für Arrays einstellbar
 - Deeplink Support
 - Speicher-Verzeichnis wählbar
