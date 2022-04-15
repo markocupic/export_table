@@ -28,9 +28,9 @@ class JsonArrayRegexpListener implements ListenerInterface
     public const HOOK = 'addCustomRegexp';
     public const PRIORITY = 100;
 
-    private Str $stringHelper;
+    private StringHelper $stringHelper;
     private Config $config;
-    private Translator $translator;
+    private TranslatorInterface $translator;
 
     private static bool $disableHook = false;
 

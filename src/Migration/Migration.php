@@ -28,6 +28,10 @@ class Migration extends AbstractMigration
         $this->connection = $connection;
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
     public function shouldRun(): bool
     {
         $doMigration = false;

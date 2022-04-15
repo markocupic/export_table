@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\Writer;
 
 use Contao\File;
+use Contao\FilesModel;
 use Markocupic\ExportTable\Config\Config;
 
 class XmlWriter extends AbstractWriter implements WriterInterface
@@ -26,6 +27,8 @@ class XmlWriter extends AbstractWriter implements WriterInterface
      */
     public function write(array $arrData, Config $objConfig): void
     {
+        $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
+
         // Run pre-write HOOK: e.g. modify the data array
         $arrData = $this->runPreWriteHook($arrData, $objConfig);
 
@@ -46,7 +49,7 @@ class XmlWriter extends AbstractWriter implements WriterInterface
 
                 $fieldValue = (string) $fieldValue;
 
-                if (is_numeric($fieldValue) || null === $fieldValue || '' === $fieldValue) {
+                if (is_numeric($fieldValue) || '' === $fieldValue) {
                     $objXml->text($fieldValue);
                 } else {
                     // Write CDATA
@@ -78,11 +81,12 @@ class XmlWriter extends AbstractWriter implements WriterInterface
 
         $this->log($objFile, $objConfig);
 
-        if ($objConfig->getSendFileToTheBrowser()) {
-            // Show the download dialog
+        if ($objConfig->getSaveExport() && $objConfig->getSaveExportDirectory() && null !== $filesModelAdapter->findByUuid($objConfig->getSaveExportDirectory())) {
+            // Save file to filesystem
+            $this->sendBackendMessage($objFile);
+        } else {
+            // Send file to the browser
             $this->sendFileToBrowser($objFile);
         }
-
-        $this->sendBackendMessage($objFile);
     }
 }

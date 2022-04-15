@@ -37,9 +37,13 @@ class ExportTableFormatDateListener implements ListenerInterface
     }
 
     /**
+     * @param string $strFieldname
      * @param $varValue
-     *
-     * @return mixed
+     * @param string $strTablename
+     * @param array $arrDataRecord
+     * @param array $arrDca
+     * @param Config $objConfig
+     * @return mixed|string
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {

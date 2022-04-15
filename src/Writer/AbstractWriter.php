@@ -45,12 +45,9 @@ abstract class AbstractWriter
         $this->projectDir = $projectDir;
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function getTargetPath(Config $objConfig, string $strFileEnding): string
+
+    protected function getFileName(Config $objConfig, string $strFileEnding): string
     {
-        $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
 
         $fn = $objConfig->getFilename();
 
@@ -60,13 +57,25 @@ abstract class AbstractWriter
 
         $appendDateString = $objConfig->getOverrideFile() ? '' : date('_Ymd_His', time());
 
-        $filename = sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
+        return  sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
+
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function getTargetPath(Config $objConfig, string $strFileEnding): string
+    {
+        $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
+
+        $filename = $this->getFileName($objConfig, $strFileEnding);
 
         if ($objConfig->getSaveExport() && $objConfig->getSaveExportDirectory() && null !== ($filesModel = $filesModelAdapter->findByUuid($objConfig->getSaveExportDirectory()))) {
             $objFile = new File($filesModel->path.'/'.$filename);
 
             return $objFile->path;
         }
+
         $objFile = new File($objConfig->getTempFolder().'/'.$filename);
 
         return $objFile->path;
@@ -133,12 +142,7 @@ abstract class AbstractWriter
         $messageAdapter->addInfo($msg);
     }
 
-    protected function systemLog(File $objFile): void
-    {
-        $messageAdapter = $this->framework->getAdapter(Message::class);
-        $msg = $this->translator->trans('MSC.savedExportFile', [$objFile->path], 'contao_default');
-        $messageAdapter->addInfo($msg);
-    }
+
 
     protected function log(File $objFile, Config $objConfig): void
     {

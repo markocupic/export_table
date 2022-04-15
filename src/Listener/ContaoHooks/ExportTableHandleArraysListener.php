@@ -37,9 +37,13 @@ class ExportTableHandleArraysListener implements ListenerInterface
     }
 
     /**
+     * @param string $strFieldname
      * @param $varValue
-     *
-     * @return mixed
+     * @param string $strTablename
+     * @param array $arrDataRecord
+     * @param array $arrDca
+     * @param Config $objConfig
+     * @return mixed|string
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
@@ -51,10 +55,10 @@ class ExportTableHandleArraysListener implements ListenerInterface
 
         $dcaEval = $arrDca['fields'][$strFieldname]['eval'];
 
-        if ($dcaEval['csv'] ?? false && '' !== $dcaEval['csv']) {
+        if (isset($dcaEval['csv']) && '' !== $dcaEval['csv']) {
             $delim = $dcaEval['csv'];
             $varValue = implode($delim, $stringUtilAdapter->deserialize($varValue, true));
-        } elseif ($dcaEval['multiple'] ?? false && true === $dcaEval['multiple']) {
+        } elseif (isset($dcaEval['multiple']) && true === $dcaEval['multiple']) {
             $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
         } elseif (!empty($varValue) && \is_string($varValue) && 0 === strpos($varValue, 'a:') && \is_array($stringUtilAdapter->deserialize($varValue))) {
             $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));

@@ -18,7 +18,7 @@ use Markocupic\ExportTable\Model\ExportTableModel;
 
 class Config
 {
-    private $arrData = [
+    private array $arrData = [
         'model' => null,
         'title' => '',
         'table' => null,

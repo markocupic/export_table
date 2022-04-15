@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\Writer;
 
 use Contao\File;
+use Contao\FilesModel;
 use Haste\IO\Reader\ArrayReader;
 use Haste\IO\Writer\CsvFileWriter;
 use Markocupic\ExportTable\Config\Config;
@@ -28,6 +29,8 @@ class CsvWriter extends AbstractWriter implements WriterInterface
      */
     public function write(array $arrData, Config $objConfig): void
     {
+        $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
+
         // Run pre-write HOOK: e.g. modify the data array
         $arrData = $this->runPreWriteHook($arrData, $objConfig);
 
@@ -57,6 +60,12 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         // Run post-write HOOK: e.g. send notifications, etc.
         $objFile = $this->runPostWriteHook($objFile, $objConfig);
 
-        $this->sendFileToBrowser($objFile, false);
+        if ($objConfig->getSaveExport() && $objConfig->getSaveExportDirectory() && null !== $filesModelAdapter->findByUuid($objConfig->getSaveExportDirectory())) {
+            // Save file to filesystem
+            $this->sendBackendMessage($objFile);
+        } else {
+            // Send file to the browser
+            $this->sendFileToBrowser($objFile);
+        }
     }
 }

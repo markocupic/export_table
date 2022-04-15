@@ -80,6 +80,7 @@ class ExportTable
      * Run export.
      *
      * @Callback(table="tl_export_table", target="config.onload")
+     * @throws \Exception
      */
     public function runExport(): void
     {

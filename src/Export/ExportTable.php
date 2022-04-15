@@ -28,20 +28,9 @@ class ExportTable
     private ContaoFramework $framework;
     private StringHelper $stringHelper;
     private DatabaseHelper $databaseHelper;
-    /**
-     * @var string
-     */
-    private $strTable;
 
-    /**
-     * @var array
-     */
-    private $arrData = [];
-
-    /**
-     * @var array
-     */
-    private $writers = [];
+    private array $arrData = [];
+    private array $writers = [];
 
     public function __construct(ContaoFramework $framework, StringHelper $stringHelper, DatabaseHelper $databaseHelper)
     {
@@ -63,21 +52,21 @@ class ExportTable
      */
     public function run(Config $objConfig): void
     {
-        $this->strTable = $objConfig->getTable();
+        $strTable = $objConfig->getTable();
 
         $databaseAdapter = $this->framework->getAdapter(Database::class);
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
         $systemAdapter = $this->framework->getAdapter(System::class);
 
         // Load the data container array.
-        $controllerAdapter->loadDataContainer($this->strTable, true);
-        $arrDca = $GLOBALS['TL_DCA'][$this->strTable] ?? [];
+        $controllerAdapter->loadDataContainer($strTable, true);
+        $arrDca = $GLOBALS['TL_DCA'][$strTable] ?? [];
 
         // If no fields are chosen, then do list all the fields from the selected table.
         $arrSelectedFields = $objConfig->getFields();
 
         if (empty($arrSelectedFields)) {
-            $arrSelectedFields = $this->databaseHelper->listFields($this->strTable, false, false);
+            $arrSelectedFields = $this->databaseHelper->listFields($strTable, false, false);
             $objConfig->setFields($arrSelectedFields);
         }
 
@@ -98,7 +87,7 @@ class ExportTable
         // Generate the sorting expression.
         $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
 
-        $strQuery = sprintf('SELECT %s FROM %s%s%s', $strFields, $this->strTable, $strFilterExpr, $strSortingStmt);
+        $strQuery = sprintf('SELECT %s FROM %s%s%s', $strFields, $strTable, $strFilterExpr, $strSortingStmt);
         $objDb = $databaseAdapter
             ->getInstance()
             ->prepare($strQuery)
@@ -111,7 +100,7 @@ class ExportTable
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
                         $objCallback = $systemAdapter->importStatic($callback[0]);
-                        $varValue = $objCallback->{$callback[1]}($strFieldName, $varValue, $this->strTable, $arrRow, $arrDca, $objConfig);
+                        $varValue = $objCallback->{$callback[1]}($strFieldName, $varValue, $strTable, $arrRow, $arrDca, $objConfig);
                     }
                     $arrRow[$strFieldName] = $varValue;
                 }

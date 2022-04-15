@@ -28,9 +28,13 @@ class ExportTableReplaceNewlineListener implements ListenerInterface
     private static bool $disableHook = false;
 
     /**
+     * @param string $strFieldname
      * @param $varValue
-     *
-     * @return array|mixed|string|array<string>|null
+     * @param string $strTablename
+     * @param array $arrDataRecord
+     * @param array $arrDca
+     * @param Config $objConfig
+     * @return array|mixed|string|string[]|null
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
