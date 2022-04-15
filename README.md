@@ -1,4 +1,4 @@
-![Alt text](docs/logo.png?raw=true "logo")
+![Markoo Cupic Logo](docs/logo.png?raw=true "logo")
 
 # Export Table für Contao CMS
 
@@ -11,14 +11,14 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Ausgabe sortierbar (Feldname und Richtung)
 - Delimiter einstellbar (Default: ;)
 - Enclosure einstellbar (Default: ")
-- BOM (für Korrekete Darstellung von UTF-8 codierten Zeichen in MS Excel)
+- BOM (für korrekete Darstellung von UTF-8 codierten Zeichen in MS Excel)
 - Trennzeichen für Arrays einstellbar
 - Deeplink Support
 - Speicher-Verzeichnis wählbar
 - Dateiname wählbar
 - Extension mit HOOKS und weiteren Writern erweiterbar
 
-![Alt text](docs/backend.png?raw=true "Backend")
+![Backend](docs/backend.png?raw=true "Backend")
 
 ## Der Einsatz von Filtern
 Der Export ist über Filter konfigurierbar.
