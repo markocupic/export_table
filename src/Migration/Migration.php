@@ -29,7 +29,6 @@ class Migration extends AbstractMigration
     }
 
     /**
-     * @return bool
      * @throws Exception
      */
     public function shouldRun(): bool

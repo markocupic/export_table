@@ -45,10 +45,8 @@ abstract class AbstractWriter
         $this->projectDir = $projectDir;
     }
 
-
     protected function getFileName(Config $objConfig, string $strFileEnding): string
     {
-
         $fn = $objConfig->getFilename();
 
         if (!\strlen((string) $fn)) {
@@ -57,8 +55,7 @@ abstract class AbstractWriter
 
         $appendDateString = $objConfig->getOverrideFile() ? '' : date('_Ymd_His', time());
 
-        return  sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
-
+        return sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
     }
 
     /**
@@ -141,8 +138,6 @@ abstract class AbstractWriter
         $msg = $this->translator->trans('MSC.savedExportFile', [$objFile->path], 'contao_default');
         $messageAdapter->addInfo($msg);
     }
-
-
 
     protected function log(File $objFile, Config $objConfig): void
     {
