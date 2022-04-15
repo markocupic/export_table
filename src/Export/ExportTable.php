@@ -178,7 +178,7 @@ class ExportTable
         $filterStmt = $filterStmt ? ' WHERE '.$filterStmt : '';
 
         // Check for invalid input.
-        if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' ' . implode(' ', $arrValues)), $objConfig->getNotAllowedFilterExpr())) {
+        if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' '.implode(' ', $arrValues)), $objConfig->getNotAllowedFilterExpr())) {
             $message = sprintf('Illegal filter expression! Do not use "%s" in your filter expression.', implode(', ', $objConfig->getNotAllowedFilterExpr()));
 
             throw new \Exception($message);

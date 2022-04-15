@@ -19,7 +19,6 @@ use Markocupic\ExportTable\Model\ExportTableModel;
 
 class GetConfigFromToken
 {
-
     private ContaoFramework $framework;
     private GetConfigFromModel $getConfigFromModel;
 

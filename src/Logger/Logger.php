@@ -19,7 +19,6 @@ use Psr\Log\LoggerInterface;
 
 class Logger
 {
-
     private ?LoggerInterface $logger;
 
     public function __construct(?LoggerInterface $logger)

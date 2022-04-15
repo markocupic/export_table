@@ -34,7 +34,6 @@ use Twig\Error\SyntaxError;
 
 class ExportTable
 {
-
     private ContaoFramework $framework;
     private RequestStack $requestStack;
     private DatabaseHelper $databaseHelper;

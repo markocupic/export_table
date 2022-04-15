@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Widget;
 use Markocupic\ExportTable\Config\Config;
@@ -34,7 +33,6 @@ class JsonArrayRegexpListener implements ListenerInterface
     private Translator $translator;
 
     private static bool $disableHook = false;
-
 
     public function __construct(StringHelper $stringHelper, Config $config, TranslatorInterface $translator)
     {

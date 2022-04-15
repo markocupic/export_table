@@ -26,7 +26,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DownloadController extends AbstractController
 {
-
     private ContaoFramework $framework;
     private RequestStack $requestStack;
     private GetConfigFromToken $getConfigFromToken;

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Markocupic\ExportTable\Config\Config;
 
@@ -29,12 +28,8 @@ class ExportTableTrimValuesListener implements ListenerInterface
     private static bool $disableHook = false;
 
     /**
-     * @param string $strFieldname
      * @param $varValue
-     * @param string $strTablename
-     * @param array $arrDataRecord
-     * @param array $arrDca
-     * @param Config $objConfig
+     *
      * @return string
      */
     public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)

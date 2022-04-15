@@ -26,10 +26,9 @@ class ReplaceGetInsertTagsListener implements ListenerInterface
     public const HOOK = 'replaceInsertTags';
     public const PRIORITY = 10;
 
-    private ContaoFramework $framework;
-
     public static bool $disableHook = false;
 
+    private ContaoFramework $framework;
 
     public function __construct(ContaoFramework $framework)
     {

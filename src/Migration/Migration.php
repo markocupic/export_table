@@ -21,7 +21,6 @@ use Doctrine\DBAL\Exception;
 
 class Migration extends AbstractMigration
 {
-
     private Connection $connection;
 
     public function __construct(Connection $connection)
