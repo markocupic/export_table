@@ -77,6 +77,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Export\ExportTable;
+use Markocupic\ExportTable\Writer\Bom;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -125,12 +126,14 @@ class CustomController extends AbstractController
             ->setSaveExportDirectory(FilesModel::findByPath('files')->uuid)
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
-            // Use the row callback to convert from utf-8 to ISO-8859-1
+            // Add BOM (correct display of UTF8 encoded chars in MS-Excel)
+            ->setBom(Bom::BOM_UTF_8) 
+            // Use the row callback to manipulate records
             ->setRowCallback(
                 static function ($arrRow) {
                     foreach($arrRow as $fieldName => $varValue)
                     {
-                        $arrRow[$fieldName] = is_string($varValue) ? iconv("UTF-8", "ISO-8859-1", $varValue) : $varValue;
+                        $arrRow[$fieldName] = doSomething($varValue);
                     }
                     return $arrRow;
                 }
