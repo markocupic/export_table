@@ -144,29 +144,4 @@ abstract class AbstractWriter
         $strText = sprintf('Run ExportTable for "%s" and stored file to "%s".', $objConfig->getTable(), $objFile->path);
         $this->logger->log($strText, LogLevel::INFO, ContaoContext::GENERAL, __METHOD__);
     }
-
-    protected function addBom(File $objFile, string $bomType = ''): File
-    {
-        switch ($bomType) {
-            case 'UTF-8':
-                $bom = $this->getUtf8Bom();
-                break;
-
-            default:
-                $bom = '';
-        }
-
-        if ($bom) {
-            $strContentWithBom = $bom.$objFile->getContent();
-            $objFile->write($strContentWithBom);
-            $objFile->close();
-        }
-
-        return $objFile;
-    }
-
-    private function getUtf8Bom(): string
-    {
-        return \chr(hexdec('EF')).\chr(hexdec('BB')).\chr(hexdec('BF'));
-    }
 }

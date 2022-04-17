@@ -151,7 +151,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
         'bom'                    => [
             'exclude'   => true,
             'inputType' => 'select',
-            'options'   => ['UTF-8'],
+            'options'   => ['UTF-8', 'UTF-16-BE', 'UTF-16-LE', 'UTF-32-BE', 'UTF-32-LE'],
             'eval'      => ['includeBlankOption' => true, 'useRawRequestData' => true, 'tl_class' => 'w50'],
             'sql'       => "char(32) NOT NULL default ''",
         ],

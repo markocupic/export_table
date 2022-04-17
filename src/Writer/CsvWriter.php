@@ -34,7 +34,7 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         // Run pre-write HOOK: e.g. modify the data array
         $arrData = $this->runPreWriteHook($arrData, $objConfig);
 
-        // Use codefog haste and its ArrayReader- and CsvFileWriter-class
+        // Use codefog/haste and its ArrayReader- and CsvFileWriter-class
         $objReader = new ArrayReader($arrData);
 
         // Write content into a file
@@ -54,7 +54,7 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         $objFile = new File($objWriter->getFilename());
 
         if ($objConfig->getBom()) {
-            $objFile = $this->addBom($objFile, $objConfig->getBom());
+            $objFile = $this->setOutputBom($objFile, $objConfig->getBom());
         }
 
         // Run post-write HOOK: e.g. send notifications, etc.
@@ -67,5 +67,27 @@ class CsvWriter extends AbstractWriter implements WriterInterface
             // Send file to the browser
             $this->sendFileToBrowser($objFile);
         }
+    }
+
+    private function setOutputBom(File $objFile, string $bomType = ''): File
+    {
+        $bom = '';
+
+        if (!empty($bomType)) {
+            $className = Bom::class;
+            $bomConst = 'BOM_'.str_replace('-', '_', $bomType);
+
+            if (\defined($className.'::'.$bomConst)) {
+                $bom = \constant($className.'::'.$bomConst);
+            }
+        }
+
+        if ($bom) {
+            $strContentWithBom = $bom.$objFile->getContent();
+            $objFile->write($strContentWithBom);
+            $objFile->close();
+        }
+
+        return $objFile;
     }
 }
