@@ -127,7 +127,7 @@ class CustomController extends AbstractController
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
             // Add BOM (correct display of UTF8 encoded chars in MS-Excel)
-            ->setBom(Bom::BOM_UTF_8) 
+            ->setBom(Bom::UTF_8) 
             // Use the row callback to manipulate records
             ->setRowCallback(
                 static function ($arrRow) {

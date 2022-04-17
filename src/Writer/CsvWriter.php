@@ -75,7 +75,7 @@ class CsvWriter extends AbstractWriter implements WriterInterface
 
         if (!empty($bomType)) {
             $className = Bom::class;
-            $bomConst = 'BOM_'.str_replace('-', '_', $bomType);
+            $bomConst = str_replace('-', '_', $bomType);
 
             if (\defined($className.'::'.$bomConst)) {
                 $bom = \constant($className.'::'.$bomConst);

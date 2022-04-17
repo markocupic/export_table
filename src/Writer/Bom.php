@@ -16,9 +16,9 @@ namespace Markocupic\ExportTable\Writer;
 
 class Bom
 {
-    public const BOM_UTF_8 = "\xEF\xBB\xBF";
-    public const BOM_UTF_16_BE = "\xFE\xFF";
-    public const BOM_UTF_16_LE = "\xFF\xFE";
-    public const BOM_UTF_32_BE = "\x00\x00\xFE\xFF";
-    public const BOM_UTF_32_LE = "\xFF\xFE\x00\x00";
+    public const UTF_8 = "\xEF\xBB\xBF";
+    public const UTF_16_BE = "\xFE\xFF";
+    public const UTF_16_LE = "\xFF\xFE";
+    public const UTF_32_BE = "\x00\x00\xFE\xFF";
+    public const UTF_32_LE = "\xFF\xFE\x00\x00";
 }
