@@ -171,7 +171,7 @@ class Config
         return $this;
     }
 
-    public function getBom(): string
+    public function getOutputBom(): string
     {
         return $this->arrData['bom'];
     }
@@ -179,7 +179,7 @@ class Config
     /**
      * @return $this
      */
-    public function setBom(string $strBom = ''): self
+    public function setOutputBom(string $strBom = ''): self
     {
         $this->arrData['bom'] = $strBom;
 

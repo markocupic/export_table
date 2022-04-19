@@ -59,6 +59,7 @@ $config = new Config('tl_member');
 Der eigentliche Export-Service wird mit der Methode `$this->exportTable->run($objConfig)` aufgerufen, welche als einzigen Parameter das vorher erstellte Config-Objekt erwartet.
 ```
 $config = new Config('tl_member');
+$config->setOutputBom(ByteSequence['UTF-8']);
 
 return $this->exportTable->run($config);
 ```
@@ -77,7 +78,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Export\ExportTable;
-use Markocupic\ExportTable\Writer\Bom;
+use Markocupic\ExportTable\Writer\ByteSequence;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -127,7 +128,7 @@ class CustomController extends AbstractController
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
             // Add BOM (correct display of UTF8 encoded chars in MS-Excel)
-            ->setBom(Bom::UTF_8) 
+            ->setOutputBom(ByteSequence['UTF-8']) 
             // Use the row callback to manipulate records
             ->setRowCallback(
                 static function ($arrRow) {

@@ -27,40 +27,40 @@ class CsvWriter extends AbstractWriter implements WriterInterface
     /**
      * @throws \Exception
      */
-    public function write(array $arrData, Config $objConfig): void
+    public function write(array $arrData, Config $config): void
     {
         $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
 
         // Run pre-write HOOK: e.g. modify the data array
-        $arrData = $this->runPreWriteHook($arrData, $objConfig);
+        $arrData = $this->runPreWriteHook($arrData, $config);
 
         // Use codefog/haste and its ArrayReader- and CsvFileWriter-class
         $objReader = new ArrayReader($arrData);
 
         // Write content into a file
-        $targetPath = $this->getTargetPath($objConfig, self::FILE_ENDING);
+        $targetPath = $this->getTargetPath($config, self::FILE_ENDING);
         $objWriter = new CsvFileWriter($targetPath);
 
-        if ($objConfig->getAddHeadline() && !empty($objConfig->getHeadlineFields())) {
+        if ($config->getAddHeadline() && !empty($config->getHeadlineFields())) {
             $objWriter->enableHeaderFields();
-            $objReader->setHeaderFields($objConfig->getHeadlineFields());
+            $objReader->setHeaderFields($config->getHeadlineFields());
         }
 
-        $objWriter->setDelimiter($objConfig->getDelimiter());
-        $objWriter->setEnclosure($objConfig->getEnclosure());
+        $objWriter->setDelimiter($config->getDelimiter());
+        $objWriter->setEnclosure($config->getEnclosure());
         $objWriter->writeFrom($objReader);
 
         // Send generated file to the browser
         $objFile = new File($objWriter->getFilename());
 
-        if ($objConfig->getBom()) {
-            $objFile = $this->setOutputBom($objFile, $objConfig->getBom());
+        if ($config->getOutputBom()) {
+            $objFile = $this->setOutputBom($objFile, $config->getOutputBom());
         }
 
         // Run post-write HOOK: e.g. send notifications, etc.
-        $objFile = $this->runPostWriteHook($objFile, $objConfig);
+        $objFile = $this->runPostWriteHook($objFile, $config);
 
-        if ($objConfig->getSaveExport() && $objConfig->getSaveExportDirectory() && null !== $filesModelAdapter->findByUuid($objConfig->getSaveExportDirectory())) {
+        if ($config->getSaveExport() && $config->getSaveExportDirectory() && null !== $filesModelAdapter->findByUuid($config->getSaveExportDirectory())) {
             // Save file to filesystem
             $this->sendBackendMessage($objFile);
         } else {
@@ -69,17 +69,19 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private function setOutputBom(File $objFile, string $bomType = ''): File
     {
         $bom = '';
 
         if (!empty($bomType)) {
-            $className = Bom::class;
-            $bomConst = str_replace('-', '_', $bomType);
-
-            if (\defined($className.'::'.$bomConst)) {
-                $bom = \constant($className.'::'.$bomConst);
+            if (!isset(ByteSequence::BOM[$bomType])) {
+                throw new \Exception(sprintf('BOM type "%s" not found. BOM type has to be one of %s.', $bomType, implode(', ', array_keys(ByteSequence::BOM)), ));
             }
+
+            $bom = ByteSequence::BOM[$bomType];
         }
 
         if ($bom) {

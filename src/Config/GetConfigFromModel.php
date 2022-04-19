@@ -34,7 +34,7 @@ class GetConfigFromModel
             ->setSortDirection($model->sortDirection)
             ->setEnclosure($model->enclosure)
             ->setDelimiter($model->delimiter)
-            ->setBom($model->bom)
+            ->setOutputBom($model->bom)
             ->setFields(StringUtil::deserialize($model->fields, true))
             ->setAddHeadline((bool) $model->addHeadline)
             ->setArrayDelimiter($model->arrayDelimiter)

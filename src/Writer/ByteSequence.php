@@ -14,11 +14,13 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Writer;
 
-class Bom
+class ByteSequence
 {
-    public const UTF_8 = "\xEF\xBB\xBF";
-    public const UTF_16_BE = "\xFE\xFF";
-    public const UTF_16_LE = "\xFF\xFE";
-    public const UTF_32_BE = "\x00\x00\xFE\xFF";
-    public const UTF_32_LE = "\xFF\xFE\x00\x00";
+    public const BOM = [
+        'UTF-8' => "\xEF\xBB\xBF",
+        'UTF-16-BE' => "\xFE\xFF",
+        'UTF-16-LE' => "\xFF\xFE",
+        'UTF-32-BE' => "\x00\x00\xFE\xFF",
+        'UTF-32-LE' => "\xFF\xFE\x00\x00",
+    ];
 }
