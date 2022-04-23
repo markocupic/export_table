@@ -17,6 +17,7 @@ namespace Markocupic\ExportTable\Config;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Markocupic\ExportTable\Model\ExportTableModel;
+use Markocupic\ExportTable\Writer\ByteSequence;
 
 class GetConfigFromModel
 {
@@ -34,7 +35,7 @@ class GetConfigFromModel
             ->setSortDirection($model->sortDirection)
             ->setEnclosure($model->enclosure)
             ->setDelimiter($model->delimiter)
-            ->setOutputBom($model->bom)
+            ->setOutputBom(ByteSequence::BOM[$model->bom])
             ->setFields(StringUtil::deserialize($model->fields, true))
             ->setAddHeadline((bool) $model->addHeadline)
             ->setArrayDelimiter($model->arrayDelimiter)

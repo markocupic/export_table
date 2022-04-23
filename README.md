@@ -59,7 +59,7 @@ $config = new Config('tl_member');
 Der eigentliche Export-Service wird mit der Methode `$this->exportTable->run($objConfig)` aufgerufen, welche als einzigen Parameter das vorher erstellte Config-Objekt erwartet.
 ```
 $config = new Config('tl_member');
-$config->setOutputBom(ByteSequence['UTF-8']);
+$config->setOutputBom(ByteSequence::BOM['UTF-8']);
 
 return $this->exportTable->run($config);
 ```
@@ -128,7 +128,7 @@ class CustomController extends AbstractController
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
             // Add BOM (correct display of UTF8 encoded chars in MS-Excel)
-            ->setOutputBom(ByteSequence['UTF-8']) 
+            ->setOutputBom(ByteSequence::BOM['UTF-8']) 
             // Use the row callback to manipulate records
             ->setRowCallback(
                 static function ($arrRow) {

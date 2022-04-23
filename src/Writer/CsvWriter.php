@@ -72,18 +72,8 @@ class CsvWriter extends AbstractWriter implements WriterInterface
     /**
      * @throws \Exception
      */
-    private function setOutputBom(File $objFile, string $bomType = ''): File
+    private function setOutputBom(File $objFile, string $bom): File
     {
-        $bom = '';
-
-        if (!empty($bomType)) {
-            if (!isset(ByteSequence::BOM[$bomType])) {
-                throw new \Exception(sprintf('BOM type "%s" not found. BOM type has to be one of %s.', $bomType, implode(', ', array_keys(ByteSequence::BOM)), ));
-            }
-
-            $bom = ByteSequence::BOM[$bomType];
-        }
-
         if ($bom) {
             $strContentWithBom = $bom.$objFile->getContent();
             $objFile->write($strContentWithBom);
