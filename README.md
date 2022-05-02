@@ -29,7 +29,10 @@ Folgender einfacher Filter für die Mitgliedertabelle *tl_member* lässt nur **F
 Oder nur **Frauen** aus **Luzern** oder **Bern**:\
 `[["gender=? AND (city=? OR city=?)"],["female","Luzern", "Bern"]]`
 
-Auch der Gebrauch von Contao Insert Tags ist möglich:\
+Oder alle **Mitglieder** aus der **Mitgliedergruppe** mit der ID 3:
+`[["tl_member.groups LIKE '%:\"3\";%' AND id > ?"],["0"]]`
+
+Auch der Gebrauch von Contao **Insert Tags** ist möglich:\
 `[["lastname=? AND city=?"],["{{user::lastname}}","Oberkirch"]]`
 
 Oder Parameterübergabe aus der URL:\
