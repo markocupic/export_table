@@ -35,7 +35,6 @@ class GetConfigFromModel
             ->setSortDirection($model->sortDirection)
             ->setEnclosure($model->enclosure)
             ->setDelimiter($model->delimiter)
-            ->setOutputBom(ByteSequence::BOM[$model->bom])
             ->setFields(StringUtil::deserialize($model->fields, true))
             ->setAddHeadline((bool) $model->addHeadline)
             ->setArrayDelimiter($model->arrayDelimiter)
@@ -43,6 +42,10 @@ class GetConfigFromModel
             ->setToken($model->token)
             ->setSendFileToTheBrowser((bool) $model->sendFileToTheBrowser)
         ;
+
+        if ($model->bom) {
+            $config->setOutputBom(ByteSequence::BOM[$model->bom]);
+        }
 
         if ('' !== $model->filter) {
             if (!\is_array(json_decode($model->filter))) {
