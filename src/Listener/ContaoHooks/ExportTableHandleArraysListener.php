@@ -49,7 +49,7 @@ class ExportTableHandleArraysListener implements ListenerInterface
 
         $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
 
-        $dcaEval = $arrDca['fields'][$strFieldname]['eval'];
+        $dcaEval = $arrDca['fields'][$strFieldname]['eval'] ?? [];
 
         if (isset($dcaEval['csv']) && '' !== $dcaEval['csv']) {
             $delim = $dcaEval['csv'];
