@@ -40,7 +40,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'delete' => [
                 'href'       => 'act=delete',
                 'icon'       => 'delete.gif',
-                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
             ],
             'show'   => [
                 'href' => 'act=show',
@@ -49,7 +49,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'export' => [
                 'href'       => 'action=export',
                 'icon'       => 'bundles/markocupicexporttable/export.png',
-                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['confirmExport'].'\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['confirmExport'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
             ],
         ],
     ],
