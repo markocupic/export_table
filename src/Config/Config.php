@@ -296,7 +296,7 @@ class Config
         return $this;
     }
 
-    public function getSaveExportDirectory(): string
+    public function getSaveExportDirectory(): ?string
     {
         return $this->arrData['saveExportDirectory'];
     }
