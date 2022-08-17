@@ -12,13 +12,15 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-use Contao\Input;
+use Contao\System;
 use Markocupic\ExportTable\Model\ExportTableModel;
+
+$request = System::getContainer()->get('request_stack')->getCurrentRequest();
 
 /*
  * Back end modules
  */
-if (TL_MODE === 'BE') {
+if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequst($request)) {
     $GLOBALS['BE_MOD']['system']['export_table'] = [
         'tables' => [
             'tl_export_table',
@@ -26,7 +28,7 @@ if (TL_MODE === 'BE') {
     ];
 }
 
-if (TL_MODE === 'BE' && 'export_table' === Input::get('do')) {
+if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequst($request) && 'export_table' === $request->query->get('do')) {
     $GLOBALS['TL_CSS'][] = 'bundles/markocupicexporttable/export_table.css';
 }
 

@@ -16,6 +16,7 @@ namespace Markocupic\ExportTable\DataContainer;
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\Routing\ScopeMatcher;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Database;
 use Contao\DataContainer;
@@ -36,6 +37,7 @@ class ExportTable
 {
     private ContaoFramework $framework;
     private RequestStack $requestStack;
+    private ScopeMatcher $scopeMatcher;
     private DatabaseHelper $databaseHelper;
     private GetConfigFromModel $getConfigFromModel;
     private ExportTableService $exportTable;
@@ -44,10 +46,11 @@ class ExportTable
 
     private array $writerAliases = [];
 
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTableService $exportTable, Twig $twig, TranslatorInterface $translator)
+    public function __construct(ContaoFramework $framework, RequestStack $requestStack, ScopeMatcher $scopeMatcher, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTableService $exportTable, Twig $twig, TranslatorInterface $translator)
     {
         $this->framework = $framework;
         $this->requestStack = $requestStack;
+        $this->scopeMatcher = $scopeMatcher;
         $this->databaseHelper = $databaseHelper;
         $this->getConfigFromModel = $getConfigFromModel;
         $this->exportTable = $exportTable;
@@ -96,9 +99,12 @@ class ExportTable
             if (null !== ($model = $exportTableModelAdapter->findByPk($pk))) {
                 $this->exportTable->run($this->getConfigFromModel->get($model));
             }
+
             $url = $urlAdapter->removeQueryString(['id', 'action']);
 
-            if (TL_MODE === 'BE') {
+            $request = $this->requestStack->getCurrentRequest();
+
+            if ($request && $this->scopeMatcher->isBackendRequest($request)) {
                 $controllerAdapter->redirect($url);
             }
         }

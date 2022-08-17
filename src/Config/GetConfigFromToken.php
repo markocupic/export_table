@@ -53,7 +53,7 @@ class GetConfigFromToken
         return false;
     }
 
-    private function getExportFromToken(string $strToken): ?ExportTableModel
+    private function getExportFromToken(string $strToken): ExportTableModel|null
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
 

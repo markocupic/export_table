@@ -59,7 +59,7 @@ class Config
         $this->arrData['table'] = $strTable;
     }
 
-    public function getModel(): ?ExportTableModel
+    public function getModel(): ExportTableModel|null
     {
         return $this->arrData['model'];
     }
@@ -104,7 +104,7 @@ class Config
         return $this;
     }
 
-    public function getExportType(): ?string
+    public function getExportType(): string|null
     {
         return $this->arrData['exportType'];
     }
@@ -261,7 +261,7 @@ class Config
         return $this;
     }
 
-    public function getFilename(): ?string
+    public function getFilename(): string|null
     {
         return $this->arrData['filename'];
     }
@@ -296,7 +296,7 @@ class Config
         return $this;
     }
 
-    public function getSaveExportDirectory(): ?string
+    public function getSaveExportDirectory(): string|null
     {
         return $this->arrData['saveExportDirectory'];
     }
@@ -304,7 +304,7 @@ class Config
     /**
      * @return $this
      */
-    public function setSaveExportDirectory(?string $stringUuid): self
+    public function setSaveExportDirectory(string|null $stringUuid): self
     {
         $this->arrData['saveExportDirectory'] = $stringUuid;
 
@@ -411,7 +411,7 @@ class Config
         return $this;
     }
 
-    public function getRowCallback(): ?callable
+    public function getRowCallback(): callable|null
     {
         return $this->arrData['rowCallback'];
     }
@@ -419,7 +419,7 @@ class Config
     /**
      * @return $this
      */
-    public function setRowCallback(?callable $callback): self
+    public function setRowCallback(callable|null $callback): self
     {
         $this->arrData['rowCallback'] = $callback;
 

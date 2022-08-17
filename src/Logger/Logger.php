@@ -19,9 +19,9 @@ use Psr\Log\LoggerInterface;
 
 class Logger
 {
-    private ?LoggerInterface $logger;
+    private LoggerInterface|null $logger;
 
-    public function __construct(?LoggerInterface $logger)
+    public function __construct(LoggerInterface|null $logger)
     {
         $this->logger = $logger;
     }
