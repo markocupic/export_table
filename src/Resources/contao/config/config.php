@@ -28,7 +28,7 @@ if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isB
     ];
 }
 
-if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequst($request) && 'export_table' === $request->query->get('do')) {
+if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request) && 'export_table' === $request->query->get('do')) {
     $GLOBALS['TL_CSS'][] = 'bundles/markocupicexporttable/export_table.css';
 }
 
