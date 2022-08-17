@@ -20,7 +20,7 @@ $request = System::getContainer()->get('request_stack')->getCurrentRequest();
 /*
  * Back end modules
  */
-if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequst($request)) {
+if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
     $GLOBALS['BE_MOD']['system']['export_table'] = [
         'tables' => [
             'tl_export_table',
