@@ -22,7 +22,7 @@
     "source": "https://github.com/markocupic/export_table"
   },
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": "^8.1",
     "ext-xmlwriter": "*",
     "ext-json": "*",
     "contao/core-bundle": "^4.9 || ^5.0",
