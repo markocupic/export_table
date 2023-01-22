@@ -26,11 +26,11 @@ class GetConfigFromModel
      */
     public function get(ExportTableModel $model): Config
     {
-        $config = (new Config($model->table))
+        $config = (new Config($model->exportTable))
             ->setModel($model)
             ->setTitle($model->title)
             ->setExportType($model->exportType)
-            ->setTable($model->table)
+            ->setTable($model->exportTable)
             ->setSortBy($model->sortBy)
             ->setSortDirection($model->sortDirection)
             ->setEnclosure($model->enclosure)

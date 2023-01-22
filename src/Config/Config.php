@@ -21,7 +21,7 @@ class Config
     private array $arrData = [
         'model' => null,
         'title' => '',
-        'table' => null,
+        'exportTable' => null,
         'exportType' => 'csv',
         'sortBy' => 'id',
         'sortDirection' => 'ASC',
@@ -56,7 +56,7 @@ class Config
 
     public function __construct(string $strTable = 'tl_member')
     {
-        $this->arrData['table'] = $strTable;
+        $this->arrData['exportTable'] = $strTable;
     }
 
     public function getModel(): ExportTableModel|null
@@ -91,7 +91,7 @@ class Config
 
     public function getTable(): string
     {
-        return $this->arrData['table'];
+        return $this->arrData['exportTable'];
     }
 
     /**
@@ -99,7 +99,7 @@ class Config
      */
     public function setTable(string $strTable): self
     {
-        $this->arrData['table'] = $strTable;
+        $this->arrData['exportTable'] = $strTable;
 
         return $this;
     }

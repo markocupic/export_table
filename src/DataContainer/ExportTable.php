@@ -98,7 +98,7 @@ class ExportTable
         }
     }
 
-    #[AsCallback(table: 'tl_export_table', target: 'fields.table.options')]
+    #[AsCallback(table: 'tl_export_table', target: 'fields.exportTable.options')]
     public function listTableNames(): array
     {
         $databaseAdapter = $this->framework->getAdapter(Database::class);
@@ -121,13 +121,11 @@ class ExportTable
             return [];
         }
 
-        $strTable = $this->connection->fetchOne('SELECT `table` FROM tl_export_table WHERE id = ?', [$dc->id]);
+        $strTable = $this->connection->fetchOne('SELECT exportTable FROM tl_export_table WHERE id = ?', [$dc->id]);
 
         if (!$strTable) {
             return [];
         }
-
-        $strTable = $dc->activeRecord->table;
 
         $databaseAdapter = $this->framework->getAdapter(Database::class);
 

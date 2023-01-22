@@ -29,7 +29,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
     'list'        => [
         'sorting'    => [
             'mode'        => DataContainer::MODE_SORTABLE,
-            'fields'      => ['title DESC'],
+            'fields'      => ['exportTable DESC'],
             'panelLayout' => 'filter;sort,search,limit',
         ],
         'label'      => [
@@ -60,15 +60,15 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
     'palettes'    => [
         '__selector__' => ['activateDeepLinkExport', 'saveExport'],
         'default'      => '{title_legend},title;'.
-            '{settings},exportType,table,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,sendFileToTheBrowser;'.
+            '{settings},exportType,exportTable,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,sendFileToTheBrowser;'.
             '{save_legend},saveExport;'.
             '{deep_link_legend},activateDeepLinkExport',
         'csv'          => '{title_legend},title;'.
-            '{settings},exportType,table,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,bom,sendFileToTheBrowser;'.
+            '{settings},exportType,exportTable,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,bom,sendFileToTheBrowser;'.
             '{save_legend},saveExport;'.
             '{deep_link_legend},activateDeepLinkExport',
         'xml'          => '{title_legend},title;'.
-            '{settings},exportType,table,fields,sortBy,sortDirection,filter,arrayDelimiter,sendFileToTheBrowser;'.
+            '{settings},exportType,exportTable,fields,sortBy,sortDirection,filter,arrayDelimiter,sendFileToTheBrowser;'.
             '{save_legend},saveExport;'.
             '{deep_link_legend},activateDeepLinkExport',
     ],
@@ -98,12 +98,12 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'eval'      => ['multiple' => false, 'mandatory' => true, 'submitOnChange' => true, 'tl_class' => 'w50'],
             'sql'       => "varchar(12) NOT NULL default 'csv'",
         ],
-        'table'                  => [
+        'exportTable'            => [
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'select',
             'search'    => true,
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['multiple' => false, 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
@@ -126,10 +126,10 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
         ],
         'sortBy'                 => [
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'select',
             'search'    => true,
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['multiple' => false, 'mandatory' => true, 'tl_class' => 'w50'],
             'sql'       => "varchar(64) NOT NULL default ''",
         ],
@@ -150,48 +150,48 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
         'enclosure'              => [
             'default'   => '"',
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'text',
             'search'    => true,
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['mandatory' => true, 'maxlength' => 1, 'useRawRequestData' => true, 'tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default '\"'",
         ],
         'delimiter'              => [
             'default'   => ';',
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'text',
             'search'    => true,
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['mandatory' => true, 'maxlength' => 1, 'useRawRequestData' => true, 'tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ';'",
         ],
         'arrayDelimiter'         => [
             'default'   => '||',
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'text',
             'search'    => true,
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['mandatory' => true, 'maxlength' => 4, 'useRawRequestData' => true, 'tl_class' => 'w50'],
             'sql'       => "varchar(4) NOT NULL default '||'",
         ],
         'bom'                    => [
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'select',
             'options'   => array_keys(ByteSequence::BOM),
             'search'    => true,
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['includeBlankOption' => true, 'useRawRequestData' => true, 'tl_class' => 'w50'],
             'sql'       => "char(32) NOT NULL default ''",
         ],
         'activateDeepLinkExport' => [
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'checkbox',
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''",
         ],
@@ -204,22 +204,22 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
         'deepLinkInfo'           => [
-            'exclude'   => true,
-            'eval' => ['doNotShow' => true],
+            'exclude' => true,
+            'eval'    => ['doNotShow' => true],
         ],
         'sendFileToTheBrowser'   => [
             'exclude'   => true,
             'filter'    => true,
             'inputType' => 'checkbox',
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['tl_class' => 'clr'],
             'sql'       => "char(1) NOT NULL default '1'",
         ],
         'saveExport'             => [
             'exclude'   => true,
-            'filter' => true,
+            'filter'    => true,
             'inputType' => 'checkbox',
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => ['submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''",
         ],
@@ -227,7 +227,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'exclude'   => true,
             'filter'    => true,
             'inputType' => 'checkbox',
-            'sorting' => true,
+            'sorting'   => true,
             'eval'      => [],
             'sql'       => "char(1) NOT NULL default ''",
         ],

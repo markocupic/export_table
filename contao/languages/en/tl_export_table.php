@@ -26,7 +26,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['save_legend'] = 'Save destination';
 
 // Fields
 $GLOBALS['TL_LANG']['tl_export_table']['title'] = ['Title', 'Enter the title please.'];
-$GLOBALS['TL_LANG']['tl_export_table']['table'] = ['Table', 'Select a data table for the export please.'];
+$GLOBALS['TL_LANG']['tl_export_table']['exportTable'] = ['Table', 'Select a data table for the export please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['fields'] = ['Fields', 'Select the fields for the export please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['addHeadline'] = ['Add headline', 'Indicate whether the header with the field names should be added to the export.'];
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'] = ['Export type', 'Select the export type please.'];

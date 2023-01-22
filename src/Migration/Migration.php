@@ -39,8 +39,13 @@ class Migration extends AbstractMigration
         if ($schemaManager->tablesExist(['tl_export_table'])) {
             $columns = $schemaManager->listTableColumns('tl_export_table');
 
-            // # Rename tl_export_table.export_table -> tl_export_table.table
-            if (isset($columns['export_table']) && !isset($columns['table'])) {
+            // # Rename tl_export_table.export_table -> tl_export_table.exportTable
+            if (isset($columns['export_table']) && !isset($columns['exporttable'])) {
+                $doMigration = true;
+            }
+
+            // # Rename tl_export_table.table -> tl_export_table.exportTable
+            if (isset($columns['`table`']) && !isset($columns['exporttable'])) {
                 $doMigration = true;
             }
 
@@ -76,9 +81,14 @@ class Migration extends AbstractMigration
         if ($schemaManager->tablesExist(['tl_export_table'])) {
             $columns = $schemaManager->listTableColumns('tl_export_table');
 
-            if (isset($columns['export_table']) && !isset($columns['table'])) {
-                $this->connection->executeQuery('ALTER TABLE tl_export_table CHANGE `export_table` `table` varchar(255)');
-                $arrMessage[] = 'Rename field tl_export_table.export_table to tl_export_table.table.';
+            if (isset($columns['export_table']) && !isset($columns['exporttable'])) {
+                $this->connection->executeQuery('ALTER TABLE tl_export_table CHANGE `export_table` `exportTable` varchar(255)');
+                $arrMessage[] = 'Rename field tl_export_table.export_table to tl_export_table.exportTable.';
+            }
+
+            if (isset($columns['`table`']) && !isset($columns['exporttable'])) {
+                $this->connection->executeQuery('ALTER TABLE tl_export_table CHANGE `table` `exportTable` varchar(255)');
+                $arrMessage[] = 'Rename field tl_export_table.table to tl_export_table.exportTable.';
             }
 
             if (isset($columns['filterexpression']) && !isset($columns['filter'])) {

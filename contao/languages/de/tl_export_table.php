@@ -26,7 +26,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['save_legend'] = 'Speicher-Einstellungen'
 
 // Fields
 $GLOBALS['TL_LANG']['tl_export_table']['title'] = ['Titel', 'Geben Sie einen Namen ein.'];
-$GLOBALS['TL_LANG']['tl_export_table']['table'] = ['Datentabelle', 'Wählen Sie eine Tabelle für den Exportvorgang aus.'];
+$GLOBALS['TL_LANG']['tl_export_table']['exportTable'] = ['Datentabelle', 'Wählen Sie eine Tabelle für den Exportvorgang aus.'];
 $GLOBALS['TL_LANG']['tl_export_table']['fields'] = ['Felder', 'Wählen Sie die Felder für den Export aus.'];
 $GLOBALS['TL_LANG']['tl_export_table']['addHeadline'] = ['Kopfzeile hinzufügen', 'Geben Sie an, ob die Kopfzeile mit den Feldnamen dem Export hinzugefügt werden soll.'];
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'] = ['Export-Typ', 'Bitte wählen Sie einen Export-Typ aus.'];
