@@ -9,14 +9,12 @@ declare(strict_types=1);
 
 namespace App\EventListener\ExportTable;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\File;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
-/**
- * @Hook(ExportTablePostWriteListener::HOOK, priority=ExportTablePostWriteListener::PRIORITY)
- */
+#[AsHook(ExportTablePostWriteListener::HOOK, priority: ExportTablePostWriteListener::PRIORITY)]
 class ExportTablePostWriteListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTablePostWrite';

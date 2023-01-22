@@ -17,7 +17,7 @@ use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
- #[AsHook(MyCustomFormatDateListener::HOOK, priority: MyCustomFormatDateListener::PRIORITY)]
+#[AsHook(MyCustomFormatDateListener::HOOK, priority: MyCustomFormatDateListener::PRIORITY)]
 class MyCustomFormatDateListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';

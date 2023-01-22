@@ -86,7 +86,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
- #[Route('/_test_export', name:CustomController::class, defaults:['_scope' => 'frontend', '_token_check' => false])]
+#[Route('/_test_export', name: CustomController::class, defaults: ['_scope' => 'frontend', '_token_check' => false])]
 class CustomController extends AbstractController
 {
 

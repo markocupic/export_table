@@ -12,10 +12,7 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-use Contao\System;
 use Markocupic\ExportTable\Model\ExportTableModel;
-
-$request = System::getContainer()->get('request_stack')->getCurrentRequest();
 
 /*
  * Back end modules

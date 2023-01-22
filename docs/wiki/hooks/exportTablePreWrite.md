@@ -13,7 +13,7 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
- #[AsHook(ExportTablePreWriteListener::HOOK, priority: ExportTablePreWriteListener::PRIORITY)]
+#[AsHook(ExportTablePreWriteListener::HOOK, priority: ExportTablePreWriteListener::PRIORITY)]
 class ExportTablePreWriteListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTablePreWrite';
