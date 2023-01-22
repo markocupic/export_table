@@ -31,12 +31,7 @@ class ExportTableFormatDateListener implements ListenerInterface
     ) {
     }
 
-    /**
-     * @param $varValue
-     *
-     * @return mixed|string
-     */
-    public function __invoke(string $strFieldName, $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
     {
         if (static::$disableHook) {
             return $varValue;

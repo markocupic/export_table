@@ -24,12 +24,7 @@ class ExportTableTrimValuesListener implements ListenerInterface
     public const PRIORITY = 400;
     private static bool $disableHook = false;
 
-    /**
-     * @param $varValue
-     *
-     * @return string
-     */
-    public function __invoke(string $strFieldName, $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
     {
         if (static::$disableHook) {
             return $varValue;

@@ -24,12 +24,7 @@ class ExportTableReplaceNewlineListener implements ListenerInterface
     public const PRIORITY = 200;
     private static bool $disableHook = false;
 
-    /**
-     * @param $varValue
-     *
-     * @return array|mixed|string|array<string>|null
-     */
-    public function __invoke(string $strFieldName, $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
     {
         if (static::$disableHook) {
             return $varValue;

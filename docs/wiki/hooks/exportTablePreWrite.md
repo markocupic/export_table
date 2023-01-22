@@ -9,22 +9,16 @@ declare(strict_types=1);
 
 namespace App\EventListener\ExportTable;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
-/**
- * @Hook(ExportTablePreWriteListener::HOOK, priority=ExportTablePreWriteListener::PRIORITY)
- */
+ #[AsHook(ExportTablePreWriteListener::HOOK, priority: ExportTablePreWriteListener::PRIORITY)]
 class ExportTablePreWriteListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTablePreWrite';
     public const PRIORITY = 100;
-
-    /**
-     * @var bool
-     */
-    private static $disableHook = false;
+    private static bool $disableHook = false;
 
     public function __invoke(array $arrData, Config $objConfig): array
     {

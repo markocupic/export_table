@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace App\EventListener\ExportTable;
 
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Date;
@@ -16,35 +17,19 @@ use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableFormatDateListener;
 use Markocupic\ExportTable\Listener\ContaoHooks\ExportTableListenerInterface;
 
-/**
- * @Hook(MyCustomFormatDateListener::HOOK, priority=MyCustomFormatDateListener::PRIORITY)
- */
+ #[AsHook(MyCustomFormatDateListener::HOOK, priority: MyCustomFormatDateListener::PRIORITY)]
 class MyCustomFormatDateListener implements ExportTableListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 100;
+    private static bool $disableHook = false;
 
-    /**
-     * @var bool
-     */
-    private static $disableHook = false;
-
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-
-    public function __construct(ContaoFramework $framework)
-    {
-        $this->framework = $framework;
+    public function __construct(
+        private ContaoFramework $framework,
+    ) {
     }
 
-    /**
-     * @param $varValue
-     *
-     * @return mixed
-     */
-    public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldname, mixed $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
     {
         if (static::$disableHook) {
             return $varValue;

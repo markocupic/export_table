@@ -86,30 +86,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/_test_export", name="_test_export", defaults={"_scope" = "frontend", "_token_check" = false})
- */
+ #[Route('/_test_export', name:CustomController::class, defaults:['_scope' => 'frontend', '_token_check' => false])]
 class CustomController extends AbstractController
 {
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
 
-    /**
-     * @var ExportTable
-     */
-    private $exportTable;
-
-    public function __construct(ContaoFramework $framework, ExportTable $exportTable)
-    {
-        $this->framework = $framework;
-        $this->exportTable = $exportTable;
+    public function __construct(
+        private ContaoFramework $framework,
+        private ExportTable $exportTable,
+    ){
     }
 
-    /**
-     * @throws \Exception
-     */
     public function __invoke(): Response
     {
         $this->framework->initialize();
