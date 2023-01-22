@@ -25,19 +25,19 @@ class XmlWriter extends AbstractWriter implements WriterInterface
     /**
      * @throws \Exception
      */
-    public function write(array $arrData, Config $objConfig): void
+    public function write(array $arrData, Config $config): void
     {
         $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
 
         // Run pre-write HOOK: e.g. modify the data array
-        $arrData = $this->runPreWriteHook($arrData, $objConfig);
+        $arrData = $this->runPreWriteHook($arrData, $config);
 
         $objXml = new \XMLWriter();
         $objXml->openMemory();
         $objXml->setIndent(true);
         $objXml->setIndentString("\t");
         $objXml->startDocument('1.0', 'UTF-8');
-        $objXml->startElement($objConfig->getTable());
+        $objXml->startElement($config->getTable());
 
         foreach ($arrData as $arrRow) {
             // Add a new row
@@ -70,18 +70,18 @@ class XmlWriter extends AbstractWriter implements WriterInterface
         $objXml->endDocument();
 
         // Write output to the file system
-        $targetPath = $this->getTargetPath($objConfig, self::FILE_ENDING);
+        $targetPath = $this->getTargetPath($config, self::FILE_ENDING);
 
         $objFile = new File($targetPath);
         $objFile->write($objXml->outputMemory());
         $objFile->close();
 
         // Run post-write HOOK: e.g. send notifications, etc.
-        $objFile = $this->runPostWriteHook($objFile, $objConfig);
+        $objFile = $this->runPostWriteHook($objFile, $config);
 
-        $this->log($objFile, $objConfig);
+        $this->log($objFile, $config);
 
-        if ($objConfig->getSaveExport() && $objConfig->getSaveExportDirectory() && null !== $filesModelAdapter->findByUuid($objConfig->getSaveExportDirectory())) {
+        if ($config->getSaveExport() && $config->getSaveExportDirectory() && null !== $filesModelAdapter->findByUuid($config->getSaveExportDirectory())) {
             // Save file to filesystem
             $this->sendBackendMessage($objFile);
         } else {

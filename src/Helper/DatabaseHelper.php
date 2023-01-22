@@ -24,7 +24,7 @@ class DatabaseHelper
     ) {
     }
 
-    public function listFields(string $strTable = '', $blnAssociative = false, $blnAddType = false): array
+    public function listFields(string $strTable = '', bool $blnAssociative = false, bool $blnAddType = false): array
     {
         $databaseAdapter = $this->framework->getAdapter(Database::class);
 

@@ -47,11 +47,7 @@ class ExportTableHandleArraysListener implements ListenerInterface
         } elseif (isset($dcaEval['multiple']) && true === $dcaEval['multiple']) {
             $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
         } elseif (!empty($varValue) && \is_string($varValue) && str_starts_with($varValue, 'a:') && \is_array($stringUtilAdapter->deserialize($varValue))) {
-            try {
-                $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
-            } catch (\Exception $e) {
-                //die($varValue);
-            }
+            $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
         }
 
         return $varValue;
