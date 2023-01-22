@@ -32,7 +32,7 @@ class ExportTableEntityDecodeListener implements ListenerInterface
      *
      * @return mixed|string
      */
-    public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldName, $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
         if (static::$disableHook) {
             return $varValue;

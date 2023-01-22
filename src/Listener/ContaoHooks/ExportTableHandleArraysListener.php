@@ -41,7 +41,7 @@ class ExportTableHandleArraysListener implements ListenerInterface
      *
      * @return mixed|string
      */
-    public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldName, $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
     {
         if (static::$disableHook) {
             return $varValue;
@@ -49,15 +49,19 @@ class ExportTableHandleArraysListener implements ListenerInterface
 
         $stringUtilAdapter = $this->framework->getAdapter(StringUtil::class);
 
-        $dcaEval = $arrDca['fields'][$strFieldname]['eval'] ?? [];
+        $dcaEval = $arrDca['fields'][$strFieldName]['eval'] ?? [];
 
         if (isset($dcaEval['csv']) && '' !== $dcaEval['csv']) {
             $delim = $dcaEval['csv'];
             $varValue = implode($delim, $stringUtilAdapter->deserialize($varValue, true));
         } elseif (isset($dcaEval['multiple']) && true === $dcaEval['multiple']) {
             $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
-        } elseif (!empty($varValue) && \is_string($varValue) && 0 === strpos($varValue, 'a:') && \is_array($stringUtilAdapter->deserialize($varValue))) {
-            $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
+        } elseif (!empty($varValue) && \is_string($varValue) && str_starts_with($varValue, 'a:') && \is_array($stringUtilAdapter->deserialize($varValue))) {
+            try {
+                $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
+            } catch (\Exception $e) {
+                //die($varValue);
+            }
         }
 
         return $varValue;

@@ -21,7 +21,6 @@ use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Environment;
-use Haste\Util\Url;
 use Markocupic\ExportTable\Config\GetConfigFromModel;
 use Markocupic\ExportTable\Export\ExportTable as ExportTableService;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
@@ -89,7 +88,6 @@ class ExportTable
     public function runExport(): void
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
-        $urlAdapter = $this->framework->getAdapter(Url::class);
         $controllerAdapter = $this->framework->getAdapter(Controller::class);
 
         $request = $this->requestStack->getCurrentRequest();
@@ -100,12 +98,14 @@ class ExportTable
                 $this->exportTable->run($this->getConfigFromModel->get($model));
             }
 
-            $url = $urlAdapter->removeQueryString(['id', 'action']);
-
             $request = $this->requestStack->getCurrentRequest();
 
             if ($request && $this->scopeMatcher->isBackendRequest($request)) {
-                $controllerAdapter->redirect($url);
+                $request->query->remove('id');
+                $request->query->remove('action');
+                $request->overrideGlobals();
+
+                $controllerAdapter->redirect($request->getUri());
             }
         }
     }

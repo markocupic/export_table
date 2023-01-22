@@ -32,14 +32,14 @@ class ExportTableReplaceNewlineListener implements ListenerInterface
      *
      * @return array|mixed|string|array<string>|null
      */
-    public function __invoke(string $strFieldname, $varValue, string $strTablename, array $arrDataRecord, array $arrDca, Config $objConfig)
+    public function __invoke(string $strFieldName, $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig)
     {
         if (static::$disableHook) {
             return $varValue;
         }
 
         // Replace newlines with [NEWLINE]
-        if ($varValue && '' !== $varValue && isset($arrDca['fields'][$strFieldname]['inputType']) && 'textarea' === $arrDca['fields'][$strFieldname]['inputType']) {
+        if ($varValue && '' !== $varValue && isset($arrDca['fields'][$strFieldName]['inputType']) && 'textarea' === $arrDca['fields'][$strFieldName]['inputType']) {
             $varValue = preg_replace('/(?>\r\n|\n|\r)/sm', '[NEWLINE]', (string) $varValue);
         }
 
