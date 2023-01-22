@@ -20,9 +20,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class MarkocupicExportTable extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new WriterResourcePass());

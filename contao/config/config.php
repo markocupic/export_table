@@ -20,19 +20,17 @@ $request = System::getContainer()->get('request_stack')->getCurrentRequest();
 /*
  * Back end modules
  */
-if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
-    $GLOBALS['BE_MOD']['system']['export_table'] = [
-        'tables' => [
-            'tl_export_table',
-        ],
-    ];
-}
+$GLOBALS['BE_MOD']['system']['export_table'] = [
+    'tables'     => [
+        'tl_export_table',
+    ],
+    'stylesheet' => ['bundles/markocupicexporttable/export_table.css'],
 
-if ($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request) && 'export_table' === $request->query->get('do')) {
-    $GLOBALS['TL_CSS'][] = 'bundles/markocupicexporttable/export_table.css';
-}
+];
 
-// Register contao models
+/**
+ * Models
+ */
 $GLOBALS['TL_MODELS']['tl_export_table'] = ExportTableModel::class;
 
 // ****** exportTable Hook *********

@@ -7,8 +7,8 @@ services:
       $projectDir: '%kernel.project_dir%'
 
   Markocupic\ExportTable\:
-    resource: ../../
-    exclude: ../../{Model,DependencyInjection,Resources}
+    resource: ../src/
+    exclude: ../src/{Model,DependencyInjection,Resources}
 
   # Inject the default CSV writer into Markocupic\ExportTable\Export\ExportTable and Markocupic\ExportTable\DataContainer\ExportTable during compilation
   Markocupic\ExportTable\Writer\CsvWriter:

@@ -131,7 +131,7 @@ class CustomController extends AbstractController
             // Define a filename, otherwise the file will become the name of the table ->tl_member.csv
             ->setFilename('export.csv')
             // Add BOM (correct display of UTF8 encoded chars in MS-Excel)
-            ->setOutputBom(ByteSequence::BOM['UTF-8']) 
+            ->setOutputBom(ByteSequence::BOM['UTF-8'])
             // Use the row callback to manipulate records
             ->setRowCallback(
                 static function ($arrRow) {
@@ -155,7 +155,7 @@ class CustomController extends AbstractController
 
 Falls die beiden Standard-Writer (CSV und XML) nicht genügen sollten, ist es ohne weiteres möglich einen
 weiteren Writer hinzuzufügen. Dazu muss eine Writer Klasse geschrieben werden, die das `Markocupic\ExportTable\Writer\WriterInterface` implementiert.
-In `services.yml` muss die Klasse mit `name: markocupic_export_table.writer` getaggt werden. Der Alias sollte eindeutig sein und nicht bereits verwendet worden sein. Z.B. `alias: my_custom_csv`
+In `services.yaml` muss die Klasse mit `name: markocupic_export_table.writer` getaggt werden. Der Alias sollte eindeutig sein und nicht bereits verwendet worden sein. Z.B. `alias: my_custom_csv`
 
 ```yaml
 
