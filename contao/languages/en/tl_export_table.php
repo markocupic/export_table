@@ -30,7 +30,7 @@ $GLOBALS['TL_LANG']['tl_export_table']['table'] = ['Table', 'Select a data table
 $GLOBALS['TL_LANG']['tl_export_table']['fields'] = ['Fields', 'Select the fields for the export please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['addHeadline'] = ['Add headline', 'Indicate whether the header with the field names should be added to the export.'];
 $GLOBALS['TL_LANG']['tl_export_table']['exportType'] = ['Export type', 'Select the export type please.'];
-$GLOBALS['TL_LANG']['tl_export_table']['filter'] = ['SQL "filter-expression"', 'Define a filter as JSON-encoded Array -> [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]] You can add insert tags as well: -> [["tl_member.id=?"],[{{user::id}}]]'];
+$GLOBALS['TL_LANG']['tl_export_table']['filter'] = ['SQL "filter-expression"', 'Define a filter as JSON-encoded Array -> [["tl_calendar_events.published=? AND tl_calendar_events.pid=?"],["1",6]] You can add insert tags as well: -> [["tl_member.id=?"],["{{user::id}}"]]'];
 $GLOBALS['TL_LANG']['tl_export_table']['sortBy'] = ['Sort by', 'Add a sort by field please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['sortDirection'] = ['Sort by direction', 'Select sorting direction please.'];
 $GLOBALS['TL_LANG']['tl_export_table']['enclosure'] = ['Enclosure', 'Please enter the enclosure tag (normally \'"\').'];
