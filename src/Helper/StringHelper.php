@@ -19,7 +19,7 @@ class StringHelper
     public function testAgainstSet(string $strTest, $arrStrings): bool
     {
         foreach ($arrStrings as $str) {
-            if (false !== strpos($strTest, $str)) {
+            if (str_contains($strTest, $str)) {
                 return true;
             }
         }

@@ -27,18 +27,13 @@ class JsonArrayRegexpListener implements ListenerInterface
 {
     public const HOOK = 'addCustomRegexp';
     public const PRIORITY = 100;
-
-    private StringHelper $stringHelper;
-    private Config $config;
-    private TranslatorInterface $translator;
-
     private static bool $disableHook = false;
 
-    public function __construct(StringHelper $stringHelper, Config $config, TranslatorInterface $translator)
-    {
-        $this->stringHelper = $stringHelper;
-        $this->config = $config;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly StringHelper $stringHelper,
+        private readonly Config $config,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function __invoke(string $regexp, $input, Widget $widget): bool

@@ -34,27 +34,18 @@ use Twig\Error\SyntaxError;
 
 class ExportTable
 {
-    private ContaoFramework $framework;
-    private RequestStack $requestStack;
-    private ScopeMatcher $scopeMatcher;
-    private DatabaseHelper $databaseHelper;
-    private GetConfigFromModel $getConfigFromModel;
-    private ExportTableService $exportTable;
-    private Twig $twig;
-    private TranslatorInterface $translator;
-
     private array $writerAliases = [];
 
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, ScopeMatcher $scopeMatcher, DatabaseHelper $databaseHelper, GetConfigFromModel $getConfigFromModel, ExportTableService $exportTable, Twig $twig, TranslatorInterface $translator)
-    {
-        $this->framework = $framework;
-        $this->requestStack = $requestStack;
-        $this->scopeMatcher = $scopeMatcher;
-        $this->databaseHelper = $databaseHelper;
-        $this->getConfigFromModel = $getConfigFromModel;
-        $this->exportTable = $exportTable;
-        $this->twig = $twig;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly RequestStack $requestStack,
+        private readonly ScopeMatcher $scopeMatcher,
+        private readonly DatabaseHelper $databaseHelper,
+        private readonly GetConfigFromModel $getConfigFromModel,
+        private readonly ExportTableService $exportTable,
+        private readonly Twig $twig,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function addWriterAlias(string $alias): void

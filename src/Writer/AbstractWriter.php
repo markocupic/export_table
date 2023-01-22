@@ -32,17 +32,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractWriter
 {
-    protected ContaoFramework $framework;
-    protected TranslatorInterface $translator;
-    protected Logger $logger;
-    protected string $projectDir;
-
-    public function __construct(ContaoFramework $framework, TranslatorInterface $translator, Logger $logger, string $projectDir)
-    {
-        $this->framework = $framework;
-        $this->translator = $translator;
-        $this->logger = $logger;
-        $this->projectDir = $projectDir;
+    public function __construct(
+        protected ContaoFramework $framework,
+        protected TranslatorInterface $translator,
+        protected Logger $logger,
+        protected string $projectDir,
+    ) {
     }
 
     protected function getFileName(Config $objConfig, string $strFileEnding): string

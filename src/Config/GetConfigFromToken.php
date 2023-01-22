@@ -19,13 +19,10 @@ use Markocupic\ExportTable\Model\ExportTableModel;
 
 class GetConfigFromToken
 {
-    private ContaoFramework $framework;
-    private GetConfigFromModel $getConfigFromModel;
-
-    public function __construct(ContaoFramework $framework, GetConfigFromModel $getConfigFromModel)
-    {
-        $this->framework = $framework;
-        $this->getConfigFromModel = $getConfigFromModel;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly GetConfigFromModel $getConfigFromModel,
+    ) {
     }
 
     /**

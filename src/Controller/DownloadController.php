@@ -26,17 +26,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DownloadController extends AbstractController
 {
-    private ContaoFramework $framework;
-    private RequestStack $requestStack;
-    private GetConfigFromToken $getConfigFromToken;
-    private ExportTable $exportTable;
-
-    public function __construct(ContaoFramework $framework, RequestStack $requestStack, GetConfigFromToken $getConfigFromToken, ExportTable $exportTable)
-    {
-        $this->framework = $framework;
-        $this->requestStack = $requestStack;
-        $this->getConfigFromToken = $getConfigFromToken;
-        $this->exportTable = $exportTable;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly RequestStack $requestStack,
+        private readonly GetConfigFromToken $getConfigFromToken,
+        private readonly ExportTable $exportTable,
+    ) {
     }
 
     /**

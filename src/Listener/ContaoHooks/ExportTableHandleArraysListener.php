@@ -26,14 +26,11 @@ class ExportTableHandleArraysListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 300;
-
-    private ContaoFramework $framework;
-
     private static bool $disableHook = false;
 
-    public function __construct(ContaoFramework $framework)
-    {
-        $this->framework = $framework;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+    ) {
     }
 
     /**

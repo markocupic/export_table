@@ -25,18 +25,14 @@ use Markocupic\ExportTable\Writer\WriterInterface;
 
 class ExportTable
 {
-    private ContaoFramework $framework;
-    private StringHelper $stringHelper;
-    private DatabaseHelper $databaseHelper;
-
     private array $arrData = [];
     private array $writers = [];
 
-    public function __construct(ContaoFramework $framework, StringHelper $stringHelper, DatabaseHelper $databaseHelper)
-    {
-        $this->framework = $framework;
-        $this->stringHelper = $stringHelper;
-        $this->databaseHelper = $databaseHelper;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly StringHelper $stringHelper,
+        private readonly DatabaseHelper $databaseHelper,
+    ) {
     }
 
     /**
