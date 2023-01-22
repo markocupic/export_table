@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Markocupic\ExportTable\DataContainer;
 
 use Contao\Controller;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Routing\ScopeMatcher;
-use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Environment;
@@ -53,9 +53,7 @@ class ExportTable
         $this->writerAliases[$alias] = $alias;
     }
 
-    /**
-     * @Callback(table="tl_export_table", target="config.onload")
-     */
+    #[AsCallback(table: 'tl_export_table', target: 'config.onload')]
     public function setPalettes(DataContainer $dc): void
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
@@ -71,11 +69,8 @@ class ExportTable
 
     /**
      * Run export.
-     *
-     * @Callback(table="tl_export_table", target="config.onload")
-     *
-     * @throws \Exception
      */
+    #[AsCallback(table: 'tl_export_table', target: 'config.onload')]
     public function runExport(): void
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
@@ -101,9 +96,7 @@ class ExportTable
         }
     }
 
-    /**
-     * @Callback(table="tl_export_table", target="fields.table.options")
-     */
+    #[AsCallback(table: 'tl_export_table', target: 'fields.table.options')]
     public function listTableNames(): array
     {
         $databaseAdapter = $this->framework->getAdapter(Database::class);
@@ -112,18 +105,14 @@ class ExportTable
         return \is_array($arrTableNames) ? $arrTableNames : [];
     }
 
-    /**
-     * @Callback(table="tl_export_table", target="fields.exportType.options")
-     */
+    #[AsCallback(table: 'tl_export_table', target: 'fields.exportType.options')]
     public function listWriters(): array
     {
         return $this->writerAliases;
     }
 
-    /**
-     * @Callback(table="tl_export_table", target="fields.fields.options")
-     * @Callback(table="tl_export_table", target="fields.sortBy.options")
-     */
+    #[AsCallback(table: 'tl_export_table', target: 'fields.fields.options')]
+    #[AsCallback(table: 'tl_export_table', target: 'fields.sortBy.options')]
     public function listFields(DataContainer $dc): array
     {
         $strTable = $dc->activeRecord->table;
@@ -141,8 +130,8 @@ class ExportTable
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
-     * @Callback(table="tl_export_table", target="fields.deepLinkInfo.input_field")
      */
+    #[AsCallback(table: 'tl_export_table', target: 'fields.deepLinkInfo.input_field')]
     public function generateDeepLinkInfo(DataContainer $dc): string
     {
         $exportTableModel = $this->framework->getAdapter(ExportTableModel::class);
