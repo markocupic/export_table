@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Input;
 
-/**
- * @Hook(ReplaceGetInsertTagsListener::HOOK,  priority=ReplaceGetInsertTagsListener::PRIORITY)
- */
+#[AsHook(ReplaceGetInsertTagsListener::HOOK, priority: ReplaceGetInsertTagsListener::PRIORITY)]
 class ReplaceGetInsertTagsListener implements ListenerInterface
 {
     public const HOOK = 'replaceInsertTags';

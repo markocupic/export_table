@@ -14,17 +14,14 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Markocupic\ExportTable\Config\Config;
 
-/**
- * @Hook(ExportTableReplaceNewlineListener::HOOK, priority=ExportTableReplaceNewlineListener::PRIORITY)
- */
+#[AsHook(ExportTableReplaceNewlineListener::HOOK, priority: ExportTableReplaceNewlineListener::PRIORITY)]
 class ExportTableReplaceNewlineListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 200;
-
     private static bool $disableHook = false;
 
     /**

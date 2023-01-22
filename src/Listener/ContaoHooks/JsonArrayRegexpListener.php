@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Widget;
 use Markocupic\ExportTable\Config\Config;
 use Markocupic\ExportTable\Helper\StringHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Hook(JsonArrayRegexpListener::HOOK,  priority=JsonArrayRegexpListener::PRIORITY)
- */
+#[AsHook(JsonArrayRegexpListener::HOOK, priority: JsonArrayRegexpListener::PRIORITY)]
 class JsonArrayRegexpListener implements ListenerInterface
 {
     public const HOOK = 'addCustomRegexp';

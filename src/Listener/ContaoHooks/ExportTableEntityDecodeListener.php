@@ -14,17 +14,14 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Markocupic\ExportTable\Config\Config;
 
-/**
- * @Hook(ExportTableEntityDecodeListener::HOOK, priority=ExportTableEntityDecodeListener::PRIORITY)
- */
+#[AsHook(ExportTableEntityDecodeListener::HOOK, priority: ExportTableEntityDecodeListener::PRIORITY)]
 class ExportTableEntityDecodeListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 500;
-
     private static bool $disableHook = false;
 
     /**

@@ -14,14 +14,12 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\StringUtil;
 use Markocupic\ExportTable\Config\Config;
 
-/**
- * @Hook(ExportTableHandleArraysListener::HOOK, priority=ExportTableHandleArraysListener::PRIORITY)
- */
+#[AsHook(ExportTableHandleArraysListener::HOOK, priority: ExportTableHandleArraysListener::PRIORITY)]
 class ExportTableHandleArraysListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';

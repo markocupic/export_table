@@ -14,19 +14,16 @@ declare(strict_types=1);
 
 namespace Markocupic\ExportTable\Listener\ContaoHooks;
 
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Date;
 use Markocupic\ExportTable\Config\Config;
 
-/**
- * @Hook(ExportTableFormatDateListener::HOOK, priority=ExportTableFormatDateListener::PRIORITY)
- */
+#[AsHook(ExportTableFormatDateListener::HOOK, priority: ExportTableFormatDateListener::PRIORITY)]
 class ExportTableFormatDateListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
     public const PRIORITY = 100;
-
     private static bool $disableHook = false;
 
     public function __construct(
