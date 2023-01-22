@@ -61,7 +61,7 @@ abstract class AbstractWriter
     /**
      * @throws \Exception
      */
-    protected function getTargetPath(Config $objConfig, string $strFileEnding): string
+    protected function getTargetPath(Config $objConfig, string $strFileEnding, bool $absolute = false): string
     {
         $filesModelAdapter = $this->framework->getAdapter(FilesModel::class);
 
@@ -75,7 +75,7 @@ abstract class AbstractWriter
 
         $objFile = new File($objConfig->getTempFolder().'/'.$filename);
 
-        return $objFile->path;
+        return $absolute ? $this->projectDir.'/'.$objFile->path : $objFile->path;
     }
 
     protected function sendFileToBrowser(File $objFile, bool $blnInline = false): void

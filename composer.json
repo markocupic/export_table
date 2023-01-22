@@ -26,7 +26,7 @@
     "ext-xmlwriter": "*",
     "ext-json": "*",
     "contao/core-bundle": "^4.9 || ^5.0",
-    "codefog/contao-haste": "^4.20",
+    "league/csv": "^9.0",
     "ramsey/uuid": "^3.0 || ^4.0"
   },
   "require-dev": {

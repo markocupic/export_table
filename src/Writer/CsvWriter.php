@@ -16,8 +16,9 @@ namespace Markocupic\ExportTable\Writer;
 
 use Contao\File;
 use Contao\FilesModel;
-use Haste\IO\Reader\ArrayReader;
-use Haste\IO\Writer\CsvFileWriter;
+use League\Csv\CannotInsertRecord;
+use League\Csv\InvalidArgument;
+use League\Csv\Writer;
 use Markocupic\ExportTable\Config\Config;
 
 class CsvWriter extends AbstractWriter implements WriterInterface
@@ -25,7 +26,8 @@ class CsvWriter extends AbstractWriter implements WriterInterface
     public const FILE_ENDING = 'csv';
 
     /**
-     * @throws \Exception
+     * @throws CannotInsertRecord
+     * @throws InvalidArgument
      */
     public function write(array $arrData, Config $config): void
     {
@@ -34,27 +36,27 @@ class CsvWriter extends AbstractWriter implements WriterInterface
         // Run pre-write HOOK: e.g. modify the data array
         $arrData = $this->runPreWriteHook($arrData, $config);
 
-        // Use codefog/haste and its ArrayReader- and CsvFileWriter-class
-        $objReader = new ArrayReader($arrData);
-
-        // Write content into a file
-        $targetPath = $this->getTargetPath($config, self::FILE_ENDING);
-        $objWriter = new CsvFileWriter($targetPath);
-
         if ($config->getAddHeadline() && !empty($config->getHeadlineFields())) {
-            $objWriter->enableHeaderFields();
-            $objReader->setHeaderFields($config->getHeadlineFields());
+            array_unshift($arrData, $config->getHeadlineFields());
         }
 
+        // Create empty file
+        $objFile = new File($this->getTargetPath($config, self::FILE_ENDING));
+        $objFile->write('');
+        $objFile->close();
+
+        // Prepare the writer
+        $objWriter = Writer::createFromPath($this->projectDir.'/'.$objFile->path);
         $objWriter->setDelimiter($config->getDelimiter());
         $objWriter->setEnclosure($config->getEnclosure());
-        $objWriter->writeFrom($objReader);
-
-        // Send generated file to the browser
-        $objFile = new File($objWriter->getFilename());
 
         if ($config->getOutputBom()) {
-            $objFile = $this->setOutputBom($objFile, $config->getOutputBom());
+            $objWriter->setOutputBom($config->getOutputBom());
+        }
+
+        // Insert records
+        foreach ($arrData as $record) {
+            $objWriter->insertOne(array_values($record));
         }
 
         // Run post-write HOOK: e.g. send notifications, etc.
@@ -67,19 +69,5 @@ class CsvWriter extends AbstractWriter implements WriterInterface
             // Send file to the browser
             $this->sendFileToBrowser($objFile);
         }
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function setOutputBom(File $objFile, string $bom): File
-    {
-        if ($bom) {
-            $strContentWithBom = $bom.$objFile->getContent();
-            $objFile->write($strContentWithBom);
-            $objFile->close();
-        }
-
-        return $objFile;
     }
 }
