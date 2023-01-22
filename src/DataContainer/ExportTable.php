@@ -21,6 +21,7 @@ use Contao\CoreBundle\Routing\ScopeMatcher;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Environment;
+use Doctrine\DBAL\Connection;
 use Markocupic\ExportTable\Config\GetConfigFromModel;
 use Markocupic\ExportTable\Export\ExportTable as ExportTableService;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
@@ -38,6 +39,7 @@ class ExportTable
 
     public function __construct(
         private readonly ContaoFramework $framework,
+        private readonly Connection $connection,
         private readonly RequestStack $requestStack,
         private readonly ScopeMatcher $scopeMatcher,
         private readonly DatabaseHelper $databaseHelper,
@@ -115,6 +117,16 @@ class ExportTable
     #[AsCallback(table: 'tl_export_table', target: 'fields.sortBy.options')]
     public function listFields(DataContainer $dc): array
     {
+        if (!$dc->id) {
+            return [];
+        }
+
+        $strTable = $this->connection->fetchOne('SELECT `table` FROM tl_export_table WHERE id = ?', [$dc->id]);
+
+        if (!$strTable) {
+            return [];
+        }
+
         $strTable = $dc->activeRecord->table;
 
         $databaseAdapter = $this->framework->getAdapter(Database::class);
