@@ -16,6 +16,7 @@ namespace Markocupic\ExportTable\Export;
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\InsertTag\InsertTagParser;
 use Contao\Database;
 use Contao\System;
 use Markocupic\ExportTable\Config\Config;
@@ -32,6 +33,7 @@ class ExportTable
         private readonly ContaoFramework $framework,
         private readonly StringHelper $stringHelper,
         private readonly DatabaseHelper $databaseHelper,
+        private readonly InsertTagParser $contaoInsertTagParser,
     ) {
     }
 
@@ -128,8 +130,7 @@ class ExportTable
         $strFilter = json_encode($arrFilter);
 
         // Replace insert tags: Replace {{GET::key}} with a given value of a corresponding $_GET parameter.
-        $controllerAdapter = $this->framework->getAdapter(Controller::class);
-        $strFilter = $controllerAdapter->replaceInsertTags($strFilter);
+        $strFilter = $this->contaoInsertTagParser->replaceInline($strFilter);
 
         $arrFilter = json_decode($strFilter);
 
