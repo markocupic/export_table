@@ -29,7 +29,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
     'list'        => [
         'sorting'    => [
             'mode'   => DataContainer::MODE_SORTABLE,
-            'fields' => ['tstamp DESC'],
+            'fields' => ['title DESC'],
         ],
         'label'      => [
             'fields' => ['title', 'export_table'],
@@ -51,7 +51,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             ],
             'export' => [
                 'href'       => 'action=export',
-                'icon'       => 'bundles/markocupicexporttable/export.png',
+                'icon'       => 'bundles/markocupicexporttable/export.svg',
                 'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['confirmExport'] ?? null).'\'))return false;Backend.getScrollOffset()"',
             ],
         ],
