@@ -46,8 +46,8 @@ class ExportTableHandleArraysListener implements ListenerInterface
             $varValue = implode($delim, $stringUtilAdapter->deserialize($varValue, true));
         } elseif (isset($dcaEval['multiple']) && true === $dcaEval['multiple']) {
             $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
-        } elseif (!empty($varValue) && \is_string($varValue) && str_starts_with($varValue, 'a:') && \is_array($stringUtilAdapter->deserialize($varValue))) {
-            $varValue = implode($objConfig->getArrayDelimiter(), $stringUtilAdapter->deserialize($varValue, true));
+        } elseif (!empty($varValue) && \is_string($varValue) && str_starts_with($varValue, 'a:') && \is_array($stringUtilAdapter->deserialize($varValue)) && !$this->arrIsMultiDimensional($stringUtilAdapter->deserialize($varValue))) {
+            $varValue = implode($objConfig->getArrayDelimiter(), StringUtil::deserialize($varValue, true));
         }
 
         return $varValue;
@@ -66,5 +66,16 @@ class ExportTableHandleArraysListener implements ListenerInterface
     public static function isEnabled(): bool
     {
         return self::$disableHook;
+    }
+
+    /**
+     * Function to check if array is
+     * multidimensional or not.
+     */
+    private function arrIsMultiDimensional(array $arr): bool
+    {
+        rsort($arr);
+
+        return isset($arr[0]) && \is_array($arr[0]);
     }
 }

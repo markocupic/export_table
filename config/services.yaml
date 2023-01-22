@@ -5,6 +5,7 @@ services:
     public: true
     bind:
       $projectDir: '%kernel.project_dir%'
+      $contaoInsertTagParser: '@contao.insert_tag.parser'
 
   Markocupic\ExportTable\:
     resource: ../src/
