@@ -26,16 +26,8 @@
         "ext-xmlwriter": "*",
         "ext-json": "*",
         "contao/core-bundle": "^4.9 || ^5.0",
-        "league/csv": "^9.0",
+        "league/csv": "^9.8",
         "ramsey/uuid": "^3.0 || ^4.0"
-    },
-    "require-dev": {
-        "contao/easy-coding-standard": "^5.0",
-        "contao/manager-bundle": "^4.13",
-        "contao/manager-plugin": "^2.3.1",
-        "contao/test-case": "^4.6",
-        "phpunit/phpunit": "^9.3",
-        "symfony/phpunit-bridge": "^5.4"
     },
     "autoload": {
         "psr-4": {
