@@ -17,11 +17,11 @@ namespace Markocupic\ExportTable\Listener\ContaoHooks;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Markocupic\ExportTable\Config\Config;
 
-#[AsHook(ExportTableEntityDecodeListener::HOOK, priority: ExportTableEntityDecodeListener::PRIORITY)]
-class ExportTableEntityDecodeListener implements ListenerInterface
+#[AsHook(self::HOOK, priority: self::PRIORITY)]
+class ExportTableCharsetConversionListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
-    public const PRIORITY = 600;
+    public const PRIORITY = 20;
     private static bool $disableHook = false;
 
     public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
@@ -31,7 +31,12 @@ class ExportTableEntityDecodeListener implements ListenerInterface
         }
 
         if (\is_string($varValue) && !empty($varValue)) {
-            $varValue = html_entity_decode($varValue, ENT_QUOTES);
+            $arrConversionConfig = $objConfig->getConversionConfiguration();
+
+            if ($arrConversionConfig['convertEncoding']) {
+                $varValueNew = mb_convert_encoding($varValue, $arrConversionConfig['convertTo'], $arrConversionConfig['convertFrom']);
+                $varValue = \is_string($varValueNew) ? $varValueNew : $varValue;
+            }
         }
 
         return $varValue;

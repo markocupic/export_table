@@ -42,6 +42,9 @@ class Config
         'activateDeepLinkExport' => false,
         'token' => null,
         'rowCallback' => null,
+        'convertEncoding' => false,
+        'convertFrom' => 'UTF-8',
+        'convertTo' => 'ISO-8859-1',
         'notAllowedFilterExpr' => [
             'delete',
             'drop',
@@ -429,5 +432,23 @@ class Config
     public function getAll(): array
     {
         return $this->arrData;
+    }
+
+    public function getConversionConfiguration(): array
+    {
+        return [
+            'convertEncoding' => $this->arrData['convertEncoding'],
+            'convertFrom' => $this->arrData['convertFrom'],
+            'convertTo' => $this->arrData['convertTo'],
+        ];
+    }
+
+    public function convertEncoding(bool $blnConvert, string $from = 'UTF-8', string $to = 'ISO-8859-1'): self
+    {
+        $this->arrData['convertEncoding'] = $blnConvert;
+        $this->arrData['convertFrom'] = $from;
+        $this->arrData['convertTo'] = $to;
+
+        return $this;
     }
 }
