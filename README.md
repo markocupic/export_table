@@ -128,6 +128,7 @@ class CustomController extends AbstractController
                     return $arrRow;
                 }
             )
+            //->convertEncoding(true, 'UTF-8', 'ISO-8859-1');
         ;
 
         // The export class takes the config object as single parameter.
