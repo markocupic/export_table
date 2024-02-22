@@ -18,6 +18,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Markocupic\ExportTable\Config\GetConfigFromToken;
 use Markocupic\ExportTable\Export\ExportTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -35,7 +36,7 @@ class DownloadController extends AbstractController
     /**
      * @throws \Exception
      */
-    public function __invoke(): void
+    public function __invoke(): JsonResponse
     {
         $this->framework->initialize();
         $request = $this->requestStack->getCurrentRequest();
@@ -43,5 +44,12 @@ class DownloadController extends AbstractController
         $objConfig = $this->getConfigFromToken->get($strToken);
 
         $this->exportTable->run($objConfig);
+
+        $json = [
+            'status' => 'success',
+            'table'  => $objConfig->getTable(),
+        ];
+
+        return new JsonResponse($json);
     }
 }
