@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of Contao Export Table.
  *
- * (c) Marko Cupic 2024 <m.cupic@gmx.ch>
+ * (c) Marko Cupic <m.cupic@gmx.ch>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -44,8 +44,7 @@ class ExportTableFormatDateListener implements ListenerInterface
         if ($dca) {
             $strRgxp = $dca['eval']['rgxp'] ?? '';
 
-            if ($varValue && '' !== $varValue && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
-
+            if (!empty($varValue) && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
                 try {
                     // Contao tries to retrieve the time/date/date format from the global page object,
                     // but there is none when the app is run in deep link mode.
