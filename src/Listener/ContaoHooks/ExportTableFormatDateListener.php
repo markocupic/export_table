@@ -45,7 +45,21 @@ class ExportTableFormatDateListener implements ListenerInterface
             $strRgxp = $dca['eval']['rgxp'] ?? '';
 
             if ($varValue && '' !== $varValue && \in_array($strRgxp, ['date', 'datim', 'time'], true)) {
-                $dateFormat = $dateAdapter->getFormatFromRgxp($strRgxp);
+
+                try {
+                    // Contao tries to retrieve the time/date/date format from the global page object,
+                    // but there is none when the app is run in deep link mode.
+                    $dateFormat = $dateAdapter->getFormatFromRgxp($strRgxp);
+                } catch (\Exception $e) {
+                    // Fallback: Retrieve the date/datim-/time-format from config.
+                    $configAdapter = $this->framework->getAdapter(\Contao\Config::class);
+                    $dateFormat = $configAdapter->get($strRgxp.'Format');
+                }
+
+                if (empty($dateFormat)) {
+                    throw new \Exception(sprintf('Date-/time format not found for rgxp: %s.', $strRgxp));
+                }
+
                 $varValue = $dateAdapter->parse($dateFormat, $varValue);
             }
         }
