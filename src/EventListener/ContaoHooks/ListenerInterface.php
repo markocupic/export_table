@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable\Listener\ContaoHooks;
+namespace Markocupic\ExportTable\EventListener\ContaoHooks;
 
 interface ListenerInterface
 {

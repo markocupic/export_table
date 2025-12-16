@@ -12,16 +12,16 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/export_table
  */
 
-namespace Markocupic\ExportTable\Listener\ContaoHooks;
+namespace Markocupic\ExportTable\EventListener\ContaoHooks;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Markocupic\ExportTable\Config\Config;
 
-#[AsHook(ExportTableReplaceNewlineListener::HOOK, priority: ExportTableReplaceNewlineListener::PRIORITY)]
-class ExportTableReplaceNewlineListener implements ListenerInterface
+#[AsHook(self::HOOK, priority: self::PRIORITY)]
+class ExportTableCharsetConversionListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
-    public const PRIORITY = 200;
+    public const PRIORITY = 20;
     private static bool $disableHook = false;
 
     public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
@@ -30,9 +30,13 @@ class ExportTableReplaceNewlineListener implements ListenerInterface
             return $varValue;
         }
 
-        // Replace newlines with [NEWLINE]
-        if ($varValue && '' !== $varValue && isset($arrDca['fields'][$strFieldName]['inputType']) && 'textarea' === $arrDca['fields'][$strFieldName]['inputType']) {
-            $varValue = preg_replace('/(?>\r\n|\n|\r)/sm', '[NEWLINE]', (string) $varValue);
+        if (\is_string($varValue) && !empty($varValue)) {
+            $arrConversionConfig = $objConfig->getConversionConfiguration();
+
+            if ($arrConversionConfig['convertEncoding']) {
+                $varValueNew = mb_convert_encoding($varValue, $arrConversionConfig['convertTo'], $arrConversionConfig['convertFrom']);
+                $varValue = \is_string($varValueNew) ? $varValueNew : $varValue;
+            }
         }
 
         return $varValue;
