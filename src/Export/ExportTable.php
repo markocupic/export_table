@@ -16,24 +16,27 @@ namespace Markocupic\ExportTable\Export;
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\InsertTag\InsertTagParser;
-use Contao\Database;
 use Contao\System;
+use Doctrine\DBAL\Connection;
 use Markocupic\ExportTable\Config\Config;
+use Markocupic\ExportTable\Event\QueryBuilderPreparedEvent;
 use Markocupic\ExportTable\Helper\DatabaseHelper;
-use Markocupic\ExportTable\Helper\StringHelper;
+use Markocupic\ExportTable\Helper\WhereExpressionParser;
 use Markocupic\ExportTable\Writer\WriterInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ExportTable
 {
     private array $arrData = [];
+
     private array $writers = [];
 
     public function __construct(
+        private readonly Connection $connection,
         private readonly ContaoFramework $framework,
-        private readonly StringHelper $stringHelper,
         private readonly DatabaseHelper $databaseHelper,
-        private readonly InsertTagParser $contaoInsertTagParser,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly WhereExpressionParser $whereExpressionParser,
     ) {
     }
 
@@ -50,66 +53,73 @@ class ExportTable
      */
     public function run(Config $objConfig): void
     {
-        $strTable = $objConfig->getTable();
-
-        $databaseAdapter = $this->framework->getAdapter(Database::class);
-        $controllerAdapter = $this->framework->getAdapter(Controller::class);
-        $systemAdapter = $this->framework->getAdapter(System::class);
+        $tableName = $objConfig->getTable();
 
         // Load the data container array.
-        $controllerAdapter->loadDataContainer($strTable, true);
-        $arrDca = $GLOBALS['TL_DCA'][$strTable] ?? [];
+        $this->framework->getAdapter(Controller::class)->loadDataContainer($tableName, true);
+
+        // Load the related DCA array.
+        $arrDca = $GLOBALS['TL_DCA'][$tableName] ?? [];
 
         // If no fields are chosen, then do list all the fields from the selected table.
-        $arrSelectedFields = $objConfig->getFields();
+        $selectedFields = $objConfig->getFields();
 
-        if (empty($arrSelectedFields)) {
-            $arrSelectedFields = $this->databaseHelper->listFields($strTable, false, false);
-            $objConfig->setFields($arrSelectedFields);
+        if (empty($selectedFields)) {
+            $selectedFields = $this->databaseHelper->listFields($tableName, false, false);
+            $objConfig->setFields($selectedFields);
         }
 
         // Use table field names as default for the header row
         if ($objConfig->getAddHeadline() && empty($objConfig->getHeadlineFields())) {
-            $objConfig->setHeadlineFields($arrSelectedFields);
+            $objConfig->setHeadlineFields($selectedFields);
         }
 
-        $strFields = empty($arrSelectedFields) ? '*' : implode(',', $arrSelectedFields);
+        $sqlFields = empty($selectedFields) ? '*' : implode(',', $selectedFields);
 
-        // The filter expression has to be entered as a JSON encoded array
-        // -> [["tableName.field=? OR tableName.field=?"],["valueA","valueB"]] or
-        // -> [["tableName.field=?", "tableName.field=?"],["valueA","valueB"]]
-        $arrFilter = $this->generateFilterStmt($objConfig->getFilter(), $objConfig);
-        $strFilterExpr = $arrFilter['stmt'];
-        $arrFilterValues = $arrFilter['values'];
+        // Fetch data from the database.
+        $qb = $this->connection->createQueryBuilder();
+        $qb->select($sqlFields)->from($tableName, 't');
+        $qb = $this->whereExpressionParser->withWhereStmt($qb, $objConfig);
 
-        // Generate the sorting expression.
-        $strSortingStmt = $this->getSortingStmt($objConfig->getSortBy(), $objConfig->getSortDirection());
+        $orderBy = $this->getOrderBy($objConfig->getSortBy(), $objConfig->getSortDirection());
+        $qb->orderBy($orderBy['field'], $orderBy['direction']);
 
-        $strQuery = sprintf('SELECT %s FROM %s%s%s', $strFields, $strTable, $strFilterExpr, $strSortingStmt);
-        $objDb = $databaseAdapter
-            ->getInstance()
-            ->prepare($strQuery)
-            ->execute(...$arrFilterValues)
-        ;
+        // Dispatch the event to allow other bundles to modify the query.
+        $event = new QueryBuilderPreparedEvent($qb, $objConfig);
 
-        while ($arrRow = $objDb->fetchAssoc()) {
-            foreach ($arrRow as $strFieldName => $varValue) {
+        $this->eventDispatcher->dispatch($event);
+
+        // Prevent further changes to the database.
+        $this->connection->beginTransaction();
+
+        try {
+            $rows = $event->getQueryBuilder()->fetchAllAssociative();
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            // Do not allow any further changes to the database.
+            $this->connection->rollBack();
+        }
+
+        foreach ($rows as $row) {
+            foreach ($row as $fieldName => $varValue) {
                 // HOOK: Process data with your custom hooks.
                 if (isset($GLOBALS['TL_HOOKS']['exportTable']) && \is_array($GLOBALS['TL_HOOKS']['exportTable'])) {
                     foreach ($GLOBALS['TL_HOOKS']['exportTable'] as $callback) {
-                        $objCallback = $systemAdapter->importStatic($callback[0]);
-                        $varValue = $objCallback->{$callback[1]}($strFieldName, $varValue, $strTable, $arrRow, $arrDca, $objConfig);
+                        $objCallback = $this->framework->getAdapter(System::class)->importStatic($callback[0]);
+                        $varValue = $objCallback->{$callback[1]}($fieldName, $varValue, $tableName, $row, $arrDca, $objConfig);
                     }
-                    $arrRow[$strFieldName] = $varValue;
+
+                    $row[$fieldName] = $varValue;
                 }
             }
 
             // Handle the row callback.
             if (null !== ($callback = $objConfig->getRowCallback())) {
-                $arrRow = $callback($arrRow);
+                $row = $callback($row);
             }
 
-            $this->arrData[] = $arrRow;
+            $this->arrData[] = $row;
         }
 
         // Write export data to a file.
@@ -122,61 +132,8 @@ class ExportTable
         return $this->writers[$alias];
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function generateFilterStmt(array $arrFilter, Config $objConfig): array
+    private function getOrderBy(string $fieldName = 'id', string $direction = 'desc'): array
     {
-        $strFilter = json_encode($arrFilter);
-
-        // Replace insert tags: Replace {{GET::key}} with a given value of a corresponding $_GET parameter.
-        $strFilter = $this->contaoInsertTagParser->replaceInline($strFilter);
-
-        $arrFilter = json_decode($strFilter);
-
-        // Default filter statement
-        $filterStmt = '';
-        $arrValues = [];
-
-        if (!empty($arrFilter)) {
-            if (2 === \count($arrFilter)) {
-                // Statement
-                if (\is_array($arrFilter[0])) {
-                    // [["tl_member.firstname=?","tl_member.lastname=?"],["Hans","Muster"]]
-                    $filterStmt .= implode(' AND ', $arrFilter[0]);
-                } else {
-                    // [["tl_member.firstname=? AND tl_member.lastname=?"],["Hans","Muster"]]
-                    $filterStmt .= $arrFilter[0];
-                }
-
-                // Values
-                if (\is_array($arrFilter[1])) {
-                    foreach ($arrFilter[1] as $v) {
-                        $arrValues[] = $v;
-                    }
-                } else {
-                    $arrValues[] = $arrFilter[1];
-                }
-            }
-        }
-
-        $filterStmt = trim($filterStmt);
-        $filterStmt = $filterStmt ? ' WHERE '.$filterStmt : '';
-
-        // Check for invalid input.
-        if ($this->stringHelper->testAgainstSet(strtolower($filterStmt.' '.implode(' ', $arrValues)), $objConfig->getNotAllowedFilterExpr())) {
-            $message = sprintf('Illegal filter expression! Do not use "%s" in your filter expression.', implode(', ', $objConfig->getNotAllowedFilterExpr()));
-
-            throw new \Exception($message);
-        }
-
-        return ['stmt' => $filterStmt, 'values' => $arrValues];
-    }
-
-    private function getSortingStmt(string $strFieldName = 'id', string $direction = 'desc'): string
-    {
-        $arrSorting = [$strFieldName, $direction];
-
-        return ' ORDER BY '.implode(' ', $arrSorting);
+        return ['field' => $fieldName, 'direction' => $direction];
     }
 }

@@ -21,7 +21,9 @@ use Markocupic\ExportTable\Config\Config;
 class ExportTableEntityDecodeListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
+
     public const PRIORITY = 600;
+
     private static bool $disableHook = false;
 
     public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed

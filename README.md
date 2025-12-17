@@ -24,23 +24,31 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 Der Export ist über Filter konfigurierbar.
 
 Folgender einfacher Filter für die Mitgliedertabelle *tl_member* lässt nur **Frauen** aus **Luzern** zu:\
-`[["gender=? AND city=?"],["female","Luzern"]]`
+`[["gender = ? AND city = ?"],["female","Luzern"]]`
 
 Oder nur **Frauen** aus **Luzern** oder **Bern**:\
-`[["gender=? AND (city=? OR city=?)"],["female","Luzern", "Bern"]]`
+`[["gender = ? AND (city = ? OR city = ?)"],["female","Luzern","Bern"]]`
+
+Oder mit benannten Platzhaltern (named placeholders):
+`[["gender = :gender AND (city = :city_A OR city = :city_B)"],{"gender":"male","city_A":"Luzern","city_B":"Bern"}]`
 
 Oder alle **Mitglieder** aus der **Mitgliedergruppe** mit der ID 3:
 `[["tl_member.groups LIKE '%:\"3\";%' AND id > ?"],["0"]]`
 
 Auch der Gebrauch von Contao **Insert Tags** ist möglich:\
-`[["lastname=? AND city=?"],["{{user::lastname}}","Oberkirch"]]`
+`[["lastname = ? AND city = ?"],["{{user::lastname}}","Oberkirch"]]`
 
 Oder Parameterübergabe aus der URL:\
-`[["lastname=? AND city=?"],["{{GET::lastname}}","Oberkirch"]]`
+`[["lastname = ? AND city = ?"],["{{GET::lastname}}","Oberkirch"]]`
 
-## Für Entwickler: Die Ausgabe über den "exportTable" HOOK steuern
+## Für Entwickler: Die Ausgabe über EventListener oder den "exportTable" HOOK steuern
 
-Via Hook kann die Ausgabe angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps vie [exportTable Hook](docs/wiki/hooks/exportTable.md) zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden, dass der neue Hook vor dem bestehenden aufgerufen wird.\
+### QueryBuilderPreparedEvent - Datenbank Query anpassen
+
+Der `QueryBuilderPreparedEvent` ermöglicht es dir, Datenbank-Queries vor ihrer Ausführung anzupassen. Dies ist nützlich, um zusätzliche Bedingungen, Filter oder andere Modifikationen auf Query-Builder-Ebene vorzunehmen.
+Erstelle dazu einen **Event Listener**. Siehe [QueryBuilderPreparedListener](docs/wiki/event_listener/queryBuilderPreparedListener.md)
+
+Via **Hooks** kann die Ausgabe transformiert/angepasst werden. Die Erweiterung selber nutzt diese Hooks. Beispielsweise werden timestamps vie [exportTable Hook](docs/wiki/hooks/exportTable.md) zu formatierten Daten umgewandelt. Bereits vorhandene Hooks lassen sich über einen eigenen Hook deaktivieren. Dabei muss die Priority so eingestellt werden, dass der neue Hook vor dem bestehenden aufgerufen wird.\
 Siehe [siehe dieses Beispiel](docs/wiki/hooks/exportTable.md):
 
 
@@ -51,7 +59,7 @@ Siehe [siehe dieses Beispiel](docs/wiki/hooks/exportTable.md):
 | [exportTablePostWrite](docs/wiki/hooks/exportTablePostWrite.md) |
 
 
-## ExportTable aus eigenem Controller heraus nutzen
+### ExportTable aus eigenem Controller heraus nutzen
 Die ExportTable-Klasse lässt sich recht simpel auch aus anderen Erweiterungen heraus nutzen.
 
 Dazu muss als Erstes der Export konfiguriert werden. Als Konstruktor-Argument wird der Konfigurationsklasse der Name der zu exportierenden Tabelle übergeben. Mit dieser Minimalkonfiguration werden die Default-Einstellungen übernommen. Ein Beispiel mit einer etwas ausführlicheren Konfiguration findest du weiter unten.

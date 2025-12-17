@@ -109,7 +109,7 @@ class Migration extends AbstractMigration
 
         return new MigrationResult(
             true,
-            implode(' ', $arrMessage)
+            implode(' ', $arrMessage),
         );
     }
 }

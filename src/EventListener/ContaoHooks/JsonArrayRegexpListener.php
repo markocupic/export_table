@@ -24,7 +24,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class JsonArrayRegexpListener implements ListenerInterface
 {
     public const HOOK = 'addCustomRegexp';
+
     public const PRIORITY = 100;
+
     private static bool $disableHook = false;
 
     public function __construct(
@@ -45,11 +47,11 @@ class JsonArrayRegexpListener implements ListenerInterface
 
             if (!\is_array($array)) {
                 $widget->addError(
-                    $this->translator->trans('ERR.exportTblInvalidFilterExpression', [], 'contao_default')
+                    $this->translator->trans('ERR.exportTblInvalidFilterExpression', [], 'contao_default'),
                 );
             } elseif ('' !== $input && $this->stringHelper->testAgainstSet(strtolower($input), $this->config->getNotAllowedFilterExpr())) {
                 $widget->addError(
-                    $this->translator->trans('ERR.exportTblNotAllowedFilterExpression', [strtoupper(implode(', ', $this->config->getNotAllowedFilterExpr()))], 'contao_default')
+                    $this->translator->trans('ERR.exportTblNotAllowedFilterExpression', [strtoupper(implode(', ', $this->config->getNotAllowedFilterExpr()))], 'contao_default'),
                 );
             }
 

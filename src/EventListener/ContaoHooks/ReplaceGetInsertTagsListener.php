@@ -22,7 +22,9 @@ use Contao\Input;
 class ReplaceGetInsertTagsListener implements ListenerInterface
 {
     public const HOOK = 'replaceInsertTags';
+
     public const PRIORITY = 10;
+
     public static bool $disableHook = false;
 
     public function __construct(

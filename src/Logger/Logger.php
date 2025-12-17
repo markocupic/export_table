@@ -31,7 +31,7 @@ class Logger
             $strText,
             [
                 'contao' => new ContaoContext($strMethod, $strContaoLogLevel),
-            ]
+            ],
         );
     }
 }

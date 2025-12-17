@@ -23,7 +23,9 @@ use Markocupic\ExportTable\Config\Config;
 class ExportTableHandleArraysListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
+
     public const PRIORITY = 300;
+
     private static bool $disableHook = false;
 
     public function __construct(

@@ -23,7 +23,9 @@ use Markocupic\ExportTable\Config\Config;
 class ExportTableFormatDateListener implements ListenerInterface
 {
     public const HOOK = 'exportTable';
+
     public const PRIORITY = 100;
+
     private static bool $disableHook = false;
 
     public function __construct(
@@ -56,7 +58,7 @@ class ExportTableFormatDateListener implements ListenerInterface
                 }
 
                 if (empty($dateFormat)) {
-                    throw new \Exception(sprintf('Date-/time format not found for rgxp: %s.', $strRgxp));
+                    throw new \Exception(\sprintf('Date-/time format not found for rgxp: %s.', $strRgxp));
                 }
 
                 $varValue = $dateAdapter->parse($dateFormat, $varValue);

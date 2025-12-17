@@ -38,25 +38,19 @@ class WriterResourcePass implements CompilerPassInterface
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
                 if (!isset($attributes['alias'])) {
-                    throw new InvalidArgumentException(sprintf('Missing tag information "alias" on markocupic_export_table.writer tagged service "%s".', $id));
+                    throw new InvalidArgumentException(\sprintf('Missing tag information "alias" on markocupic_export_table.writer tagged service "%s".', $id));
                 }
 
                 // Inject writers
-                $definition1->addMethodCall(
-                    'addWriter',
-                    [
-                        new Reference($id),
-                        $attributes['alias'],
-                    ]
-                );
+                $definition1->addMethodCall('addWriter', [
+                    new Reference($id),
+                    $attributes['alias'],
+                ]);
 
                 // Inject export types (csv, xml, etc.)
-                $definition2->addMethodCall(
-                    'addWriterAlias',
-                    [
-                        $attributes['alias'],
-                    ]
-                );
+                $definition2->addMethodCall('addWriterAlias', [
+                    $attributes['alias'],
+                ]);
             }
         }
     }

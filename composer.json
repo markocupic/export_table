@@ -25,19 +25,14 @@
         "php": "^8.1",
         "ext-xmlwriter": "*",
         "ext-json": "*",
-        "contao/core-bundle": "^4.9 || ^5.0",
+        "contao/core-bundle": "^4.13 || ^5.0",
         "league/csv": "^9.8",
         "ramsey/uuid": "^3.0 || ^4.0"
     },
     "autoload": {
         "psr-4": {
             "Markocupic\\ExportTable\\": "src/"
-        },
-        "exclude-from-classmap": [
-            "src/Resources/contao/config",
-            "src/Resources/contao/dca",
-            "src/Resources/contao/languages"
-        ]
+        }
     },
     "extra": {
         "contao-manager-plugin": "Markocupic\\ExportTable\\ContaoManager\\Plugin"
@@ -49,6 +44,10 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "contao-community-alliance/composer-plugin": true
         }
+    },
+    "scripts": {
+        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check config/ contao/ src/ tests/ --config tools/ecs/config.php --fix --ansi",
+        "unit-tests": "@php tools/phpunit/vendor/bin/phpunit -c tools/phpunit/phpunit.xml.dist"
     }
 }
 

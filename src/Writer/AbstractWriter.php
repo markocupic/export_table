@@ -50,7 +50,7 @@ abstract class AbstractWriter
 
         $appendDateString = $objConfig->getOverrideFile() ? '' : date('_Ymd_His', time());
 
-        return sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
+        return \sprintf('%s%s.%s', $fn, $appendDateString, $strFileEnding);
     }
 
     /**
@@ -84,7 +84,7 @@ abstract class AbstractWriter
         $response->setContentDisposition(
             $blnInline ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $objFile->basename,
-            (new UnicodeString(basename($filePath)))->ascii()->toString()
+            (new UnicodeString(basename($filePath)))->ascii()->toString(),
         );
 
         $mimeTypes = new MimeTypes();
@@ -136,7 +136,7 @@ abstract class AbstractWriter
 
     protected function log(File $objFile, Config $objConfig): void
     {
-        $strText = sprintf('Run ExportTable for "%s" and stored file to "%s".', $objConfig->getTable(), $objFile->path);
+        $strText = \sprintf('Run ExportTable for "%s" and stored file to "%s".', $objConfig->getTable(), $objFile->path);
         $this->logger->log($strText, LogLevel::INFO, ContaoContext::GENERAL, __METHOD__);
     }
 }

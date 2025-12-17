@@ -143,16 +143,16 @@ class Config
     }
 
     /**
-     * @throws \Exception
-     *
      * @return $this
+     *
+     * @throws \Exception
      */
     public function setSortDirection(string $strSortDirection = 'ASC'): self
     {
         $strSortDirection = strtoupper($strSortDirection);
 
         if (!\in_array($strSortDirection, ['ASC', 'DESC'], true)) {
-            throw new \Exception(sprintf('Sort direction should be "ASC" or "DESC", %s given.', $strSortDirection));
+            throw new \Exception(\sprintf('Sort direction should be "ASC" or "DESC", %s given.', $strSortDirection));
         }
         $this->arrData['sortDirection'] = $strSortDirection;
 

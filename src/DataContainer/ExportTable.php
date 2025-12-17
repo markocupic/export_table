@@ -60,7 +60,7 @@ class ExportTable
     {
         $exportTableModelAdapter = $this->framework->getAdapter(ExportTableModel::class);
 
-        if (null !== ($model = $exportTableModelAdapter->findByPk($dc->id))) {
+        if (null !== ($model = $exportTableModelAdapter->findById($dc->id))) {
             $arrPalette = &$GLOBALS['TL_DCA']['tl_export_table']['palettes'];
 
             if ($arrPalette[$model->exportType]) {
@@ -82,7 +82,7 @@ class ExportTable
         $pk = $request->query->get('id');
 
         if ('export' === $request->query->get('action') && $pk) {
-            if (null !== ($model = $exportTableModelAdapter->findByPk($pk))) {
+            if (null !== ($model = $exportTableModelAdapter->findById($pk))) {
                 $this->exportTable->run($this->getConfigFromModel->get($model));
             }
 
@@ -147,22 +147,19 @@ class ExportTable
         $exportTableModel = $this->framework->getAdapter(ExportTableModel::class);
         $environmentAdapter = $this->framework->getAdapter(Environment::class);
 
-        if (null === ($objModel = $exportTableModel->findByPk($dc->activeRecord->id))) {
+        if (null === ($objModel = $exportTableModel->findById($dc->activeRecord->id))) {
             return '';
         }
 
-        $link = sprintf(
+        $link = \sprintf(
             '%s/_export_table_download_table?action=exportTable&key=%s',
             $environmentAdapter->get('url'),
-            $objModel->token
+            $objModel->token,
         );
 
-        return $this->twig->render(
-            '@MarkocupicExportTable/backend/deep_link_info.html.twig',
-            [
-                'info_text' => $this->translator->trans('tl_export_table.deepLinkInfoText', [], 'contao_default'),
-                'link' => $link,
-            ]
-        );
+        return $this->twig->render('@MarkocupicExportTable/backend/deep_link_info.html.twig', [
+            'info_text' => $this->translator->trans('tl_export_table.deepLinkInfoText', [], 'contao_default'),
+            'link' => $link,
+        ]);
     }
 }
