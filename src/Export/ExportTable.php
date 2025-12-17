@@ -78,7 +78,7 @@ class ExportTable
 
         // Fetch data from the database.
         $qb = $this->connection->createQueryBuilder();
-        $qb->select($sqlFields)->from($tableName, 't');
+        $qb->select($sqlFields)->from($tableName);
         $qb = $this->whereExpressionParser->withWhereStmt($qb, $objConfig);
 
         $orderBy = $this->getOrderBy($objConfig->getSortBy(), $objConfig->getSortDirection());
