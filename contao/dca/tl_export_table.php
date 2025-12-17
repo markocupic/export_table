@@ -44,7 +44,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'delete' => [
                 'href'       => 'act=delete',
                 'icon'       => 'delete.svg',
-                'attributes' => 'onclick="onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
             ],
             'show'   => [
                 'href' => 'act=show',
@@ -53,23 +53,23 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'export' => [
                 'href'       => 'action=export',
                 'icon'       => 'bundles/markocupicexporttable/export.svg',
-                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['confirmExport'] ?? null).'\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['confirmExport'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
             ],
         ],
     ],
     'palettes'    => [
         '__selector__' => ['activateDeepLinkExport', 'saveExport'],
-        'default'      => '{title_legend},title;'.
-            '{settings},exportType,exportTable,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,sendFileToTheBrowser;'.
-            '{save_legend},saveExport;'.
+        'default'      => '{title_legend},title;' .
+            '{settings},exportType,exportTable,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,sendFileToTheBrowser;' .
+            '{save_legend},saveExport;' .
             '{deep_link_legend},activateDeepLinkExport',
-        'csv'          => '{title_legend},title;'.
-            '{settings},exportType,exportTable,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,bom,sendFileToTheBrowser;'.
-            '{save_legend},saveExport;'.
+        'csv'          => '{title_legend},title;' .
+            '{settings},exportType,exportTable,fields,addHeadline,sortBy,sortDirection,filter,enclosure,delimiter,arrayDelimiter,bom,sendFileToTheBrowser;' .
+            '{save_legend},saveExport;' .
             '{deep_link_legend},activateDeepLinkExport',
-        'xml'          => '{title_legend},title;'.
-            '{settings},exportType,exportTable,fields,sortBy,sortDirection,filter,arrayDelimiter,sendFileToTheBrowser;'.
-            '{save_legend},saveExport;'.
+        'xml'          => '{title_legend},title;' .
+            '{settings},exportType,exportTable,fields,sortBy,sortDirection,filter,arrayDelimiter,sendFileToTheBrowser;' .
+            '{save_legend},saveExport;' .
             '{deep_link_legend},activateDeepLinkExport',
     ],
     'subpalettes' => [
@@ -119,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'inputType' => 'checkbox',
             'sorting'   => true,
             'eval'      => ['tl_class' => 'clr'],
-            'sql'       => "char(1) NOT NULL default '1'",
+            'sql'       => ['type' => 'boolean', 'default' => true],
         ],
         'orderFields'            => [
             'sql' => 'blob NULL',
@@ -193,7 +193,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'inputType' => 'checkbox',
             'sorting'   => true,
             'eval'      => ['submitOnChange' => true],
-            'sql'       => "char(1) NOT NULL default ''",
+            'sql'       => ['type' => 'boolean', 'default' => false],
         ],
         'token'                  => [
             'default'   => Uuid::uuid4()->toString(),
@@ -213,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'inputType' => 'checkbox',
             'sorting'   => true,
             'eval'      => ['tl_class' => 'clr'],
-            'sql'       => "char(1) NOT NULL default '1'",
+            'sql'       => ['type' => 'boolean', 'default' => true],
         ],
         'saveExport'             => [
             'exclude'   => true,
@@ -221,7 +221,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'inputType' => 'checkbox',
             'sorting'   => true,
             'eval'      => ['submitOnChange' => true],
-            'sql'       => "char(1) NOT NULL default ''",
+            'sql'       => ['type' => 'boolean', 'default' => false],
         ],
         'overrideFile'           => [
             'exclude'   => true,
@@ -229,7 +229,7 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'inputType' => 'checkbox',
             'sorting'   => true,
             'eval'      => [],
-            'sql'       => "char(1) NOT NULL default ''",
+            'sql'       => ['type' => 'boolean', 'default' => false],
         ],
         'saveExportDirectory'    => [
             'exclude'   => true,
