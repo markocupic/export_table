@@ -36,11 +36,11 @@ class GetConfigFromModel
             ->setEnclosure($model->enclosure)
             ->setDelimiter($model->delimiter)
             ->setFields(StringUtil::deserialize($model->fields, true))
-            ->setAddHeadline($model->addHeadline)
+            ->setAddHeadline((bool) $model->addHeadline)
             ->setArrayDelimiter($model->arrayDelimiter)
-            ->setActivateDeepLinkExport($model->activateDeepLinkExport)
+            ->setActivateDeepLinkExport((bool) $model->activateDeepLinkExport)
             ->setToken($model->token)
-            ->setSendFileToTheBrowser($model->sendFileToTheBrowser)
+            ->setSendFileToTheBrowser((bool) $model->sendFileToTheBrowser)
         ;
 
         if ($model->bom) {
@@ -66,7 +66,7 @@ class GetConfigFromModel
             $config->setFilename((string) $model->filename);
         }
 
-        $config->setOverrideFile($model->overrideFile);
+        $config->setOverrideFile((bool) $model->overrideFile);
 
         return $config;
     }
