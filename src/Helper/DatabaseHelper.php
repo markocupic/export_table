@@ -19,9 +19,8 @@ use Contao\Database;
 
 class DatabaseHelper
 {
-    public function __construct(
-        private readonly ContaoFramework $framework,
-    ) {
+    public function __construct(private readonly ContaoFramework $framework)
+    {
     }
 
     public function listFields(string $strTable = '', bool $blnAssociative = false, bool $blnAddType = false): array

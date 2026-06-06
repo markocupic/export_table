@@ -19,9 +19,8 @@ use Psr\Log\LoggerInterface;
 
 class Logger
 {
-    public function __construct(
-        private readonly LoggerInterface|null $logger,
-    ) {
+    public function __construct(private readonly LoggerInterface|null $logger)
+    {
     }
 
     public function log(string $strText, string $strLogLevel, string $strContaoLogLevel, string $strMethod): void

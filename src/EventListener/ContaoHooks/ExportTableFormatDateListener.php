@@ -28,9 +28,8 @@ class ExportTableFormatDateListener implements ListenerInterface
 
     private static bool $disableHook = false;
 
-    public function __construct(
-        private readonly ContaoFramework $framework,
-    ) {
+    public function __construct(private readonly ContaoFramework $framework)
+    {
     }
 
     public function __invoke(string $strFieldName, mixed $varValue, string $strTableName, array $arrDataRecord, array $arrDca, Config $objConfig): mixed
