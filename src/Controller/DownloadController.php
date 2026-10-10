@@ -20,7 +20,7 @@ use Markocupic\ExportTable\Export\ExportTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/_export_table_download_table', name: 'export_table_download_table', defaults: ['_scope' => 'frontend', '_token_check' => false])]
 class DownloadController extends AbstractController

@@ -18,6 +18,11 @@ Mit dieser Erweiterung lassen sich aus dem Contao Backend heraus Datenbank-Tabel
 - Dateiname wählbar
 - Extension mit HOOKS und weiteren Writern erweiterbar
 
+## Anforderungen
+
+- PHP ^8.2
+- Contao ^5.3 || ^6.0
+
 ![Backend](docs/backend.png?raw=true "Backend")
 
 ## Der Einsatz von Filtern

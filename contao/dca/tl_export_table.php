@@ -37,23 +37,14 @@ $GLOBALS['TL_DCA']['tl_export_table'] = [
             'format' => '%s',
         ],
         'operations' => [
-            'edit'   => [
-                'href' => 'act=edit',
-                'icon' => 'edit.svg',
-            ],
-            'delete' => [
-                'href'       => 'act=delete',
-                'icon'       => 'delete.svg',
-                'attributes' => 'onclick="onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show'   => [
-                'href' => 'act=show',
-                'icon' => 'show.svg',
-            ],
+            'edit',
+            'delete',
+            'show',
             'export' => [
                 'href'       => 'action=export',
                 'icon'       => 'bundles/markocupicexporttable/export.svg',
-                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['confirmExport'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
+                // Disable Turbo (Contao 6), the export is sent as a file download
+                'attributes' => 'data-turbo="false" onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['confirmExport'] ?? null) . '\'))return false"',
             ],
         ],
     ],

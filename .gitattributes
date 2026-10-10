@@ -2,3 +2,5 @@
 /.ecs export-ignore
 /.gitignore export-ignore
 /.editorconfig export-ignore
+/tools export-ignore
+/phpunit.xml.dist export-ignore

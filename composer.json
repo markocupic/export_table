@@ -7,7 +7,7 @@
         "csv",
         "xml"
     ],
-    "type": "contao-module",
+    "type": "contao-bundle",
     "license": "MIT",
     "authors": [
         {
@@ -22,16 +22,43 @@
         "source": "https://github.com/markocupic/export_table"
     },
     "require": {
-        "php": "^8.1",
-        "ext-xmlwriter": "*",
+        "php": "^8.2",
         "ext-json": "*",
-        "contao/core-bundle": "^4.13 || ^5.0",
+        "ext-xmlwriter": "*",
+        "contao/core-bundle": "^5.3 || ^6.0",
+        "doctrine/dbal": "^3.6 || ^4.0",
         "league/csv": "^9.8",
-        "ramsey/uuid": "^3.0 || ^4.0"
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
+        "ramsey/uuid": "^4.0",
+        "symfony/config": "^6.4 || ^7.0 || ^8.0",
+        "symfony/dependency-injection": "^6.4 || ^7.0 || ^8.0",
+        "symfony/event-dispatcher": "^6.4 || ^7.0 || ^8.0",
+        "symfony/event-dispatcher-contracts": "^3.0",
+        "symfony/filesystem": "^6.4 || ^7.0 || ^8.0",
+        "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0",
+        "symfony/http-foundation": "^6.4 || ^7.0 || ^8.0",
+        "symfony/http-kernel": "^6.4 || ^7.0 || ^8.0",
+        "symfony/mime": "^6.4 || ^7.0 || ^8.0",
+        "symfony/routing": "^6.4 || ^7.0 || ^8.0",
+        "symfony/string": "^6.4 || ^7.0 || ^8.0",
+        "symfony/translation-contracts": "^3.0",
+        "twig/twig": "^3.8"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.12",
+        "contao/test-case": "^5.3 || ^6.0"
+    },
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0"
     },
     "autoload": {
         "psr-4": {
             "Markocupic\\ExportTable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Markocupic\\ExportTable\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -39,15 +66,16 @@
     },
     "config": {
         "allow-plugins": {
-            "contao/manager-plugin": true,
-            "contao-components/installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "contao-community-alliance/composer-plugin": true
+            "contao-components/installer": false,
+            "contao/manager-plugin": false,
+            "php-http/discovery": false,
+            "contao-community-alliance/composer-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "scripts": {
-        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check config/ contao/ src/ tests/ --config tools/ecs/config.php --fix --ansi",
-        "unit-tests": "@php tools/phpunit/vendor/bin/phpunit -c tools/phpunit/phpunit.xml.dist"
+        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check --config tools/ecs/config/default.php --fix --ansi",
+        "cs-check": "@php tools/ecs/vendor/bin/ecs check --config tools/ecs/config/default.php --ansi",
+        "unit-tests": "@php vendor/bin/phpunit --colors=always"
     }
 }
-

@@ -4,7 +4,6 @@ cd..
 cd..
 cd..
 cd..
-
-../../../vendor\bin\ecs check tests --config tools/ecs/config/default.php
-
-cd tools/ecs/batch/fix
+cd..
+cd..
+php vendor\bin\ecs check --fix --config vendor/markocupic/export_table/tools/ecs/config/default.php
